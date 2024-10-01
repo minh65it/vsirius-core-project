@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{02320E1A-C2D0-4169-8162-E67926A2653B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "chatGPT", "chatGPT", "{5E0C0DF7-ED69-4D30-BDE3-7C3DE629AC46}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "product", "product", "{B5B10EF5-DF41-47C0-99FE-3F3E89CC2E9F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductApi", "Product\ProductApi\ProductApi.csproj", "{884AE9AB-C5F0-4EC1-9D00-2966E1A59538}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductApiTests", "Product\ProductApiTests\ProductApiTests.csproj", "{EF1DAD0A-F88D-4E8A-BD0E-878897859099}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityApi", "Identity\IdentityApi\IdentityApi.csproj", "{93D32DCB-755A-459A-AAAB-3F69045D40C4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityApiTests", "Identity\IdentityApiTests\IdentityApiTests.csproj", "{00772387-9367-4339-A7A4-010F0CBB958C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductAiApi", "ProductAI\ProductAiApi\ProductAiApi.csproj", "{03A27BDD-0A52-4377-AFDA-CFE1504051EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{884AE9AB-C5F0-4EC1-9D00-2966E1A59538}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{884AE9AB-C5F0-4EC1-9D00-2966E1A59538}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{884AE9AB-C5F0-4EC1-9D00-2966E1A59538}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{884AE9AB-C5F0-4EC1-9D00-2966E1A59538}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF1DAD0A-F88D-4E8A-BD0E-878897859099}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF1DAD0A-F88D-4E8A-BD0E-878897859099}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF1DAD0A-F88D-4E8A-BD0E-878897859099}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF1DAD0A-F88D-4E8A-BD0E-878897859099}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93D32DCB-755A-459A-AAAB-3F69045D40C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93D32DCB-755A-459A-AAAB-3F69045D40C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93D32DCB-755A-459A-AAAB-3F69045D40C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93D32DCB-755A-459A-AAAB-3F69045D40C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00772387-9367-4339-A7A4-010F0CBB958C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00772387-9367-4339-A7A4-010F0CBB958C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00772387-9367-4339-A7A4-010F0CBB958C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00772387-9367-4339-A7A4-010F0CBB958C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03A27BDD-0A52-4377-AFDA-CFE1504051EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03A27BDD-0A52-4377-AFDA-CFE1504051EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03A27BDD-0A52-4377-AFDA-CFE1504051EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03A27BDD-0A52-4377-AFDA-CFE1504051EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{884AE9AB-C5F0-4EC1-9D00-2966E1A59538} = {B5B10EF5-DF41-47C0-99FE-3F3E89CC2E9F}
+		{EF1DAD0A-F88D-4E8A-BD0E-878897859099} = {B5B10EF5-DF41-47C0-99FE-3F3E89CC2E9F}
+		{93D32DCB-755A-459A-AAAB-3F69045D40C4} = {02320E1A-C2D0-4169-8162-E67926A2653B}
+		{00772387-9367-4339-A7A4-010F0CBB958C} = {02320E1A-C2D0-4169-8162-E67926A2653B}
+		{03A27BDD-0A52-4377-AFDA-CFE1504051EF} = {5E0C0DF7-ED69-4D30-BDE3-7C3DE629AC46}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {37FD6387-A1B8-4A66-AD2B-95A9FBF06BEE}
+	EndGlobalSection
+EndGlobal
