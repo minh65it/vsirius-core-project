@@ -1,0 +1,81 @@
+1. Build project
+2. Copy file QuartzInfrastructure.dll vào API cần các process
+nhớ add thêm <PackageReference Include="Quartz.Extensions.Hosting" Version="3.8.0" /> vào project
+3. Thêm vào file appsettings.json với các thông tin như sau
+
+"Quartz": {
+    "API_System": "https://localhost:7165/api/JobScheduler",
+    "Cron": {
+      "JobName1": "0 30 0/1 * * ?",
+      "JobName2": "0 30 0/1 * * ?",
+      "JobName3": "0 30 0/1 * * ?"
+    }
+  }
+
+  * Trong đó:
+- JobName1 => tên của classJob cần chạy sau đó là thời gian chạy(nếu không cấu hình mặc định là cứ 1h30p là chạy 1 lần)
+- API_System => API system
+
+4. Tạo class mô tả job cần thực hiện với mẫu sau:
+
+public class NameJob : IJob
+{
+    //private readonly IService Service;
+
+    //public NameJob(IService Service)
+    //{
+    //    this.Service = Service;
+    //}
+
+    public Task Execute(IJobExecutionContext context)
+    {
+        ///logic job
+        //Service.RunTaskInService();
+
+        return Task.CompletedTask;
+    }
+}
+
+5. Trong Program.cs thêm code: DependencyInjection.AddJob<NameJob>(builder.Services);
+
+
+
+
+
+////Update Jobs
+1. thêm Dependency vào Programs.cs DependencyInjection.AddUpdateJobs(builder.Services);
+2. Thêm Controller có tên như sau:
+
+    [Route("[controller]")]
+    [ApiController]
+    public class UpdateJobController : ControllerBase
+    {
+        private readonly IUpdateJobsService _updateJobsService;
+
+        public UpdateJobController(IUpdateJobsService updateJobsService)
+        {
+            _updateJobsService = updateJobsService;
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(JobInfoDto job)
+        {
+            switch (job.Tittle)
+            {
+                case "T1":
+                    await _updateJobsService.UpdateJob<T1>(job);
+                    break;
+                case "T2":
+                    await _updateJobsService.UpdateJob<T2>(job);
+                    break;
+                case "T3":
+                    await _updateJobsService.UpdateJob<T3>(job);
+                    break;
+                default:
+                    break;
+            }
+            return Ok("Done");
+        }
+    }
+Với T1, T2 là class tạo ở phần 1.4
+* Tạo đúng controller mới có thể update đúng: endpoint sẽ có dạng: http://118.69.37.20:5102/esty/UpdateJob/
