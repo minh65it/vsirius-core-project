@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ProductApi._Services.Interfaces;
 using ProductApi.Dtos;
 using ProductApi.Helpers.Utilities;
-using System.Data;
 
 namespace ProductApi.Controllers
 {
@@ -16,7 +15,7 @@ namespace ProductApi.Controllers
         public VsiriusProductController(IVsiriusProductService vsiriusProductService)
         {
             _vsiriusProductService = vsiriusProductService;
-        }
+        }    
 
         [HttpPost("CreateProduct")]
         [Authorize(Roles = "Admin")]
@@ -82,14 +81,37 @@ namespace ProductApi.Controllers
         /// <summary>
         /// FilterParam is based on /api/VsiriusProduct/Filter, if filterParam is empty send null array
         /// </summary>
+        /// <remarks>
+        /// Search cho frontend. láy ra 1 số trường cần thiết
+        /// </remarks>
         /// <param name="filterParam"></param>
         /// <param name="pagination"></param>
-        /// <param name="keyWord"></param>
+        /// <param name="searchParam"></param>
         /// <returns></returns>
         [HttpPost()]
-        public async Task<IActionResult> GetAll([FromBody] List<VsiriusFilterParamDto> filterParam, [FromQuery] PaginationParam pagination, [FromQuery] string? keyWord)
+        public async Task<IActionResult> GetAll(
+            [FromBody] List<VsiriusFilterParamDto>? filterParam, 
+            [FromQuery] PaginationParam pagination, 
+            [FromQuery] SearchProductParam searchParam)
         {
-            var result = await _vsiriusProductService.GetAll(filterParam, pagination, keyWord);
+            var result = await _vsiriusProductService.GetAll(filterParam, pagination, searchParam);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// seach cho backoffice. Hàm này lấy ra tất cả
+        /// </summary>
+        /// <param name="filterParam"></param>
+        /// <param name="pagination"></param>
+        /// <param name="searchParam"></param>
+        /// <returns></returns>
+        [HttpPost("GetAllBackOffice")]
+        public async Task<IActionResult> GetAllBackOffice(
+            [FromBody] List<VsiriusFilterParamDto>? filterParam, 
+            [FromQuery] PaginationParam pagination, 
+            [FromQuery] SearchProductParam searchParam)
+        {
+            var result = await _vsiriusProductService.GetAllBackOffice(filterParam, pagination, searchParam);
             return Ok(result);
         }
 
@@ -105,17 +127,26 @@ namespace ProductApi.Controllers
             return Ok(result);
         }
 
+        #region Các endpoint cho process
         /// <summary>
         /// Get the list of sku items that are in the database. endpoint for app console mapper
         /// </summary>
+        /// <remarks>
+        /// tìm kiếm item_sku_category với 'S' hoặc 'Q'
+        /// </remarks>
         /// <param name="item_sku_category"></param>
         /// <returns></returns>
         [HttpGet("GetAllItemSKU")]
         public async Task<IActionResult> GetAllItemSKU(string item_sku_category)
         {
-            var result = await _vsiriusProductService.GetAllItemSKU(item_sku_category);
+            var result = await _vsiriusProductService.GetAllItemSKU( item_sku_category);
             return Ok(result);
         }
+        /// <summary>
+        /// Xoá nhiều sản phẩm
+        /// </summary>
+        /// <param name="listSKU"></param>
+        /// <returns></returns>
         [HttpPut("RemoveMultipleProduct")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveMultipleProduct([FromBody] List<string> listSKU)
@@ -123,5 +154,11 @@ namespace ProductApi.Controllers
             var result = await _vsiriusProductService.RemoveMultipleProduct(listSKU);
             return Ok(result);
         }
+        [HttpGet("GetData")]
+        public async Task<IActionResult> GetData([FromQuery] PaginationParam pagination, [FromQuery] string? keyword)
+        {
+            return Ok(await _vsiriusProductService.GetData(pagination, keyword, true));
+        }
+        #endregion
     }
 }

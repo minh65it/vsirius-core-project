@@ -2,7 +2,7 @@
 {
     public class VsiriusFilterDto
     {
-        public int FilterId { get; set; }
+        public int? FilterId { get; set; }
         public string? FieldName { get; set; }
         public string? LabelName { get; set; }
         public string? Value { get; set; }
@@ -18,5 +18,6 @@
         public string? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public IFormFile? FileImage { get; set; }
+        public string? Title { get; set; }
     }
 }

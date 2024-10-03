@@ -1,49 +1,19 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Korzh.EasyQuery;
 using OfficeOpenXml;
 using ProductApi.Dtos;
-using ProductApi.Models;
 using System.Text.RegularExpressions;
 
 namespace ProductApi.Helpers.Utilities
 {
     public class ValidationVsirius
     {
-        private IMemoryCache _cache;
 
-        public ValidationVsirius(IMemoryCache cache)
+        public VsiriusProductDto IsValid(VsiriusProductDto dto)
         {
-            _cache = cache;
-        }
+            Dictionary<string, List<object>> listModelfromExcel = Common.listModelfromExcel;
+            _ = FieldNotNull.FieldNotNulls(dto);
 
-        public async Task<VsiriusProductDto> IsValid(VsiriusProductDto dto)
-        {
-            var fileName = Path.Combine(Directory.GetCurrentDirectory(), @"Resources/Template/VsiriusTemplate1.0.xlsm");
-
-            Dictionary<string, List<object>> listModelfromExcel = (Dictionary<string, List<object>>)_cache.Get("listModelfromExcel");
-            if(listModelfromExcel == null)
-            {
-                var listModelfromExcelCache = await ReadExcelFileToDynamic(fileName);
-                _cache.Set("listModelfromExcel", listModelfromExcelCache, DateTimeOffset.Now.AddMinutes(20));
-                listModelfromExcel = (Dictionary<string, List<object>>)_cache.Get("listModelfromExcel");
-            }
-
-            VsiriusProductDto msgDto = new();
-
-            msgDto = FieldNotNull.FieldNotNulls(dto);
-
-            Dictionary<string, List<string>> resultDict = new();
-            if (dto.batteries_required == "TRUE")
-            {
-                dto.batteries_required = "Yes";
-            }
-            else
-            {
-                dto.batteries_required = "No";
-            }
-
-
-            msgDto = FiedRequired.FiedRequireds(listModelfromExcel, dto);
-
+            VsiriusProductDto msgDto = FiedRequired.FiedRequireds(listModelfromExcel, dto);
 
             //age_range_description
             if (!string.IsNullOrEmpty(dto.age_range_description))
@@ -60,14 +30,71 @@ namespace ProductApi.Helpers.Utilities
             //other_image_url1
             if (!string.IsNullOrEmpty(dto.other_image_url1))
             {
-                if (!Ultilities.IsValidUrl(dto.other_image_url1))
+                if (!Common.IsValidUrl(dto.other_image_url1))
                 {
                     msgDto.other_image_url1 = "A valid URL, including leading.";
                 }
             }
+            ////other_image_url2
+            //if (!string.IsNullOrEmpty(dto.other_image_url2))
+            //{
+            //    if (!Ultilities.IsValidUrl(dto.other_image_url2))
+            //    {
+            //        msgDto.other_image_url2 = "A valid URL, including leading.";
+            //    }
+            //}
+            ////other_image_url3
+            //if (!string.IsNullOrEmpty(dto.other_image_url3))
+            //{
+            //    if (!Ultilities.IsValidUrl(dto.other_image_url3))
+            //    {
+            //        msgDto.other_image_url3 = "A valid URL, including leading.";
+            //    }
+            //}
+            ////other_image_url4
+            //if (!string.IsNullOrEmpty(dto.other_image_url4))
+            //{
+            //    if (!Ultilities.IsValidUrl(dto.other_image_url4))
+            //    {
+            //        msgDto.other_image_url4 = "A valid URL, including leading.";
+            //    }
+            //}
+            ////other_image_url5
+            //if (!string.IsNullOrEmpty(dto.other_image_url5))
+            //{
+            //    if (!Ultilities.IsValidUrl(dto.other_image_url5))
+            //    {
+            //        msgDto.other_image_url5 = "A valid URL, including leading.";
+            //    }
+            //}
+            ////other_image_url6
+            //if (!string.IsNullOrEmpty(dto.other_image_url6))
+            //{
+            //    if (!Ultilities.IsValidUrl(dto.other_image_url6))
+            //    {
+            //        msgDto.other_image_url6 = "A valid URL, including leading.";
+            //    }
+            //}
+            ////other_image_url7
+            //if (!string.IsNullOrEmpty(dto.other_image_url7))
+            //{
+            //    if (!Ultilities.IsValidUrl(dto.other_image_url7))
+            //    {
+            //        msgDto.other_image_url7 = "A valid URL, including leading.";
+            //    }
+            //}
+            ////other_image_url8
+            //if (!string.IsNullOrEmpty(dto.other_image_url8))
+            //{
+            //    if (!Ultilities.IsValidUrl(dto.other_image_url8))
+            //    {
+            //        msgDto.other_image_url8 = "A valid URL, including leading.";
+            //    }
+            //}
+            //swatch_image_url
             if (!string.IsNullOrEmpty(dto.swatch_image_url))
             {
-                if (!Ultilities.IsValidUrl(dto.swatch_image_url))
+                if (!Common.IsValidUrl(dto.swatch_image_url))
                 {
                     msgDto.swatch_image_url = "A valid URL, including leading.";
                 }
@@ -75,7 +102,7 @@ namespace ProductApi.Helpers.Utilities
             //pt1_image_url 
             if (!string.IsNullOrEmpty(dto.pt1_image_url))
             {
-                if (!Ultilities.IsValidUrl(dto.pt1_image_url))
+                if (!Common.IsValidUrl(dto.pt1_image_url))
                 {
                     msgDto.pt1_image_url = "Upload an additional image with a different view of your product.";
                 }
@@ -83,7 +110,7 @@ namespace ProductApi.Helpers.Utilities
             //pt2_image_url 
             if (!string.IsNullOrEmpty(dto.pt2_image_url))
             {
-                if (!Ultilities.IsValidUrl(dto.pt2_image_url))
+                if (!Common.IsValidUrl(dto.pt2_image_url))
                 {
                     msgDto.pt2_image_url = "Upload an additional image with a different view of your product.";
                 }
@@ -91,7 +118,7 @@ namespace ProductApi.Helpers.Utilities
             //pt3_image_url 
             if (!string.IsNullOrEmpty(dto.pt3_image_url))
             {
-                if (!Ultilities.IsValidUrl(dto.pt3_image_url))
+                if (!Common.IsValidUrl(dto.pt3_image_url))
                 {
                     msgDto.pt3_image_url = "Upload an additional image with a different view of your product.";
                 }
@@ -99,7 +126,7 @@ namespace ProductApi.Helpers.Utilities
             //pt4_image_url 
             if (!string.IsNullOrEmpty(dto.pt4_image_url))
             {
-                if (!Ultilities.IsValidUrl(dto.pt4_image_url))
+                if (!Common.IsValidUrl(dto.pt4_image_url))
                 {
                     msgDto.pt4_image_url = "Upload an additional image with a different view of your product.";
                 }
@@ -107,7 +134,7 @@ namespace ProductApi.Helpers.Utilities
             //pt5_image_url 
             if (!string.IsNullOrEmpty(dto.pt5_image_url))
             {
-                if (!Ultilities.IsValidUrl(dto.pt5_image_url))
+                if (!Common.IsValidUrl(dto.pt5_image_url))
                 {
                     msgDto.pt5_image_url = "Upload an additional image with a different view of your product.";
                 }
@@ -115,7 +142,7 @@ namespace ProductApi.Helpers.Utilities
             //pt6_image_url 
             if (!string.IsNullOrEmpty(dto.pt6_image_url))
             {
-                if (!Ultilities.IsValidUrl(dto.pt6_image_url))
+                if (!Common.IsValidUrl(dto.pt6_image_url))
                 {
                     msgDto.pt6_image_url = "Upload an additional image with a different view of your product.";
                 }
@@ -123,7 +150,7 @@ namespace ProductApi.Helpers.Utilities
             //pt7_image_url 
             if (!string.IsNullOrEmpty(dto.pt7_image_url))
             {
-                if (!Ultilities.IsValidUrl(dto.pt7_image_url))
+                if (!Common.IsValidUrl(dto.pt7_image_url))
                 {
                     msgDto.pt7_image_url = "Upload an additional image with a different view of your product.";
                 }
@@ -131,7 +158,7 @@ namespace ProductApi.Helpers.Utilities
             //pt8_image_url 
             if (!string.IsNullOrEmpty(dto.pt8_image_url))
             {
-                if (!Ultilities.IsValidUrl(dto.pt8_image_url))
+                if (!Common.IsValidUrl(dto.pt8_image_url))
                 {
                     msgDto.pt8_image_url = "Upload an additional image with a different view of your product.";
                 }
@@ -151,7 +178,7 @@ namespace ProductApi.Helpers.Utilities
             //parent_sku
             if (!string.IsNullOrEmpty(dto.parent_sku))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.parent_sku, 40))
+                if (!Common.IsValidAlphanumericString(dto.parent_sku, 40))
                 {
                     msgDto.parent_sku = "An alphanumeric string, 1 character minimum in length and 40 characters maximum in length.";
                 }
@@ -209,7 +236,7 @@ namespace ProductApi.Helpers.Utilities
             //certificate_number1
             if (!string.IsNullOrEmpty(dto.certificate_number1))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.certificate_number1, 250))
+                if (!Common.IsValidAlphanumericString(dto.certificate_number1, 250))
                 {
                     msgDto.certificate_number1 = "An alphanumeric string, 1 character minimum in length and 250 characters maximum in length.";
                 }
@@ -217,7 +244,7 @@ namespace ProductApi.Helpers.Utilities
             //certificate_number2
             if (!string.IsNullOrEmpty(dto.certificate_number2))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.certificate_number2, 250))
+                if (!Common.IsValidAlphanumericString(dto.certificate_number2, 250))
                 {
                     msgDto.certificate_number2 = "An alphanumeric string, 1 character minimum in length and 250 characters maximum in length.";
                 }
@@ -225,7 +252,7 @@ namespace ProductApi.Helpers.Utilities
             //certificate_number3
             if (!string.IsNullOrEmpty(dto.certificate_number3))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.certificate_number3, 250))
+                if (!Common.IsValidAlphanumericString(dto.certificate_number3, 250))
                 {
                     msgDto.certificate_number3 = "An alphanumeric string, 1 character minimum in length and 250 characters maximum in length.";
                 }
@@ -233,7 +260,7 @@ namespace ProductApi.Helpers.Utilities
             //certificate_number4
             if (!string.IsNullOrEmpty(dto.certificate_number4))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.certificate_number4, 250))
+                if (!Common.IsValidAlphanumericString(dto.certificate_number4, 250))
                 {
                     msgDto.certificate_number4 = "An alphanumeric string, 1 character minimum in length and 250 characters maximum in length.";
                 }
@@ -241,7 +268,7 @@ namespace ProductApi.Helpers.Utilities
             //certificate_number5
             if (!string.IsNullOrEmpty(dto.certificate_number5))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.certificate_number5, 250))
+                if (!Common.IsValidAlphanumericString(dto.certificate_number5, 250))
                 {
                     msgDto.certificate_number5 = "An alphanumeric string, 1 character minimum in length and 250 characters maximum in length.";
                 }
@@ -249,7 +276,7 @@ namespace ProductApi.Helpers.Utilities
             //certificate_number6
             if (!string.IsNullOrEmpty(dto.certificate_number6))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.certificate_number6, 250))
+                if (!Common.IsValidAlphanumericString(dto.certificate_number6, 250))
                 {
                     msgDto.certificate_number6 = "An alphanumeric string, 1 character minimum in length and 250 characters maximum in length.";
                 }
@@ -257,7 +284,7 @@ namespace ProductApi.Helpers.Utilities
             //certificate_number7
             if (!string.IsNullOrEmpty(dto.certificate_number7))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.certificate_number7, 250))
+                if (!Common.IsValidAlphanumericString(dto.certificate_number7, 250))
                 {
                     msgDto.certificate_number7 = "An alphanumeric string, 1 character minimum in length and 250 characters maximum in length.";
                 }
@@ -265,7 +292,7 @@ namespace ProductApi.Helpers.Utilities
             //certificate_number8
             if (!string.IsNullOrEmpty(dto.certificate_number8))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.certificate_number8, 250))
+                if (!Common.IsValidAlphanumericString(dto.certificate_number8, 250))
                 {
                     msgDto.certificate_number8 = "An alphanumeric string, 1 character minimum in length and 250 characters maximum in length.";
                 }
@@ -273,7 +300,7 @@ namespace ProductApi.Helpers.Utilities
             //certificate_number9
             if (!string.IsNullOrEmpty(dto.certificate_number9))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.certificate_number9, 250))
+                if (!Common.IsValidAlphanumericString(dto.certificate_number9, 250))
                 {
                     msgDto.certificate_number9 = "An alphanumeric string, 1 character minimum in length and 250 characters maximum in length.";
                 }
@@ -328,7 +355,7 @@ namespace ProductApi.Helpers.Utilities
             {
                 if (listModelfromExcel.ContainsKey(nameof(dto.certificate_type5) + "_" + dto.feed_product_type))
                 {
-                    if (!listModelfromExcel[nameof(dto.certificate_type1) + "_" + dto.feed_product_type].Contains(dto.certificate_type5))
+                    if (!listModelfromExcel[nameof(dto.certificate_type5) + "_" + dto.feed_product_type].Contains(dto.certificate_type5))
                     {
                         msgDto.certificate_type5 = "Assign a value from the list on the valid values tab.";
                     }
@@ -381,7 +408,7 @@ namespace ProductApi.Helpers.Utilities
 
             if (!string.IsNullOrEmpty(dto.model_year))
             {
-                if (!Ultilities.IsValidTextString(dto.model_year))
+                if (!Common.IsValidTextString(dto.model_year))
                 {
                     msgDto.model_year = "Numerical String";
                 }
@@ -542,7 +569,7 @@ namespace ProductApi.Helpers.Utilities
             //athlete
             if (!string.IsNullOrEmpty(dto.athlete))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.athlete, 50))
+                if (!Common.IsValidAlphanumericString(dto.athlete, 50))
                 {
                     dto.athlete = "An alphanumeric string; 50 characters maximum.";
                 }
@@ -557,41 +584,41 @@ namespace ProductApi.Helpers.Utilities
                 }
             }
 
-            //stone_shape1
-            if (!string.IsNullOrEmpty(dto.stone_shape1))
-            {
+            ////stone_shape1
+            //if (!string.IsNullOrEmpty(dto.stone_shape1))
+            //{
 
-                if (listModelfromExcel.ContainsKey(nameof(dto.stone_shape1) + "_" + dto.feed_product_type))
-                {
-                    if (!listModelfromExcel[nameof(dto.stone_shape1) + "_" + dto.feed_product_type].Contains(dto.stone_shape1))
-                    {
-                        msgDto.stone_shape1 = "Assign a value from the list on the Valid Values tab.";
-                    }
-                }
+            //    if (listModelfromExcel.ContainsKey(nameof(dto.stone_shape1) + "_" + dto.feed_product_type))
+            //    {
+            //        if (!listModelfromExcel[nameof(dto.stone_shape1) + "_" + dto.feed_product_type].Contains(dto.stone_shape1))
+            //        {
+            //            msgDto.stone_shape1 = "Assign a value from the list on the Valid Values tab.";
+            //        }
+            //    }
 
-            }
-            //stone_shape2
-            if (!string.IsNullOrEmpty(dto.stone_shape2))
-            {
-                if (listModelfromExcel.ContainsKey(nameof(dto.stone_shape2) + "_" + dto.feed_product_type))
-                {
-                    if (!listModelfromExcel[nameof(dto.stone_shape2) + "_" + dto.feed_product_type].Contains(dto.stone_shape2))
-                    {
-                        msgDto.stone_shape2 = "Assign a value from the list on the Valid Values tab.";
-                    }
-                }
-            }
-            //stone_shape3
-            if (!string.IsNullOrEmpty(dto.stone_shape3))
-            {
-                if (listModelfromExcel.ContainsKey(nameof(dto.stone_shape3) + "_" + dto.feed_product_type))
-                {
-                    if (!listModelfromExcel[nameof(dto.stone_shape3) + "_" + dto.feed_product_type].Contains(dto.stone_shape3))
-                    {
-                        msgDto.stone_shape3 = "Assign a value from the list on the Valid Values tab.";
-                    }
-                }
-            }
+            //}
+            ////stone_shape2
+            //if (!string.IsNullOrEmpty(dto.stone_shape2))
+            //{
+            //    if (listModelfromExcel.ContainsKey(nameof(dto.stone_shape2) + "_" + dto.feed_product_type))
+            //    {
+            //        if (!listModelfromExcel[nameof(dto.stone_shape2) + "_" + dto.feed_product_type].Contains(dto.stone_shape2))
+            //        {
+            //            msgDto.stone_shape2 = "Assign a value from the list on the Valid Values tab.";
+            //        }
+            //    }
+            //}
+            ////stone_shape3
+            //if (!string.IsNullOrEmpty(dto.stone_shape3))
+            //{
+            //    if (listModelfromExcel.ContainsKey(nameof(dto.stone_shape3) + "_" + dto.feed_product_type))
+            //    {
+            //        if (!listModelfromExcel[nameof(dto.stone_shape3) + "_" + dto.feed_product_type].Contains(dto.stone_shape3))
+            //        {
+            //            msgDto.stone_shape3 = "Assign a value from the list on the Valid Values tab.";
+            //        }
+            //    }
+            //}
             //stone_clarity1
             if (!string.IsNullOrEmpty(dto.stone_clarity1))
             {
@@ -746,7 +773,7 @@ namespace ProductApi.Helpers.Utilities
             //chain_length_derived
             if (!string.IsNullOrEmpty(dto.chain_length_derived))
             {
-                if (!Ultilities.IsValidDecimal(dto.chain_length_derived))
+                if (!Common.IsValidDecimal(dto.chain_length_derived))
                 {
                     msgDto.chain_length_derived = "Specify the length of chain in decimal.";
                 }
@@ -779,7 +806,7 @@ namespace ProductApi.Helpers.Utilities
             //item_booking_date
             if (!string.IsNullOrEmpty(dto.item_booking_date))
             {
-                if (!Ultilities.IsFormatDatetime(dto.item_booking_date))
+                if (!Common.IsFormatDatetime(dto.item_booking_date))
                 {
                     msgDto.item_booking_date = "Provide the date a vendor must receive a PO in order to deliver goods to Amazon by a specified date using YYYY-MM-DD format.";
                 }
@@ -799,7 +826,8 @@ namespace ProductApi.Helpers.Utilities
             //is_autographed
             if (!string.IsNullOrEmpty(dto.is_autographed))
             {
-                if (listModelfromExcel.ContainsKey(nameof(dto.back_finding))){
+                if (listModelfromExcel.ContainsKey(nameof(dto.is_autographed)))
+                {
 
                     if (!listModelfromExcel[nameof(dto.is_autographed)].Contains(dto.is_autographed))
                     {
@@ -952,7 +980,7 @@ namespace ProductApi.Helpers.Utilities
             //horsepower
             if (!string.IsNullOrEmpty(dto.horsepower))
             {
-                if (!Ultilities.ValidateNumber(dto.horsepower, 10, 2))
+                if (!Common.ValidateNumber(dto.horsepower, 10, 2))
                 {
                     dto.horsepower = "A number with up to 10 digits to the left of the decimal point and 2 digits to the right of the decimal point. ";
                 }
@@ -1008,7 +1036,7 @@ namespace ProductApi.Helpers.Utilities
 
             if (!string.IsNullOrEmpty(dto.maximum_operating_pressure))
             {
-                if (!Ultilities.IsValidDecimal(dto.maximum_operating_pressure))
+                if (!Common.IsValidDecimal(dto.maximum_operating_pressure))
                 {
                     dto.maximum_operating_pressure = "A number with up to 2 decimal places.";
                 }
@@ -1077,7 +1105,7 @@ namespace ProductApi.Helpers.Utilities
             //item_torque
             if (!string.IsNullOrEmpty(dto.item_torque))
             {
-                if (!Ultilities.ValidateNumber(dto.item_torque, 10, 2))
+                if (!Common.ValidateNumber(dto.item_torque, 10, 2))
                 {
                     dto.item_torque = "A number with up to 10 digits to the left of the decimal point and 2 digits to the right of the decimal point. ";
                 }
@@ -1121,7 +1149,7 @@ namespace ProductApi.Helpers.Utilities
             //oem_equivalent_part_number
             if (!string.IsNullOrEmpty(dto.oem_equivalent_part_number))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.oem_equivalent_part_number, 40))
+                if (!Common.IsValidAlphanumericString(dto.oem_equivalent_part_number, 40))
                 {
                     msgDto.oem_equivalent_part_number = "An alphanumeric string; 1 character minimum in length and 40 characters maximum in length.";
                 }
@@ -1154,7 +1182,7 @@ namespace ProductApi.Helpers.Utilities
             //number_of_drawers
             if (!string.IsNullOrEmpty(dto.number_of_drawers))
             {
-                if (!Ultilities.IsValidInteger(dto.number_of_drawers))
+                if (!Common.IsValidInteger(dto.number_of_drawers))
                 {
                     msgDto.number_of_drawers = "A positive whole number.";
                 }
@@ -1491,7 +1519,7 @@ namespace ProductApi.Helpers.Utilities
             //catalog_number
             if (!string.IsNullOrEmpty(dto.catalog_number))
             {
-                if (!Ultilities.IsValidInteger(dto.catalog_number))
+                if (!Common.IsValidInteger(dto.catalog_number))
                 {
                     msgDto.catalog_number = " Positive Integer.";
                 }
@@ -1567,9 +1595,9 @@ namespace ProductApi.Helpers.Utilities
             //case_thickness
             if (!string.IsNullOrEmpty(dto.case_thickness))
             {
-                if (!Ultilities.ValidateNumber(dto.case_thickness, 10, 2))
+                if (!Common.ValidateNumber(dto.case_thickness, 10, 2))
                 {
-                    msgDto.number_of_pearls = "A number with up to 10 digits allowed to the left of the decimal point and 2 digits allowed to the right of the decimal point. Please do not use commas or dollar signs.";
+                    msgDto.case_thickness = "A number with up to 10 digits allowed to the left of the decimal point and 2 digits allowed to the right of the decimal point. Please do not use commas or dollar signs.";
                 }
             }
 
@@ -1600,7 +1628,7 @@ namespace ProductApi.Helpers.Utilities
             //water_resistance_depth
             if (!string.IsNullOrEmpty(dto.water_resistance_depth))
             {
-                if (!Ultilities.ValidateNumber(dto.water_resistance_depth, 10, 2))
+                if (!Common.ValidateNumber(dto.water_resistance_depth, 10, 2))
                 {
                     msgDto.water_resistance_depth = "A number with up to 10 digits allowed to the left of the decimal point and 2 digits allowed to the right of the decimal point. Please do not use commas or dollar signs.";
                 }
@@ -1743,7 +1771,7 @@ namespace ProductApi.Helpers.Utilities
                 {
                     if (!listModelfromExcel[nameof(dto.target_audience_base5) + "_" + dto.feed_product_type].Contains(dto.target_audience_base5))
                     {
-                        msgDto.target_audience_base1 = "Assign a value from the list on the Valid Values tab.";
+                        msgDto.target_audience_base5 = "Assign a value from the list on the Valid Values tab.";
                     }
                 }
             }
@@ -1823,7 +1851,7 @@ namespace ProductApi.Helpers.Utilities
             //directions
             if (!string.IsNullOrEmpty(dto.directions))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.directions, 500))
+                if (!Common.IsValidAlphanumericString(dto.directions, 500))
                 {
                     msgDto.directions = "An alphanumeric string; 1 character minimum in length and 500 character maximum in length.";
                 }
@@ -1844,7 +1872,7 @@ namespace ProductApi.Helpers.Utilities
             //number_of_pieces
             if (!string.IsNullOrEmpty(dto.number_of_pieces))
             {
-                if (!Ultilities.IsValidInteger(dto.number_of_pieces))
+                if (!Common.IsValidInteger(dto.number_of_pieces))
                 {
                     msgDto.number_of_pieces = " Positive Integer.";
                 }
@@ -1970,7 +1998,7 @@ namespace ProductApi.Helpers.Utilities
             //number_of_pearls
             if (!string.IsNullOrEmpty(dto.number_of_pearls))
             {
-                if (!Ultilities.IsValidInteger(dto.number_of_pearls))
+                if (!Common.IsValidInteger(dto.number_of_pearls))
                 {
                     msgDto.number_of_pearls = " Positive Integer.";
                 }
@@ -1991,7 +2019,7 @@ namespace ProductApi.Helpers.Utilities
             //number_of_stones
             if (!string.IsNullOrEmpty(dto.number_of_stones))
             {
-                if (!Ultilities.IsValidInteger(dto.number_of_stones))
+                if (!Common.IsValidInteger(dto.number_of_stones))
                 {
                     msgDto.number_of_stones = "Positive Integer";
                 }
@@ -2015,23 +2043,23 @@ namespace ProductApi.Helpers.Utilities
                 }
             }
 
-            ////ring_sizing_lower_range
-            //if (!string.IsNullOrEmpty(dto.ring_sizing_lower_range))
-            //{
-            //    if (!listModelfromExcel[nameof(dto.ring_sizing_lower_range)].Contains(dto.ring_sizing_lower_range))
-            //    {
-            //        msgDto.ring_sizing_lower_range = "Assign a value from the list on the Valid Values tab for the Ring Size attribute.";
-            //    }
-            //}
+            //ring_sizing_lower_range
+            if (!string.IsNullOrEmpty(dto.ring_sizing_lower_range))
+            {
+                if (!listModelfromExcel[nameof(dto.ring_size)].Contains(dto.ring_sizing_lower_range))
+                {
+                    msgDto.ring_sizing_lower_range = "Assign a value from the list on the Valid Values tab for the Ring Size attribute.";
+                }
+            }
 
-            ////ring_sizing_upper_range
-            //if (!string.IsNullOrEmpty(dto.ring_sizing_upper_range))
-            //{
-            //    if (!listModelfromExcel[nameof(dto.ring_sizing_upper_range)].Contains(dto.ring_sizing_upper_range))
-            //    {
-            //        msgDto.ring_sizing_upper_range = "Assign a value from the list on the Valid Values tab for the Ring Size attribute.";
-            //    }
-            //}
+            //ring_sizing_upper_range
+            if (!string.IsNullOrEmpty(dto.ring_sizing_upper_range))
+            {
+                if (!listModelfromExcel[nameof(dto.ring_size)].Contains(dto.ring_sizing_upper_range))
+                {
+                    msgDto.ring_sizing_upper_range = "Assign a value from the list on the Valid Values tab for the Ring Size attribute.";
+                }
+            }
 
             //duration_unit_of_measure
             if (!string.IsNullOrEmpty(dto.duration_unit_of_measure))
@@ -2154,7 +2182,7 @@ namespace ProductApi.Helpers.Utilities
             //authenticated_by
             if (!string.IsNullOrEmpty(dto.authenticated_by))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.authenticated_by, 50))
+                if (!Common.IsValidAlphanumericString(dto.authenticated_by, 50))
                 {
                     msgDto.authenticated_by = "An alphanumeric string; 1 character minimum in length and 500 character maximum in length.";
                 }
@@ -2317,7 +2345,7 @@ namespace ProductApi.Helpers.Utilities
             //item_display_weight
             if (!string.IsNullOrEmpty(dto.item_display_weight))
             {
-                if (!Ultilities.ValidateNumber(dto.item_display_weight, 10, 2))
+                if (!Common.ValidateNumber(dto.item_display_weight, 10, 2))
                 {
                     dto.item_display_weight = "A number with up to 10 digits to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2326,7 +2354,7 @@ namespace ProductApi.Helpers.Utilities
             //total_diamond_weight
             if (!string.IsNullOrEmpty(dto.total_diamond_weight))
             {
-                if (!Ultilities.ValidateNumber(dto.total_diamond_weight, 12, 4))
+                if (!Common.ValidateNumber(dto.total_diamond_weight, 12, 4))
                 {
                     msgDto.total_diamond_weight = " A number with up to 12 digits to the left of the decimal point and 4 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2335,7 +2363,7 @@ namespace ProductApi.Helpers.Utilities
             //item_display_diameter
             if (!string.IsNullOrEmpty(dto.item_display_diameter))
             {
-                if (!Ultilities.ValidateNumber(dto.item_display_diameter, 12, 2))
+                if (!Common.ValidateNumber(dto.item_display_diameter, 12, 2))
                 {
                     msgDto.item_display_diameter = "A number with up to 12 digits to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2344,7 +2372,7 @@ namespace ProductApi.Helpers.Utilities
             //stone_weight1
             if (!string.IsNullOrEmpty(dto.stone_weight1))
             {
-                if (!Ultilities.ValidateNumber(dto.stone_weight1, 12, 4))
+                if (!Common.ValidateNumber(dto.stone_weight1, 12, 4))
                 {
                     msgDto.stone_weight1 = " A number with up to 12 digits to the left of the decimal point and 4 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2352,7 +2380,7 @@ namespace ProductApi.Helpers.Utilities
             //stone_weight2
             if (!string.IsNullOrEmpty(dto.stone_weight2))
             {
-                if (!Ultilities.ValidateNumber(dto.stone_weight2, 12, 4))
+                if (!Common.ValidateNumber(dto.stone_weight2, 12, 4))
                 {
                     msgDto.stone_weight2 = " A number with up to 12 digits to the left of the decimal point and 4 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2360,7 +2388,7 @@ namespace ProductApi.Helpers.Utilities
             //stone_weight3
             if (!string.IsNullOrEmpty(dto.stone_weight3))
             {
-                if (!Ultilities.ValidateNumber(dto.stone_weight3, 12, 4))
+                if (!Common.ValidateNumber(dto.stone_weight3, 12, 4))
                 {
                     msgDto.stone_weight3 = " A number with up to 12 digits to the left of the decimal point and 4 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2403,7 +2431,7 @@ namespace ProductApi.Helpers.Utilities
             //total_gem_weight
             if (!string.IsNullOrEmpty(dto.total_gem_weight))
             {
-                if (!Ultilities.ValidateNumber(dto.total_gem_weight, 12, 4))
+                if (!Common.ValidateNumber(dto.total_gem_weight, 12, 4))
                 {
                     msgDto.total_gem_weight = "A number with up to 12 digits to the left of the decimal point and 4 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2437,7 +2465,7 @@ namespace ProductApi.Helpers.Utilities
             //item_display_length
             if (!string.IsNullOrEmpty(dto.item_display_length))
             {
-                if (!Ultilities.ValidateNumber(dto.item_display_length, 10, 2))
+                if (!Common.ValidateNumber(dto.item_display_length, 10, 2))
                 {
                     msgDto.item_display_length = "A number with up to 10 digits to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2494,7 +2522,7 @@ namespace ProductApi.Helpers.Utilities
             //band_width
             if (!string.IsNullOrEmpty(dto.band_width))
             {
-                if (!Ultilities.ValidateNumber(dto.band_width, 10, 2))
+                if (!Common.ValidateNumber(dto.band_width, 10, 2))
                 {
                     msgDto.band_width = "A number with up to 10 digits to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2512,15 +2540,15 @@ namespace ProductApi.Helpers.Utilities
             //item_display_width
             if (!string.IsNullOrEmpty(dto.item_display_width))
             {
-                if (!Ultilities.ValidateNumber(dto.item_display_width, 12, 2))
+                if (!Common.ValidateNumber(dto.item_display_width, 12, 2))
                 {
-                    msgDto.item_display_diameter = "A number with up to 12 digits to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas.";
+                    msgDto.item_display_width = "A number with up to 12 digits to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas.";
                 }
             }
             //website_shipping_weight
             if (!string.IsNullOrEmpty(dto.website_shipping_weight))
             {
-                if (!Ultilities.ValidateNumber(dto.website_shipping_weight, 10, 2))
+                if (!Common.ValidateNumber(dto.website_shipping_weight, 10, 2))
                 {
                     msgDto.website_shipping_weight = "A number with up to 10 digits to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2620,7 +2648,7 @@ namespace ProductApi.Helpers.Utilities
             //item_display_height
             if (!string.IsNullOrEmpty(dto.item_display_height))
             {
-                if (!Ultilities.IsValidDecimal(dto.item_display_height))
+                if (!Common.IsValidDecimal(dto.item_display_height))
                 {
                     msgDto.item_display_height = "A number that can include 2 decimal places (e.g., 10.15 or 145.00).";
                 }
@@ -2703,7 +2731,7 @@ namespace ProductApi.Helpers.Utilities
             //total_metal_weight
             if (!string.IsNullOrEmpty(dto.total_metal_weight))
             {
-                if (!Ultilities.ValidateNumber(dto.total_metal_weight, 12, 4))
+                if (!Common.ValidateNumber(dto.total_metal_weight, 12, 4))
                 {
                     msgDto.total_metal_weight = "A number with up to 12 digits to the left of the decimal point and 4 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2843,7 +2871,8 @@ namespace ProductApi.Helpers.Utilities
             //batteries_required  xử lý nếu batteries_required == false thì mọi trường batteries ko required
             if (!string.IsNullOrEmpty(dto.batteries_required))
             {
-                if (!listModelfromExcel[nameof(dto.batteries_required)].Contains(dto.batteries_required))
+                var tmp = dto.batteries_required == "FALSE" ? "No" : "Yes";
+                if (!listModelfromExcel[nameof(dto.batteries_required)].Contains(tmp))
                 {
                     msgDto.batteries_required = "Select: true or false ";
                 }
@@ -2862,7 +2891,7 @@ namespace ProductApi.Helpers.Utilities
             {
                 if (!listModelfromExcel[nameof(dto.battery_cell_composition) + "_" + dto.feed_product_type].Contains(dto.battery_cell_composition))
                 {
-                    msgDto.are_batteries_included = "Assign a value from the list on the Valid Values tab.";
+                    msgDto.battery_cell_composition = "Assign a value from the list on the Valid Values tab.";
                 }
             }
             //battery_type1
@@ -2892,7 +2921,7 @@ namespace ProductApi.Helpers.Utilities
             //number_of_batteries1
             if (!string.IsNullOrEmpty(dto.number_of_batteries1) && dto.batteries_required == "TRUE")
             {
-                if (!Ultilities.IsValidInteger(dto.number_of_batteries1) && !( Convert.ToInt32(dto.number_of_batteries1) >= 1))
+                if (!Common.IsValidInteger(dto.number_of_batteries1) && !(dto.number_of_batteries1.ToInt() >= 1))
                 {
                     msgDto.number_of_batteries1 = "Any integer greater than or equal to one";
                 }
@@ -2921,7 +2950,7 @@ namespace ProductApi.Helpers.Utilities
             //flash_point
             if (!string.IsNullOrEmpty(dto.flash_point))
             {
-                if (!Ultilities.ValidateNumber(dto.flash_point, 10, 2))
+                if (!Common.ValidateNumber(dto.flash_point, 10, 2))
                 {
                     msgDto.flash_point = "A number with up to 10 digits to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -2992,7 +3021,7 @@ namespace ProductApi.Helpers.Utilities
             //california_proposition_65_chemical_names2
             if (!string.IsNullOrEmpty(dto.california_proposition_65_chemical_names2))
             {
-                if (!listModelfromExcel[nameof(dto.california_proposition_65_chemical_names1)].Contains(dto.california_proposition_65_chemical_names1))
+                if (!listModelfromExcel[nameof(dto.california_proposition_65_chemical_names2)].Contains(dto.california_proposition_65_chemical_names2))
                 {
                     msgDto.california_proposition_65_chemical_names2 = "If you selected the Food, Furniture, or Chemical warning you must indicate a chemical(s). You certify that the chemical(s) satisfies legal requirements and that you’ll remove a chemical previously provided only if it is no longer legally required.";
                 }
@@ -3000,7 +3029,7 @@ namespace ProductApi.Helpers.Utilities
             //california_proposition_65_chemical_names3
             if (!string.IsNullOrEmpty(dto.california_proposition_65_chemical_names3))
             {
-                if (!listModelfromExcel[nameof(dto.california_proposition_65_chemical_names1)].Contains(dto.california_proposition_65_chemical_names1))
+                if (!listModelfromExcel[nameof(dto.california_proposition_65_chemical_names3)].Contains(dto.california_proposition_65_chemical_names3))
                 {
                     msgDto.california_proposition_65_chemical_names3 = "If you selected the Food, Furniture, or Chemical warning you must indicate a chemical(s). You certify that the chemical(s) satisfies legal requirements and that you’ll remove a chemical previously provided only if it is no longer legally required.";
                 }
@@ -3008,7 +3037,7 @@ namespace ProductApi.Helpers.Utilities
             //california_proposition_65_chemical_names4
             if (!string.IsNullOrEmpty(dto.california_proposition_65_chemical_names4))
             {
-                if (!listModelfromExcel[nameof(dto.california_proposition_65_chemical_names1)].Contains(dto.california_proposition_65_chemical_names1))
+                if (!listModelfromExcel[nameof(dto.california_proposition_65_chemical_names4)].Contains(dto.california_proposition_65_chemical_names4))
                 {
                     msgDto.california_proposition_65_chemical_names4 = "If you selected the Food, Furniture, or Chemical warning you must indicate a chemical(s). You certify that the chemical(s) satisfies legal requirements and that you’ll remove a chemical previously provided only if it is no longer legally required.";
                 }
@@ -3016,7 +3045,7 @@ namespace ProductApi.Helpers.Utilities
             //california_proposition_65_chemical_names5
             if (!string.IsNullOrEmpty(dto.california_proposition_65_chemical_names5))
             {
-                if (!listModelfromExcel[nameof(dto.california_proposition_65_chemical_names1)].Contains(dto.california_proposition_65_chemical_names1))
+                if (!listModelfromExcel[nameof(dto.california_proposition_65_chemical_names5)].Contains(dto.california_proposition_65_chemical_names5))
                 {
                     msgDto.california_proposition_65_chemical_names5 = "If you selected the Food, Furniture, or Chemical warning you must indicate a chemical(s). You certify that the chemical(s) satisfies legal requirements and that you’ll remove a chemical previously provided only if it is no longer legally required.";
                 }
@@ -3090,7 +3119,7 @@ namespace ProductApi.Helpers.Utilities
             //merchant_release_date
             if (!string.IsNullOrEmpty(dto.merchant_release_date))
             {
-                if (!Ultilities.IsFormatDatetime(dto.merchant_release_date))
+                if (!Common.IsFormatDatetime(dto.merchant_release_date))
                 {
                     msgDto.merchant_release_date = "Date in this format: yyyy-mm-dd";
                 }
@@ -3098,7 +3127,7 @@ namespace ProductApi.Helpers.Utilities
             //list_price
             if (!string.IsNullOrEmpty(dto.list_price))
             {
-                if (!Ultilities.ValidateNumber(dto.list_price, 10, 2))
+                if (!Common.ValidateNumber(dto.list_price, 10, 2))
                 {
                     msgDto.list_price = "Manufacturer's suggested retail price or list price.";
                 }
@@ -3106,7 +3135,7 @@ namespace ProductApi.Helpers.Utilities
             //restock_date
             if (!string.IsNullOrEmpty(dto.restock_date))
             {
-                if (!Ultilities.IsFormatDatetime(dto.restock_date))
+                if (!Common.IsFormatDatetime(dto.restock_date))
                 {
                     msgDto.restock_date = "Date in this format: yyyy-mm-dd";
                 }
@@ -3115,7 +3144,7 @@ namespace ProductApi.Helpers.Utilities
             //fulfillment_latency
             if (!string.IsNullOrEmpty(dto.fulfillment_latency))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.fulfillment_latency, 2))
+                if (!Common.IsValidAlphanumericString(dto.fulfillment_latency, 2))
                 {
                     msgDto.fulfillment_latency = "A numeric string; 1 character minimum in length and 2 characters maximum in length.";
                 }
@@ -3124,7 +3153,7 @@ namespace ProductApi.Helpers.Utilities
             //offering_end_date
             if (!string.IsNullOrEmpty(dto.offering_end_date))
             {
-                if (!Ultilities.IsFormatDatetime(dto.offering_end_date))
+                if (!Common.IsFormatDatetime(dto.offering_end_date))
                 {
                     msgDto.offering_end_date = "Date in this format: yyyy-mm-dd";
                 }
@@ -3141,7 +3170,7 @@ namespace ProductApi.Helpers.Utilities
             //offering_start_date
             if (!string.IsNullOrEmpty(dto.offering_start_date))
             {
-                if (!Ultilities.IsFormatDatetime(dto.offering_start_date))
+                if (!Common.IsFormatDatetime(dto.offering_start_date))
                 {
                     msgDto.offering_start_date = "The date you want to start selling this product on the website,Date in this format: yyyy-mm-dd";
                 }
@@ -3175,7 +3204,7 @@ namespace ProductApi.Helpers.Utilities
             //condition_note
             if (!string.IsNullOrEmpty(dto.condition_note))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.condition_note, 1000))
+                if (!Common.IsValidAlphanumericString(dto.condition_note, 1000))
                 {
                     dto.condition_note = "A text string with a maximum of 1,000 characters. The Condition Note field doesn’t allow special characters.";
                 }
@@ -3185,7 +3214,7 @@ namespace ProductApi.Helpers.Utilities
             //sale_price
             if (!string.IsNullOrEmpty(dto.sale_price))
             {
-                if (!Ultilities.IsValidDecimal(dto.sale_price))
+                if (!Common.IsValidDecimal(dto.sale_price))
                 {
                     msgDto.sale_price = "Up to 18 digits. Commas and currency symbols cannot be used.";
                 }
@@ -3193,7 +3222,7 @@ namespace ProductApi.Helpers.Utilities
             //sale_from_date
             if (!string.IsNullOrEmpty(dto.sale_from_date))
             {
-                if (!Ultilities.IsFormatDatetime(dto.sale_from_date))
+                if (!Common.IsFormatDatetime(dto.sale_from_date))
                 {
                     msgDto.sale_from_date = "The date that the sale price will begin to override the product's standard price; the sale price will be displayed after 0:00AM of Sale From Date.";
                 }
@@ -3201,7 +3230,7 @@ namespace ProductApi.Helpers.Utilities
             //sale_end_date
             if (!string.IsNullOrEmpty(dto.sale_end_date))
             {
-                if (!Ultilities.IsFormatDatetime(dto.sale_end_date))
+                if (!Common.IsFormatDatetime(dto.sale_end_date))
                 {
                     msgDto.sale_end_date = "The last date that the sale price will override the item's standard price; the product's standard price will be displayed after 0:00AM of Sale End Date.";
                 }
@@ -3209,7 +3238,7 @@ namespace ProductApi.Helpers.Utilities
             //product_site_launch_date
             if (!string.IsNullOrEmpty(dto.product_site_launch_date))
             {
-                if (!Ultilities.IsFormatDatetime(dto.product_site_launch_date))
+                if (!Common.IsFormatDatetime(dto.product_site_launch_date))
                 {
                     msgDto.product_site_launch_date = "This is the date when customers will start viewing this product on Amazon.";
                 }
@@ -3217,7 +3246,7 @@ namespace ProductApi.Helpers.Utilities
             //business_price
             if (!string.IsNullOrEmpty(dto.business_price))
             {
-                if (!Ultilities.ValidateNumber(dto.business_price, 10, 2))
+                if (!Common.ValidateNumber(dto.business_price, 10, 2))
                 {
                     msgDto.business_price = "The price at which the merchant offers the product to registered business buyers for sale, expressed in U.S. dollars. ";
                 }
@@ -3233,7 +3262,7 @@ namespace ProductApi.Helpers.Utilities
             //quantity_lower_bound1
             if (!string.IsNullOrEmpty(dto.quantity_lower_bound1))
             {
-                if (!Ultilities.IsValidInteger(dto.quantity_lower_bound1))
+                if (!Common.IsValidInteger(dto.quantity_lower_bound1))
                 {
                     msgDto.quantity_lower_bound1 = "The minimum purchase quantity necessary to receive the associated Fixed price or Percent Off price";
                 }
@@ -3241,7 +3270,7 @@ namespace ProductApi.Helpers.Utilities
             //quantity_price1
             if (!string.IsNullOrEmpty(dto.quantity_price1))
             {
-                if (!Ultilities.ValidateNumber(dto.quantity_price1, 10, 2))
+                if (!Common.ValidateNumber(dto.quantity_price1, 10, 2))
                 {
                     msgDto.quantity_price1 = "The Fixed price or Percent Off discount at which the merchant offers the product for sale if the buyer is purchasing at least the associated quantity, expressed in U.S. dollars.";
                 }
@@ -3257,7 +3286,7 @@ namespace ProductApi.Helpers.Utilities
             //progressive_discount_lower_bound1
             if (!string.IsNullOrEmpty(dto.progressive_discount_lower_bound1))
             {
-                if (!Ultilities.IsValidInteger(dto.progressive_discount_lower_bound1))
+                if (!Common.IsValidInteger(dto.progressive_discount_lower_bound1))
                 {
                     msgDto.progressive_discount_lower_bound1 = "The minimum purchase quantity necessary to receive the associated Fixed price or Percent Off price";
                 }
@@ -3265,7 +3294,7 @@ namespace ProductApi.Helpers.Utilities
             //progressive_discount_value1
             if (!string.IsNullOrEmpty(dto.progressive_discount_value1))
             {
-                if (!Ultilities.ValidateNumber(dto.progressive_discount_value1, 10, 2))
+                if (!Common.ValidateNumber(dto.progressive_discount_value1, 10, 2))
                 {
                     msgDto.progressive_discount_value1 = "The Fixed price or Percent Off discount at which the merchant offers the product for sale if the buyer is purchasing at least the associated quantity.";
                 }
@@ -3273,7 +3302,7 @@ namespace ProductApi.Helpers.Utilities
             //national_stock_number
             if (!string.IsNullOrEmpty(dto.national_stock_number))
             {
-                if (!Ultilities.IsNATOCode(dto.national_stock_number))
+                if (!Common.IsNATOCode(dto.national_stock_number))
                 {
                     msgDto.national_stock_number = "A alpha-numeric 13 digit code. Code identifying standard material items of supply as defined by NATO";
                 }
@@ -3282,7 +3311,7 @@ namespace ProductApi.Helpers.Utilities
             //unspsc_code
             if (!string.IsNullOrEmpty(dto.unspsc_code))
             {
-                if (!Ultilities.ValidateNumber(dto.progressive_discount_value1, 8, 2))
+                if (!Common.ValidateNumber(dto.unspsc_code, 8, 2))
                 {
                     msgDto.unspsc_code = "An 8 digit code A numeric code classifying products according to the UNSPSC system.";
                 }
@@ -3347,12 +3376,12 @@ namespace ProductApi.Helpers.Utilities
 
                 string cell = worksheet.Cells[row, 2].Value.ToString();
 
-                if (Ultilities.GetKeyNameRegex(cell).Contains("Additional Chemical Name"))
+                if (Common.GetKeyNameRegex(cell).Contains("Additional Chemical Name"))
                 {
                     continue;
                 }
 
-                string cellMapModel = dictDataDefinitions.GetValueOrDefault(Ultilities.GetKeyNameRegex(cell));
+                string cellMapModel = dictDataDefinitions.GetValueOrDefault(Common.GetKeyNameRegex(cell));
 
                 List<string> lstKey = new();
                 ValidValueVsiriusModel model;
@@ -3377,25 +3406,25 @@ namespace ProductApi.Helpers.Utilities
                     foreach (string str in lstKey)
                     {
                         model = new();
-                        if (Ultilities.GetKeyRegex(cell) == string.Empty)
+                        if (Common.GetKeyRegex(cell) == string.Empty)
                         {
                             item.Add(str, lstValue);
                         }
                         else
                         {
-                            item.Add(str + "_" + Ultilities.GetKeyRegex(cell), lstValue);
+                            item.Add(str + "_" + Common.GetKeyRegex(cell), lstValue);
                         }
                     }
                     continue;
                 }
                 model = new();
-                if (Ultilities.GetKeyRegex(cell) == string.Empty)
+                if (Common.GetKeyRegex(cell) == string.Empty)
                 {
                     item.Add(cellMapModel, lstValue);
                 }
                 else
                 {
-                    item.Add(cellMapModel + "_" + Ultilities.GetKeyRegex(cell), lstValue);
+                    item.Add(cellMapModel + "_" + Common.GetKeyRegex(cell), lstValue);
 
                 }
 

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ProductApi._Services.Interfaces;
 using ProductApi.Dtos;
 using ProductApi.Helpers.Utilities;
-using System.Data;
 
 namespace ProductApi.Controllers
 {

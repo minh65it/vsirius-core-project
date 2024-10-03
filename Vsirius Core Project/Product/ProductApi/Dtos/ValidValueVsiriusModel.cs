@@ -1,4 +1,4 @@
-﻿namespace ProductApi.Models
+﻿namespace ProductApi.Dtos
 {
     public class ValidValueVsiriusModel
     {

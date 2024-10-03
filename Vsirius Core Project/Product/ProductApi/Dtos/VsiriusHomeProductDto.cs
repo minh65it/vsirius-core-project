@@ -19,6 +19,15 @@
         public string Filter { get; set; }
         public int TakeProduct { get; set; } = 20;
     }
+    public class VsiriusTopParams
+    {
+        public string? Filter { get; set; }
+        /// <summary>
+        /// Multiple values, separated by |,no spaces , '|'
+        /// </summary>
+        public string? feed_product_type { get; set; }
+        public string? keyword { get; set; }
+    }
 
     public static class VsiriusHomeProductFilterParams
     {

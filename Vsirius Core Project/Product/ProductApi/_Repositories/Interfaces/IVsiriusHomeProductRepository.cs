@@ -1,5 +1,4 @@
-﻿using ProductApi._Repositories.Repositories;
-using ProductApi.Models;
+﻿using VsiriusDataModel.DataModel;
 
 namespace ProductApi._Repositories.Interfaces
 {

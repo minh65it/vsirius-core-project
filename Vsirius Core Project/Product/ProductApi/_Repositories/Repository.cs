@@ -1,14 +1,14 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using ProductApi.Data;
+using VsiriusDataModel.DataContext;
 
 namespace ProductApi._Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly DataContext _context;
+        private readonly VsiriusContext _context;
 
-        public Repository(DataContext context)
+        public Repository(VsiriusContext context)
         {
             _context = context;
         }

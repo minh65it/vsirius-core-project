@@ -8,14 +8,14 @@ using ProductApi._Repositories.Interfaces;
 using ProductApi._Services.Interfaces;
 using ProductApi.Dtos;
 using ProductApi.Helpers.Utilities;
-using ProductApi.Models;
-
+using VsiriusDataModel.DataModel;
 using System.Text.RegularExpressions;
 
 namespace ProductApi._Services.Services
 {
     public class VsiriusFilterService : IVsiriusFilterService
     {
+        private readonly IAzureStorage _azureStorage;
         private readonly IVsiriusFilterRepository _vsiriusFilterRepository;
         private readonly IVsiriusValidProductRepository _vsiriusValidProductRepository;
         private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ namespace ProductApi._Services.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         public VsiriusFilterService(IVsiriusFilterRepository vsiriusFilterRepository, IMapper mapper,
             MapperConfiguration mapperConfiguration, ILogService logService, IWebHostEnvironment hostingEnvironment,
-            IVsiriusValidProductRepository vsiriusValidProductRepository, IHttpContextAccessor httpContextAccessor)
+            IVsiriusValidProductRepository vsiriusValidProductRepository, IHttpContextAccessor httpContextAccessor, IAzureStorage azureStorage)
         {
             _vsiriusFilterRepository = vsiriusFilterRepository;
             _mapper = mapper;
@@ -34,6 +34,7 @@ namespace ProductApi._Services.Services
             _hostingEnvironment = hostingEnvironment;
             _vsiriusValidProductRepository = vsiriusValidProductRepository;
             _httpContextAccessor = httpContextAccessor;
+            _azureStorage = azureStorage;
         }
 
         public async Task<PaginationUtility<VsiriusFilterDto>> GetListFilter(PaginationParam pagination, string? fullTextSearch, bool isPaging = true)
@@ -43,7 +44,7 @@ namespace ProductApi._Services.Services
             {
                 var data = _vsiriusFilterRepository.FindAll(predicate)
                                                .FullTextSearchQuery(fullTextSearch)
-                                               .ProjectTo<VsiriusFilterDto>(_mapperConfiguration).AsNoTracking();
+                                               .ProjectTo<VsiriusFilterDto>(_mapperConfiguration).AsNoTracking().OrderByDescending(x => x.UpdatedDate).ThenBy(y => y.FilterId);
 
                 return await PaginationUtility<VsiriusFilterDto>.CreateAsync(data, pagination.PageNumber, pagination.PageSize, isPaging);
             }
@@ -225,7 +226,8 @@ namespace ProductApi._Services.Services
                         filterDto.IsDelete = false;
                         filterDto.CreatedBy = "Admin";
                         filterDto.UpdatedDate = DateTime.Now;
-                        if(filterDto.FieldName == "feed_product_type" ||
+                        filterDto.Title = rowData[i];
+                        if (filterDto.FieldName == "feed_product_type" ||
                             filterDto.FieldName == "item_type" ||
                             filterDto.FieldName == "metal_type")
                             filterDto.IsActive = true;
@@ -250,6 +252,7 @@ namespace ProductApi._Services.Services
                                 CreatedBy = "Admin",
                                 UpdatedDate = DateTime.Now,
                                 IsActive = false,
+                                Title = rowData[i],
                             };
                             if (filterDto.FieldName == "feed_product_type" ||
                                 filterDto.FieldName == "item_type" ||
@@ -301,7 +304,14 @@ namespace ProductApi._Services.Services
                 {
                     return new OperationResult(false, "Not file image");
                 }
-                result.ImageURL = ReadFileImage(dto.FileImage, dto.FieldName, dto.Value);
+                //result.ImageURL = ReadFileImage(dto.FileImage, dto.FieldName, dto.Value);
+
+                var rsBlob = await _azureStorage.UploadAsync(dto.FileImage);
+                if (rsBlob.Error == true)
+                {
+                    return new OperationResult(false, rsBlob.Status);
+                }
+                result.ImageURL = rsBlob.Blob.Uri;
             }
 
             result.IsDelete = false;
@@ -312,7 +322,7 @@ namespace ProductApi._Services.Services
             {
                 _vsiriusFilterRepository.Add(result);
                 await _vsiriusFilterRepository.SaveChangesAsync();
-                return new OperationResult { Success = true, Message = "Add Data Filter Successfully" };
+                return new OperationResult { Success = true, Message = "Add Data Filter Successfully", Data = result };
             }
             catch(Exception ex) 
             {
@@ -323,18 +333,26 @@ namespace ProductApi._Services.Services
 
         public async Task<OperationResult> UpdateFilter(VsiriusFilterDto dto)
         {
-            if (dto.FileImage == null && dto.FieldName == "feed_product_type")
+            var data = await _vsiriusFilterRepository.FindSingle(x => x.FilterId == dto.FilterId);
+            if (data == null) return new OperationResult { Success = false, Message = "No Data" };
+            if (dto.FileImage == null && data.ImageURL == null && dto.FieldName == "feed_product_type")
             {
                 return new OperationResult { Success = false, Message = "No file uploaded." };
             }
 
-            var data = await _vsiriusFilterRepository.FindSingle(x => x.FilterId == dto.FilterId);
-            if (data == null) return new OperationResult { Success = false, Message = "No Data" };
-            DeleteImageFile(data.ImageURL);
-
             var result = _mapper.Map<VsiriusFilter>(dto);
             if(dto.FileImage != null)
             {
+                if(data.ImageURL != null)
+                {
+                    //DeleteImageFile(data.ImageURL);
+
+                    var deleteRs = await _azureStorage.DeleteAsync(Common.GetFileNameFromBlob(data.ImageURL));
+                    if (deleteRs.Error == true)
+                    {
+                        return new OperationResult { Success = false, Message = deleteRs.Status };
+                    }
+                }
                 string extension = Path.GetExtension(dto.FileImage.FileName);
                 string?[] arrNameFile = new string?[] {
                     ".png", ".jpg",".jpeg", ".svg"
@@ -343,7 +361,17 @@ namespace ProductApi._Services.Services
                 {
                     return new OperationResult(false, "Not file image");
                 }
-                result.ImageURL = ReadFileImage(dto.FileImage, dto.FieldName, dto.Value);
+                //result.ImageURL = ReadFileImage(dto.FileImage, dto.FieldName, dto.Value);
+                var rsBlob = await _azureStorage.UploadAsync(dto.FileImage);
+                if (rsBlob.Error == true)
+                {
+                    return new OperationResult(false, rsBlob.Status);
+                }
+                result.ImageURL = rsBlob.Blob.Uri;
+            }
+            else
+            {
+                result.ImageURL = data.ImageURL;
             }
             result.UpdatedDate = DateTime.Now;
 
@@ -351,7 +379,7 @@ namespace ProductApi._Services.Services
             {
                 _vsiriusFilterRepository.Update(result);
                 await _vsiriusFilterRepository.SaveChangesAsync();
-                return new OperationResult { Success = true, Message = "Update Data Successfully" };
+                return new OperationResult { Success = true, Message = "Update Data Successfully", Data = result };
             }
             catch (Exception ex)
             {
@@ -369,7 +397,13 @@ namespace ProductApi._Services.Services
             {
                 var result = _mapper.Map<VsiriusFilter>(data);
                 result.IsDelete = true;
-                DeleteImageFile(data.ImageURL);
+                //DeleteImageFile(data.ImageURL);
+                var rsBlob = await _azureStorage.DeleteAsync(Common.GetFileNameFromBlob(data.ImageURL));
+                if(rsBlob.Error == true)
+                {
+                    return new OperationResult { Success = false, Message = rsBlob.Status };
+                }
+
                 _vsiriusFilterRepository.Update(result);
                 await _vsiriusFilterRepository.SaveChangesAsync();
                 return new OperationResult { Success = true, Message = "Delete Data Successfully" };

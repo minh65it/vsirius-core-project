@@ -19,4 +19,10 @@
     <ProjectReference Include="..\ProductApi\ProductApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="VsiriusDataModel">
+      <HintPath>..\ProductApi\VsiriusDataModel.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

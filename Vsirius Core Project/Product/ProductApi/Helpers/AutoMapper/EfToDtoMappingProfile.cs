@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ProductApi.Dtos;
-using ProductApi.Models;
+using VsiriusDataModel.DataModel;
 
 namespace ProductApi.Helpers.AutoMapper
 {
@@ -9,6 +9,7 @@ namespace ProductApi.Helpers.AutoMapper
         public EfToDtoMappingProfile()
         {
             CreateMap<VsiriusProduct, VsiriusProductDto>()
+                .ForMember(dest => dest.standard_price, opt => opt.MapFrom(src => src.standard_price.ToString("0.00")))
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<VsiriusFilter, VsiriusFilterParamDto>();
             CreateMap<VsiriusFilter, VsiriusFilterDto>();

@@ -1,16 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProductApi.Dtos;
+using System.Transactions;
 
 namespace ProductApi.Helpers.Utilities
 {
     public class PaginationUtility<T> where T : class
     {
+
         public PaginationResult Pagination { get; set; }
         public List<T> Result { get; set; }
+        public PaginationUtility() { }
 
         public PaginationUtility(List<T> items, int count, int pageNumber, int pageSize, int skip)
         {
             Result = items;
             Pagination = PaginationResult.Create(count, pageNumber, pageSize, skip);
+        }
+
+        public PaginationUtility(PaginationResult pagination, List<T> result)
+        {
+            Pagination = pagination;
+            Result = result;
         }
 
         public static async Task<PaginationUtility<T>> CreateAsync(IQueryable<T> source, int pageNumber, int pageSize = 10, bool isPaging = true)
@@ -21,6 +31,50 @@ namespace ProductApi.Helpers.Utilities
 
             return new PaginationUtility<T>(items, count, pageNumber, pageSize, skip);
         }
+        public static async Task<PaginationUtility<T>> CreateNolockAsync(IQueryable<T> source, int pageNumber, int pageSize = 10, bool isPaging = true)
+        {
+            int count = 0;
+            using (var scope = new TransactionScope(TransactionScopeOption.Required,
+                new TransactionOptions()
+                {
+                    IsolationLevel = IsolationLevel.ReadUncommitted
+                },
+                TransactionScopeAsyncFlowOption.Enabled))
+            {
+                count = await source.CountAsync();
+                scope.Complete();
+            }
+
+            var skip = (pageNumber - 1) * pageSize;
+            List<T> items = new();
+            using (var scope = new TransactionScope(TransactionScopeOption.Required,
+            new TransactionOptions()
+            {
+                IsolationLevel = IsolationLevel.ReadUncommitted
+            },
+            TransactionScopeAsyncFlowOption.Enabled))
+            {
+                items = isPaging ? await source.Skip(skip).Take(pageSize).ToListAsync() : await source.ToListAsync();
+                scope.Complete();
+            }
+            return new PaginationUtility<T>(items, count, pageNumber, pageSize, skip);
+        }
+        public static async Task<PaginationUtility<VsiriusProductSearchDto>> CreateAsyncFrontend(IQueryable<VsiriusProductSearchDto> source, int pageNumber, int pageSize = 10, bool isPaging = true)
+        {
+            int count = 100;
+            try
+            {
+               count = await source.CountAsync();
+            }
+            catch (Exception)
+            {
+
+            }
+            var skip = (pageNumber - 1) * pageSize;
+            var items = isPaging ? await source.Skip(skip).Take(pageSize).ToListAsync() : await source.ToListAsync();
+
+            return new PaginationUtility<VsiriusProductSearchDto>(items, count, pageNumber, pageSize, skip);
+        }
 
         public static PaginationUtility<T> Create(List<T> source, int pageNumber, int pageSize = 10, bool isPaging = true)
         {
@@ -28,6 +82,35 @@ namespace ProductApi.Helpers.Utilities
             var skip = (pageNumber - 1) * pageSize;
             var items = isPaging ? source.Skip(skip).Take(pageSize).ToList() : source.ToList();
 
+            return new PaginationUtility<T>(items, count, pageNumber, pageSize, skip);
+        }
+
+        public static async Task<PaginationUtility<T>> CreateCustomAsync(IQueryable<T> source, int pageNumber, int pageSize = 10, bool isPaging = true)
+        {
+            int count = 0;
+            using (var scope = new TransactionScope(TransactionScopeOption.Required,
+                new TransactionOptions()
+                {
+                    IsolationLevel = IsolationLevel.ReadUncommitted
+                },
+                TransactionScopeAsyncFlowOption.Enabled))
+            {
+                count = await source.CountAsync();
+                scope.Complete();
+            }
+
+            var skip = (pageNumber - 1) * pageSize;
+            List<T> items = new();
+            using (var scope = new TransactionScope(TransactionScopeOption.Required,
+            new TransactionOptions()
+            {
+                IsolationLevel = IsolationLevel.ReadUncommitted
+            },
+            TransactionScopeAsyncFlowOption.Enabled))
+            {
+                items = isPaging ? await source.Skip(skip).Take(pageSize).ToListAsync() : await source.ToListAsync();
+                scope.Complete();
+            }
             return new PaginationUtility<T>(items, count, pageNumber, pageSize, skip);
         }
 
@@ -57,7 +140,7 @@ namespace ProductApi.Helpers.Utilities
 
     public class PaginationParam
     {
-        private const int MaxPageSize = 200;
+        private const int MaxPageSize = 5000;
         public int PageNumber { get; set; } = 1;
         private int pageSize = 20;
         public int PageSize

@@ -5,7 +5,7 @@ using ProductApi._Repositories.Interfaces;
 using ProductApi._Services.Interfaces;
 using ProductApi.Dtos;
 using ProductApi.Helpers.Utilities;
-using ProductApi.Models;
+using VsiriusDataModel.DataModel;
 
 namespace ProductApi._Services.Services
 {
@@ -55,8 +55,8 @@ namespace ProductApi._Services.Services
             try
             {
                 var mess = checkData != null ? "Update successful" : "Create success";
-                    await _vsiriusHomeProductRepository.SaveChangesAsync();
-                return new OperationResult { Success = true, Message = mess};
+                await _vsiriusHomeProductRepository.SaveChangesAsync();
+                return new OperationResult { Success = true, Message = mess };
             }
             catch (System.Exception ex)
             {
@@ -67,7 +67,9 @@ namespace ProductApi._Services.Services
 
         public async Task<List<VsiriusProductDto>> GetAllHomeProduct(VsiriusHomeProductParams param)
         {
-            var predicate = PredicateBuilder.New<VsiriusHomeProduct>(false);
+            if (string.IsNullOrWhiteSpace(param.Filter))
+                return null;
+            var predicate = PredicateBuilder.New<VsiriusHomeProduct>(x => x.IsActive == true);
             if (param.Filter.ToLower() == VsiriusHomeProductFilterParams.FilterPopular)
                 predicate.And(x => x.IsPopular == true && x.IsDelete == false);
             if (param.Filter.ToLower() == VsiriusHomeProductFilterParams.FilterLatest)
@@ -75,24 +77,27 @@ namespace ProductApi._Services.Services
 
             try
             {
-                var homeProduct = await _vsiriusHomeProductRepository.FindAll(predicate).Select(x => x.item_sku).ToListAsync();
-                var product = _vsiriusProductRepository.FindAll();
-
-                var data = new List<VsiriusProduct>();
-                int indexHome = 1;
-                foreach (var item in homeProduct)
-                {
-                    var findData = await _vsiriusProductRepository.FindSingle(x => x.item_sku == item);
-                    if (findData != null)
-                    {
-                        data.Add(findData);
-                        indexHome++;
-                    }
-                    if (indexHome > param.TakeProduct)
-                        break;
-                }
-                var dataMap = _mapper.Map<List<VsiriusProductDto>>(data);
-                return dataMap;
+                var data = await (from home in _vsiriusHomeProductRepository.FindAll(predicate).OrderByDescending(o => o.UpdatedDate).Select(x => x.item_sku)
+                                  join products in _vsiriusProductRepository.FindAll(x => x.IsDelete != true)
+                                  on home equals products.item_sku
+                                  select new VsiriusProductDto()
+                                  {
+                                      item_sku = home,
+                                      item_name = products.item_name,
+                                      bullet_point1 = products.bullet_point1,
+                                      standard_price = products.standard_price.ToString("0.00"),
+                                      sale_price = products.sale_price,
+                                      color_name = products.color_name,
+                                      size_name = products.size_name,
+                                      main_image_url = products.main_image_url,
+                                      other_image_url1 = products.other_image_url1,
+                                      image_standard_1 = products.other_image_url2,
+                                      image_standard_2 = products.other_image_url3,
+                                      image_standard_3 = products.other_image_url4,
+                                      image_standard_4 = products.other_image_url5,
+                                      image_standard_5 = products.other_image_url6,
+                                  }).Take(param.TakeProduct).ToListAsync();
+                return data;
             }
             catch(Exception ex)
             {
@@ -135,7 +140,7 @@ namespace ProductApi._Services.Services
                 var data = await _vsiriusProductRepository.FindAll(predicate).Take(param.TakeProduct).ToListAsync();
                 return _mapper.Map<List<VsiriusProductDto>>(data);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new List<VsiriusProductDto>();
@@ -160,7 +165,7 @@ namespace ProductApi._Services.Services
 
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new List<VsiriusHomeProductDto>();

@@ -15,23 +15,23 @@ namespace ProductApi.Helpers.Utilities
                     msgDto.feed_product_type = MessageErr.Exists;
                 }
             }
-            //brand_name
-            if (!string.IsNullOrEmpty(dto.brand_name))
+            else
             {
-                if (!listModelfromExcel[nameof(dto.brand_name)].Contains(dto.brand_name))
-                {
-                    msgDto.brand_name = MessageErr.Exists;
-                }
+                msgDto.feed_product_type = "Not Null";
             }
-            //external_product_id 
-            if (!string.IsNullOrEmpty(dto.external_product_id))
-            {
-                if (!(Ultilities.IsValidEAN(dto.external_product_id)) || !(Ultilities.IsValidUPC(dto.external_product_id)) || !(Ultilities.IsValidGCID(dto.external_product_id)))
-                {
-                    msgDto.external_product_id = "Any valid GCID, UPC, or EAN.";
-                }
+            ////brand_name
+            //if (!string.IsNullOrEmpty(dto.brand_name))
+            //{
+            //    if (!listModelfromExcel[nameof(dto.brand_name)].Contains(dto.brand_name))
+            //    {
+            //        msgDto.brand_name = MessageErr.Exists;
+            //    }
+            //}
+            //else
+            //{
+            //    msgDto.brand_name = "Not Null";
+            //}
 
-            }
             //external_product_id_type
             if (!string.IsNullOrEmpty(dto.external_product_id_type))
             {
@@ -43,11 +43,41 @@ namespace ProductApi.Helpers.Utilities
                     }
                 }
             }
+            //external_product_id 
+            if (!string.IsNullOrEmpty(dto.external_product_id))
+            {
+                switch (dto.external_product_id_type)
+                {
+                    case "UPC":
+                        if (!(Common.IsValidUPC(dto.external_product_id)))
+                        {
+                            msgDto.external_product_id = "Any valid GCID, UPC, or EAN.";
+                        }
+                        break;
+                    case "EAN":
+                        if (!(Common.IsValidEAN(dto.external_product_id)))
+                        {
+                            msgDto.external_product_id = "Any valid GCID, UPC, or EAN.";
+                        }
+                        break;
+                    case "GCID":
+                        if (!(Common.IsValidGCID(dto.external_product_id)))
+                        {
+                            msgDto.external_product_id = "Any valid GCID, UPC, or EAN.";
+                        }
+                        break;
+                    case "":
+                        msgDto.external_product_id = "Any valid GCID, UPC, or EAN.";
+                        break;
+                    default:
 
-            //item_name
+                        break;
+                }
+            }
+
             if (!string.IsNullOrEmpty(dto.item_name))
             {
-                if (!Ultilities.IsValidLength(dto.item_name, 250))
+                if (!Common.IsValidLength(dto.item_name, 250))
                 {
                     msgDto.item_name = string.Format(MessageErr.MaxLength, 250);
                 }
@@ -56,7 +86,7 @@ namespace ProductApi.Helpers.Utilities
             //main_image_url
             if (!string.IsNullOrEmpty(dto.main_image_url))
             {
-                if (!Ultilities.IsValidImage(dto.main_image_url))
+                if (!Common.IsValidImage(dto.main_image_url))
                 {
                     msgDto.main_image_url = "The URL where a main image of the product is located.  It's important that this is supplied for all products.";
                 }
@@ -77,7 +107,7 @@ namespace ProductApi.Helpers.Utilities
             //quantity
             if (!string.IsNullOrEmpty(dto.quantity))
             {
-                if (!Ultilities.IsValidInteger(dto.quantity))
+                if (!Common.IsValidInteger(dto.quantity))
                 {
                     msgDto.quantity = "A whole number.";
                 }
@@ -86,7 +116,7 @@ namespace ProductApi.Helpers.Utilities
             //standard_price
             if (!string.IsNullOrEmpty(dto.standard_price))
             {
-                if (!Ultilities.isValidNotUseCurrency(dto.standard_price))
+                if (!Common.isValidNotUseCurrency(dto.standard_price))
                 {
                     msgDto.standard_price = "Up to 18 digits. Commas and currency symbols cannot be used.";
                 }
@@ -234,38 +264,38 @@ namespace ProductApi.Helpers.Utilities
             }
 
             //gem_type1
-            if (!string.IsNullOrEmpty(dto.gem_type1))
-            {
-                if (listModelfromExcel.ContainsKey(nameof(dto.gem_type1) + "_" + dto.feed_product_type))
-                {
-                    if (!listModelfromExcel[nameof(dto.gem_type1) + "_" + dto.feed_product_type].Contains(dto.gem_type1))
-                    {
-                        msgDto.gem_type1 = "Assign a value from the list on the Valid Values tab.";
-                    }
-                }
-            }
-            //gem_type2
-            if (!string.IsNullOrEmpty(dto.gem_type2))
-            {
-                if (listModelfromExcel.ContainsKey(nameof(dto.gem_type2) + "_" + dto.feed_product_type))
-                {
-                    if (!listModelfromExcel[nameof(dto.gem_type2) + "_" + dto.feed_product_type].Contains(dto.gem_type2))
-                    {
-                        msgDto.gem_type2 = "Assign a value from the list on the Valid Values tab.";
-                    }
-                }
-            }
-            //gem_type3
-            if (!string.IsNullOrEmpty(dto.gem_type3))
-            {
-                if (listModelfromExcel.ContainsKey(nameof(dto.gem_type3) + "_" + dto.feed_product_type))
-                {
-                    if (!listModelfromExcel[nameof(dto.gem_type3) + "_" + dto.feed_product_type].Contains(dto.gem_type3))
-                    {
-                        msgDto.gem_type3 = "Assign a value from the list on the Valid Values tab.";
-                    }
-                }
-            }
+            //if (!string.IsNullOrEmpty(dto.gem_type1))
+            //{
+            //    if (listModelfromExcel.ContainsKey(nameof(dto.gem_type1) + "_" + dto.feed_product_type))
+            //    {
+            //        if (!listModelfromExcel[nameof(dto.gem_type1) + "_" + dto.feed_product_type].Contains(dto.gem_type1))
+            //        {
+            //            msgDto.gem_type1 = "Assign a value from the list on the Valid Values tab.";
+            //        }
+            //    }
+            //}
+            ////gem_type2
+            //if (!string.IsNullOrEmpty(dto.gem_type2))
+            //{
+            //    if (listModelfromExcel.ContainsKey(nameof(dto.gem_type2) + "_" + dto.feed_product_type))
+            //    {
+            //        if (!listModelfromExcel[nameof(dto.gem_type2) + "_" + dto.feed_product_type].Contains(dto.gem_type2))
+            //        {
+            //            msgDto.gem_type2 = "Assign a value from the list on the Valid Values tab.";
+            //        }
+            //    }
+            //}
+            ////gem_type3
+            //if (!string.IsNullOrEmpty(dto.gem_type3))
+            //{
+            //    if (listModelfromExcel.ContainsKey(nameof(dto.gem_type3) + "_" + dto.feed_product_type))
+            //    {
+            //        if (!listModelfromExcel[nameof(dto.gem_type3) + "_" + dto.feed_product_type].Contains(dto.gem_type3))
+            //        {
+            //            msgDto.gem_type3 = "Assign a value from the list on the Valid Values tab.";
+            //        }
+            //    }
+            //}
 
             //color_map
             if (!string.IsNullOrEmpty(dto.color_map))
@@ -283,7 +313,7 @@ namespace ProductApi.Helpers.Utilities
             //bullet_point1
             if (!string.IsNullOrEmpty(dto.bullet_point1))
             {
-                if (!Ultilities.isValidBulletPoint(dto.bullet_point1))
+                if (!Common.isValidBulletPoint(dto.bullet_point1))
                 {
                     msgDto.bullet_point1 = "We recommend four or five clear and concise bullet points; keeping to less than 1,000 characters total. " +
                         "Bullet points should focus on the features of your product, such as dimensions, materials, colours, " +
@@ -294,7 +324,7 @@ namespace ProductApi.Helpers.Utilities
             //bullet_point2
             if (!string.IsNullOrEmpty(dto.bullet_point2))
             {
-                if (!Ultilities.isValidBulletPoint(dto.bullet_point2))
+                if (!Common.isValidBulletPoint(dto.bullet_point2))
                 {
                     msgDto.bullet_point2 = "We recommend four or five clear and concise bullet points; keeping to less than 1,000 characters total. " +
                         "Bullet points should focus on the features of your product, such as dimensions, materials, colours, " +
@@ -304,7 +334,7 @@ namespace ProductApi.Helpers.Utilities
             //bullet_point3
             if (!string.IsNullOrEmpty(dto.bullet_point3))
             {
-                if (!Ultilities.isValidBulletPoint(dto.bullet_point3))
+                if (!Common.isValidBulletPoint(dto.bullet_point3))
                 {
                     msgDto.bullet_point3 = "We recommend four or five clear and concise bullet points; keeping to less than 1,000 characters total. " +
                         "Bullet points should focus on the features of your product, such as dimensions, materials, colours, " +
@@ -314,7 +344,7 @@ namespace ProductApi.Helpers.Utilities
             //bullet_point4
             if (!string.IsNullOrEmpty(dto.bullet_point4))
             {
-                if (!Ultilities.isValidBulletPoint(dto.bullet_point4))
+                if (!Common.isValidBulletPoint(dto.bullet_point4))
                 {
                     msgDto.bullet_point4 = "We recommend four or five clear and concise bullet points; keeping to less than 1,000 characters total. " +
                         "Bullet points should focus on the features of your product, such as dimensions, materials, colours, " +
@@ -324,7 +354,7 @@ namespace ProductApi.Helpers.Utilities
             //bullet_point5
             if (!string.IsNullOrEmpty(dto.bullet_point5))
             {
-                if (!Ultilities.isValidBulletPoint(dto.bullet_point5))
+                if (!Common.isValidBulletPoint(dto.bullet_point5))
                 {
                     msgDto.bullet_point5 = "We recommend four or five clear and concise bullet points; keeping to less than 1,000 characters total. " +
                         "Bullet points should focus on the features of your product, such as dimensions, materials, colours, " +
@@ -335,7 +365,7 @@ namespace ProductApi.Helpers.Utilities
             //bullet_point6
             if (!string.IsNullOrEmpty(dto.bullet_point6))
             {
-                if (!Ultilities.isValidBulletPoint(dto.bullet_point6))
+                if (!Common.isValidBulletPoint(dto.bullet_point6))
                 {
                     msgDto.bullet_point6 = "We recommend four or five clear and concise bullet points; keeping to less than 1,000 characters total. " +
                         "Bullet points should focus on the features of your product, such as dimensions, materials, colours, " +
@@ -345,7 +375,7 @@ namespace ProductApi.Helpers.Utilities
             //bullet_point7
             if (!string.IsNullOrEmpty(dto.bullet_point7))
             {
-                if (!Ultilities.isValidBulletPoint(dto.bullet_point7))
+                if (!Common.isValidBulletPoint(dto.bullet_point7))
                 {
                     msgDto.bullet_point7 = "We recommend four or five clear and concise bullet points; keeping to less than 1,000 characters total. " +
                         "Bullet points should focus on the features of your product, such as dimensions, materials, colours, " +
@@ -356,7 +386,7 @@ namespace ProductApi.Helpers.Utilities
             //bullet_point8
             if (!string.IsNullOrEmpty(dto.bullet_point8))
             {
-                if (!Ultilities.isValidBulletPoint(dto.bullet_point8))
+                if (!Common.isValidBulletPoint(dto.bullet_point8))
                 {
                     msgDto.bullet_point8 = "We recommend four or five clear and concise bullet points; keeping to less than 1,000 characters total. " +
                         "Bullet points should focus on the features of your product, such as dimensions, materials, colours, " +
@@ -366,7 +396,7 @@ namespace ProductApi.Helpers.Utilities
             //bullet_point9
             if (!string.IsNullOrEmpty(dto.bullet_point9))
             {
-                if (!Ultilities.isValidBulletPoint(dto.bullet_point9))
+                if (!Common.isValidBulletPoint(dto.bullet_point9))
                 {
                     msgDto.bullet_point9 = "We recommend four or five clear and concise bullet points; keeping to less than 1,000 characters total. " +
                         "Bullet points should focus on the features of your product, such as dimensions, materials, colours, " +
@@ -377,7 +407,7 @@ namespace ProductApi.Helpers.Utilities
             //bullet_point10
             if (!string.IsNullOrEmpty(dto.bullet_point10))
             {
-                if (!Ultilities.isValidBulletPoint(dto.bullet_point10))
+                if (!Common.isValidBulletPoint(dto.bullet_point10))
                 {
                     msgDto.bullet_point10 = "We recommend four or five clear and concise bullet points; keeping to less than 1,000 characters total. " +
                         "Bullet points should focus on the features of your product, such as dimensions, materials, colours, " +
@@ -399,7 +429,7 @@ namespace ProductApi.Helpers.Utilities
             //number_of_boxes
             if (!string.IsNullOrEmpty(dto.number_of_boxes))
             {
-                if (!Ultilities.IsValidInteger(dto.number_of_boxes))
+                if (!Common.IsValidInteger(dto.number_of_boxes))
                 {
                     msgDto.number_of_boxes = "Not Is Number";
                 }
@@ -420,7 +450,7 @@ namespace ProductApi.Helpers.Utilities
             //item_width
             if (!string.IsNullOrEmpty(dto.item_width))
             {
-                if (!Ultilities.ValidateNumber(dto.item_width, 10, 2))
+                if (!Common.ValidateNumber(dto.item_width, 10, 2))
                 {
                     msgDto.item_width = " A number with up to 10 digits to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -428,7 +458,7 @@ namespace ProductApi.Helpers.Utilities
             //item_length
             if (!string.IsNullOrEmpty(dto.item_length))
             {
-                if (!Ultilities.ValidateNumber(dto.item_length, 10, 2))
+                if (!Common.ValidateNumber(dto.item_length, 10, 2))
                 {
                     msgDto.item_length = " A number with up to 10 digits to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -436,7 +466,7 @@ namespace ProductApi.Helpers.Utilities
             //item_height
             if (!string.IsNullOrEmpty(dto.item_height))
             {
-                if (!Ultilities.ValidateNumber(dto.item_height, 10, 2))
+                if (!Common.ValidateNumber(dto.item_height, 10, 2))
                 {
                     msgDto.item_height = " A number with up to 10 digits to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas.";
                 }
@@ -526,7 +556,7 @@ namespace ProductApi.Helpers.Utilities
             //color_name
             if (!string.IsNullOrEmpty(dto.color_name))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.color_name, 50))
+                if (!Common.IsValidAlphanumericString(dto.color_name, 50))
                 {
                     msgDto.color_name = "An alphanumeric string, 1 character minimum in length and 50 characters maximum in length.";
                 }
@@ -725,7 +755,7 @@ namespace ProductApi.Helpers.Utilities
             //number_of_items
             if (!string.IsNullOrEmpty(dto.number_of_items))
             {
-                if (!Ultilities.IsValidInteger(dto.number_of_items))
+                if (!Common.IsValidInteger(dto.number_of_items))
                 {
                     msgDto.number_of_items = "The number of items that are included in the product";
                 }
@@ -777,7 +807,7 @@ namespace ProductApi.Helpers.Utilities
             //depth_front_to_back
             if (!string.IsNullOrEmpty(dto.depth_front_to_back))
             {
-                if (!Ultilities.ValidateNumber(dto.depth_front_to_back, 18, 2))
+                if (!Common.ValidateNumber(dto.depth_front_to_back, 18, 2))
                 {
                     msgDto.depth_front_to_back = "A number with up to 18 digits allowed to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas or currency symbols.";
                 }
@@ -804,7 +834,7 @@ namespace ProductApi.Helpers.Utilities
             //depth_height_floor_to_top
             if (!string.IsNullOrEmpty(dto.depth_height_floor_to_top))
             {
-                if (!Ultilities.ValidateNumber(dto.depth_height_floor_to_top, 18, 2))
+                if (!Common.ValidateNumber(dto.depth_height_floor_to_top, 18, 2))
                 {
                     msgDto.depth_height_floor_to_top = "A number with up to 18 digits allowed to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas or currency symbols.";
                 }
@@ -822,7 +852,7 @@ namespace ProductApi.Helpers.Utilities
             //package_height
             if (!string.IsNullOrEmpty(dto.package_height))
             {
-                if (!Ultilities.ValidateNumber(dto.package_height, 10, 2))
+                if (!Common.ValidateNumber(dto.package_height, 10, 2))
                 {
                     msgDto.package_height = "Provide the package height as a numeric value.";
                 }
@@ -842,7 +872,7 @@ namespace ProductApi.Helpers.Utilities
             //package_length
             if (!string.IsNullOrEmpty(dto.package_length))
             {
-                if (!Ultilities.ValidateNumber(dto.package_length, 10, 2))
+                if (!Common.ValidateNumber(dto.package_length, 10, 2))
                 {
                     msgDto.package_length = "Provide the package length as a numeric value.";
                 }
@@ -873,7 +903,7 @@ namespace ProductApi.Helpers.Utilities
             //package_width
             if (!string.IsNullOrEmpty(dto.package_width))
             {
-                if (!Ultilities.ValidateNumber(dto.package_width, 10, 2))
+                if (!Common.ValidateNumber(dto.package_width, 10, 2))
                 {
                     msgDto.package_width = "Provide the package width as a numeric value.";
                 }
@@ -892,7 +922,7 @@ namespace ProductApi.Helpers.Utilities
             //package_weight
             if (!string.IsNullOrEmpty(dto.package_weight))
             {
-                if (!Ultilities.ValidateNumber(dto.package_weight, 10, 2))
+                if (!Common.ValidateNumber(dto.package_weight, 10, 2))
                 {
                     msgDto.package_weight = "This attribute represents the weight of the item plus the packaging. If your item is shipped to the customer in multiple packages, enter the dimensions of the heaviest package";
                 }
@@ -945,7 +975,7 @@ namespace ProductApi.Helpers.Utilities
             //map_price
             if (!string.IsNullOrEmpty(dto.map_price))
             {
-                if (!Ultilities.ValidateNumber(dto.map_price, 18, 2))
+                if (!Common.ValidateNumber(dto.map_price, 18, 2))
                 {
                     msgDto.map_price = "A number with up to 18 digits allowed to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas or currency symbols.";
                 }
@@ -966,7 +996,7 @@ namespace ProductApi.Helpers.Utilities
             //unit_count
             if (!string.IsNullOrEmpty(dto.unit_count))
             {
-                if (!Ultilities.ValidateNumber(dto.unit_count, 18, 2))
+                if (!Common.ValidateNumber(dto.unit_count, 18, 2))
                 {
                     msgDto.unit_count = "A number with up to 18 digits allowed to the left of the decimal point and 2 digits to the right of the decimal point. Please do not use commas or currency symbols.";
                 }
@@ -1009,7 +1039,7 @@ namespace ProductApi.Helpers.Utilities
             //fabric_type1
             if (!string.IsNullOrEmpty(dto.fabric_type1))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.fabric_type1, 50))
+                if (!Common.IsValidAlphanumericString(dto.fabric_type1, 50))
                 {
                     dto.fabric_type1 = "An alphanumeric text string; 1 character minimum and 50 characters maximum.";
                 }
@@ -1017,7 +1047,7 @@ namespace ProductApi.Helpers.Utilities
             //fabric_type2
             if (!string.IsNullOrEmpty(dto.fabric_type2))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.fabric_type2, 50))
+                if (!Common.IsValidAlphanumericString(dto.fabric_type2, 50))
                 {
                     dto.fabric_type2 = "An alphanumeric text string; 1 character minimum and 50 characters maximum.";
                 }
@@ -1025,7 +1055,7 @@ namespace ProductApi.Helpers.Utilities
             //fabric_type3
             if (!string.IsNullOrEmpty(dto.fabric_type3))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.fabric_type3, 50))
+                if (!Common.IsValidAlphanumericString(dto.fabric_type3, 50))
                 {
                     dto.fabric_type3 = "An alphanumeric text string; 1 character minimum and 50 characters maximum.";
                 }
@@ -1033,7 +1063,7 @@ namespace ProductApi.Helpers.Utilities
             //fabric_type4
             if (!string.IsNullOrEmpty(dto.fabric_type4))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.fabric_type4, 50))
+                if (!Common.IsValidAlphanumericString(dto.fabric_type4, 50))
                 {
                     dto.fabric_type4 = "An alphanumeric text string; 1 character minimum and 50 characters maximum.";
                 }
@@ -1041,7 +1071,7 @@ namespace ProductApi.Helpers.Utilities
             //fabric_type5
             if (!string.IsNullOrEmpty(dto.fabric_type5))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.fabric_type5, 50))
+                if (!Common.IsValidAlphanumericString(dto.fabric_type5, 50))
                 {
                     dto.fabric_type5 = "An alphanumeric text string; 1 character minimum and 50 characters maximum.";
                 }
@@ -1049,7 +1079,7 @@ namespace ProductApi.Helpers.Utilities
             //fabric_type6
             if (!string.IsNullOrEmpty(dto.fabric_type6))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.fabric_type6, 50))
+                if (!Common.IsValidAlphanumericString(dto.fabric_type6, 50))
                 {
                     dto.fabric_type6 = "An alphanumeric text string; 1 character minimum and 50 characters maximum.";
                 }
@@ -1057,7 +1087,7 @@ namespace ProductApi.Helpers.Utilities
             //fabric_type7
             if (!string.IsNullOrEmpty(dto.fabric_type7))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.fabric_type7, 50))
+                if (!Common.IsValidAlphanumericString(dto.fabric_type7, 50))
                 {
                     dto.fabric_type7 = "An alphanumeric text string; 1 character minimum and 50 characters maximum.";
                 }
@@ -1065,7 +1095,7 @@ namespace ProductApi.Helpers.Utilities
             //fabric_type8
             if (!string.IsNullOrEmpty(dto.fabric_type8))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.fabric_type8, 50))
+                if (!Common.IsValidAlphanumericString(dto.fabric_type8, 50))
                 {
                     dto.fabric_type8 = "An alphanumeric text string; 1 character minimum and 50 characters maximum.";
                 }
@@ -1073,7 +1103,7 @@ namespace ProductApi.Helpers.Utilities
             //fabric_type9
             if (!string.IsNullOrEmpty(dto.fabric_type9))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.fabric_type9, 50))
+                if (!Common.IsValidAlphanumericString(dto.fabric_type9, 50))
                 {
                     dto.fabric_type9 = "An alphanumeric text string; 1 character minimum and 50 characters maximum.";
                 }
@@ -1081,7 +1111,7 @@ namespace ProductApi.Helpers.Utilities
             //fabric_type10
             if (!string.IsNullOrEmpty(dto.fabric_type10))
             {
-                if (!Ultilities.IsValidAlphanumericString(dto.fabric_type10, 50))
+                if (!Common.IsValidAlphanumericString(dto.fabric_type10, 50))
                 {
                     dto.fabric_type10 = "An alphanumeric text string; 1 character minimum and 50 characters maximum.";
                 }
@@ -1168,5 +1198,6 @@ namespace ProductApi.Helpers.Utilities
             }
             return msgDto;
         }
+
     }
 }

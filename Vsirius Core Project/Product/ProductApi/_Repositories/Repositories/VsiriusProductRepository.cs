@@ -1,12 +1,12 @@
 ﻿using ProductApi._Repositories.Interfaces;
-using ProductApi.Data;
-using ProductApi.Models;
+using VsiriusDataModel.DataModel;
+using VsiriusDataModel.DataContext;
 
 namespace ProductApi._Repositories.Repositories
 {
     public class VsiriusProductRepository : Repository<VsiriusProduct>, IVsiriusProductRepository
     {
-        public VsiriusProductRepository(DataContext context) : base(context)
+        public VsiriusProductRepository(VsiriusContext context) : base(context)
         {
         }
     }
