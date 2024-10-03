@@ -1,15 +1,15 @@
 ﻿using System.Linq.Expressions;
-using CSRApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using VsiriusDataModel.DataContext;
 
 namespace CSRApi._Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly CSRDbContext _context;
+        private readonly VsiriusContext _context;
 
-        public Repository(CSRDbContext context)
+        public Repository(VsiriusContext context)
         {
             _context = context;
         }

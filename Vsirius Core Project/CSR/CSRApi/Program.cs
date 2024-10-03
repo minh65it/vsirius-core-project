@@ -4,11 +4,13 @@ using CSRApi._Repositories.Repositories;
 using CSRApi._Services.Interfaces;
 using CSRApi._Services.Services;
 using CSRApi.Configurations;
-using CSRApi.Data;
 using CSRApi.Helpers.AutoMapper;
 using CSRApi.Helpers.ConfigSignalR;
 using CSRApi.Helpers.Utilities;
 using Microsoft.EntityFrameworkCore;
+using VsiriusDataModel.DataContext;
+using VSiriusSystemLog.CorrelationId;
+using VSiriusSystemLog.WriteLog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +29,7 @@ builder.Services.AddConfigurationAddSwaggerGen();
 builder.Services.AddConfigurationIdentity(builder.Configuration);
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
-builder.Services.AddDbContext<CSRDbContext>(
+builder.Services.AddDbContext<VsiriusContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Repositories, Services
@@ -47,7 +49,8 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IFavouritesService, FavouritesService>();
 builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<IPageViewService, PageViewService>();
-builder.Services.AddScoped<ILogService, LogService>();
+builder.Services.AddCorrelationIdGeneratorService();
+builder.Services.AddWriteLog();
 
 builder.Services.AddScoped<IDrivenHtmlPagesService, DrivenHtmlPagesService>();
 
@@ -67,6 +70,7 @@ builder.Services.AddSignalR(options =>
 
 var app = builder.Build();
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -76,19 +80,31 @@ if (app.Environment.IsDevelopment())
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseHttpsRedirection();
 
 app.UseRouting();
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseAuthorization();
 
-app.MapControllers();
-
-app.UseEndpoints(endpoints =>
+app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("*")).UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
     endpoints.MapHub<NotificationHub>("/notificationHub");
 });
-
+app.AddCorrelationIdMiddleware();
+ApplyMigration();
 app.Run();
+
+
+void ApplyMigration()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var _db = scope.ServiceProvider.GetRequiredService<VsiriusContext>();
+
+        if (_db.Database.GetPendingMigrations().Count() > 0)
+        {
+            _db.Database.Migrate();
+        }
+    }
+}

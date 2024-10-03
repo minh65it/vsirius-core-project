@@ -9,7 +9,7 @@ using Korzh.EasyQuery.Services;
 using LinqKit;
 using System.Data.Entity;
 using VsiriusDataModel.DataModel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using VSiriusSystemLog.WriteLog;
 
 namespace CSRApi._Services.Services
 {
@@ -22,10 +22,10 @@ namespace CSRApi._Services.Services
         private readonly INotificationMainRepository _notificationMainRepository;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogService _logService;
+        private ILoggerCustom _logService;
         public NotificationService(INotificationRepository notificationRepository, INotificationDetailRepository notificationDetailRepository,
             IEmployeeRepository employeeRepository, IUserRepository userRepository, IMapper mapper, INotificationMainRepository notificationMainRepository
-            , IHttpContextAccessor httpContextAccessor, ILogService logService)
+            , IHttpContextAccessor httpContextAccessor, ILoggerCustom logService)
         {
             _notificationRepository = notificationRepository;
             _notificationDetailRepository = notificationDetailRepository;
@@ -58,7 +58,7 @@ namespace CSRApi._Services.Services
 
                         if (isOverlap)
                         {
-                            return new OperationResult { Success = false, Message = "There is a message showing, Please select a date again" };
+                            return new OperationResult { Success = false, Message = "Notification is showing, please select the date again" };
                         }
 
                         NotificationMain notificationMain = new()
@@ -89,13 +89,13 @@ namespace CSRApi._Services.Services
                 }
 
                 await transaction.CommitAsync();
-                return new OperationResult { Success = true, Message = "Add notifation successfully",Data = data };
+                return new OperationResult { Success = true, Message = "Add notification successfully", Data = data };
             }
 
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Success = false, Message = ex.Message };
             }
         }
@@ -107,13 +107,13 @@ namespace CSRApi._Services.Services
             {
                 if (data.isAll == true)
                 {
-                    var notificationMain = _notificationMainRepository.FindAll(x => x.NotificationId != data.Id.ToString()).ToList();
+                    var notificationMain = _notificationMainRepository.FindAll(x => x.NotificationId == data.Id.ToString()).ToList();
                     _notificationMainRepository.RemoveMultiple(notificationMain);
                     await _notificationMainRepository.SaveChangesAsync();
                 }
                 else
                 {
-                    var notificationDetail = _notificationDetailRepository.FindAll(x => x.NotificationId != data.Id.ToString()).ToList();
+                    var notificationDetail = _notificationDetailRepository.FindAll(x => x.NotificationId == data.Id.ToString()).ToList();
                     _notificationDetailRepository.RemoveMultiple(notificationDetail);
                     await _notificationDetailRepository.SaveChangesAsync();
                 }
@@ -124,7 +124,7 @@ namespace CSRApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Success = false, Message = ex.Message };
             }
         }
@@ -141,12 +141,12 @@ namespace CSRApi._Services.Services
                     Id = x.Id,
                     Name = x.Name,
                     isAll = x.isAll
-                }).AsNoTracking();
+                }).OrderByDescending(x => x.CreateTime).AsNoTracking();
                 return await PaginationUtility<NotificationDto>.CreateAsync(data, pagination.PageNumber, pagination.PageSize, true);
             }
             catch(Exception ex) 
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return null;
             }
         }
@@ -179,7 +179,7 @@ namespace CSRApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return null;
             }
         }
@@ -187,7 +187,7 @@ namespace CSRApi._Services.Services
         public async Task<NotificationDto> GetNotificationMain()
         {
             var time = DateTime.Now.Date;
-            var predicate = PredicateBuilder.New<NotificationMain>(x => x.EndDate.Date >= time || x.IsShow == true);
+            var predicate = PredicateBuilder.New<NotificationMain>(x => x.EndDate.Date >= time && x.IsShow == true);
             try
             {
                 var item = await _notificationMainRepository.FindSingle(predicate);
@@ -208,7 +208,7 @@ namespace CSRApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new NotificationDto();
             }
             
@@ -232,12 +232,12 @@ namespace CSRApi._Services.Services
                                Name = x.Noti.Name,
                                CreateBy = x.Noti.CreateBy,
                                isView = x.Detail.isView
-                           }).ToList();
+                           }).OrderByDescending(x => x.CreateTime).ToList();
                 return data;
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new List<NotificationDto>();
             }
            
@@ -255,7 +255,7 @@ namespace CSRApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Success = false, Message = ex.Message };
             }
         }

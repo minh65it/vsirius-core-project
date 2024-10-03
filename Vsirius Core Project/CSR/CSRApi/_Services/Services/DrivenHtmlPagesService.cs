@@ -8,6 +8,7 @@ using Korzh.EasyQuery.Linq;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using VsiriusDataModel.DataModel;
+using VSiriusSystemLog.WriteLog;
 
 namespace CSRApi._Services.Services
 {
@@ -17,8 +18,8 @@ namespace CSRApi._Services.Services
         private readonly IMapper _mapper;
         private readonly MapperConfiguration _mapperConfiguration;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogService _logService;
-        public DrivenHtmlPagesService(IDrivenHtmlPagesRepository drivenHtmlPagesRepository, IMapper mapper, MapperConfiguration mapperConfiguration, IHttpContextAccessor httpContextAccessor, ILogService logService)
+        private ILoggerCustom _logService;
+        public DrivenHtmlPagesService(IDrivenHtmlPagesRepository drivenHtmlPagesRepository, IMapper mapper, MapperConfiguration mapperConfiguration, IHttpContextAccessor httpContextAccessor, ILoggerCustom logService)
         {
             _drivenHtmlPagesRepository = drivenHtmlPagesRepository;
             _mapper = mapper;
@@ -40,7 +41,7 @@ namespace CSRApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Success = false, Message = ex.Message };
             }
         }
@@ -61,7 +62,7 @@ namespace CSRApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Success = false, Message = ex.Message };
             }
         }
@@ -78,7 +79,7 @@ namespace CSRApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return null;
             }
            
@@ -97,7 +98,7 @@ namespace CSRApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new DrivenHtmlPagesDto();
             }
             
@@ -117,7 +118,7 @@ namespace CSRApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new List<DrivenHtmlPagesDto>();  
             }
             
@@ -141,7 +142,7 @@ namespace CSRApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Success = false, Message = ex.Message };
             }
         }

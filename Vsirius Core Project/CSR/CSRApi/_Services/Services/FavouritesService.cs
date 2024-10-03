@@ -5,6 +5,7 @@ using CSRApi.Dtos;
 using CSRApi.Helpers.Utilities;
 using Microsoft.EntityFrameworkCore;
 using VsiriusDataModel.DataModel;
+using VSiriusSystemLog.WriteLog;
 
 namespace CSRApi._Services.Services
 {
@@ -15,9 +16,9 @@ namespace CSRApi._Services.Services
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogService _logService;
+        private ILoggerCustom _logService;
         public FavouritesService(IFavouritesRepository favouritesRepository, IVsiriusProductRepository vsiriusProductRepository, IUserRepository userRepository,
-            IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogService logService)
+            IMapper mapper, IHttpContextAccessor httpContextAccessor, ILoggerCustom logService)
         {
             _favouritesRepository = favouritesRepository;
             _vsiriusProductRepository = vsiriusProductRepository;
@@ -43,7 +44,7 @@ namespace CSRApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Success = false, Message = ex.Message };
             }
         }
@@ -59,7 +60,7 @@ namespace CSRApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Success = false, Message = ex.Message };
             }
         }
@@ -87,7 +88,7 @@ namespace CSRApi._Services.Services
                   main_image_url = x.Product.main_image_url,
                   ProductId = x.Product.item_sku,
                   quantity = x.Product.quantity,
-                  standard_price = x.Product.standard_price,
+                  standard_price = x.Product.standard_price.ToString(),
                   price_seo = x.Product.sale_price,
                   UserId = x.User.Id
               }).ToListAsync();
@@ -95,7 +96,7 @@ namespace CSRApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new List<FavouritesDto>();
             }
            
@@ -124,7 +125,7 @@ namespace CSRApi._Services.Services
                   main_image_url = x.Product.main_image_url,
                   ProductId = x.Product.item_sku,
                   quantity = x.Product.quantity,
-                  standard_price = x.Product.standard_price,
+                  standard_price = x.Product.standard_price.ToString(),
                   price_seo = x.Product.sale_price,
                   UserId = x.User.Id
               });
@@ -132,7 +133,7 @@ namespace CSRApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return null;
             }
           

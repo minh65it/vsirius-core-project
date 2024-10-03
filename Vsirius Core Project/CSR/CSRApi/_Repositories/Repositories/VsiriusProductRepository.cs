@@ -1,13 +1,12 @@
-﻿using CSRApi._Repositories;
-using CSRApi._Repositories.Interfaces;
-using CSRApi.Data;
+﻿using CSRApi._Repositories.Interfaces;
+using VsiriusDataModel.DataContext;
 using VsiriusDataModel.DataModel;
 
 namespace CSRApi._Repositories.Repositories
 {
     public class VsiriusProductRepository : Repository<VsiriusProduct>, IVsiriusProductRepository
     {
-        public VsiriusProductRepository(CSRDbContext context) : base(context)
+        public VsiriusProductRepository(VsiriusContext context) : base(context)
         {
         }
     }

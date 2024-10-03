@@ -1,4 +1,4 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 #Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
 #For more information, please see https://aka.ms/containercompat
@@ -9,15 +9,19 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+ENV ASPNETCORE_ENVIRONMENT Development
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["CSRApi/CSRApi.csproj", "CSRApi/"]
-RUN dotnet restore "CSRApi/CSRApi.csproj"
+RUN dotnet restore "./CSRApi/./CSRApi.csproj"
 COPY . .
 WORKDIR "/src/CSRApi"
-RUN dotnet build "CSRApi.csproj" -c Release -o /app/build
+RUN dotnet build "./CSRApi.csproj" -c %BUILD_CONFIGURATION% -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "CSRApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+ARG BUILD_CONFIGURATION=Release
+ENV ASPNETCORE_ENVIRONMENT Development
+RUN dotnet publish "./CSRApi.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

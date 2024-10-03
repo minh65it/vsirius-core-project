@@ -3,6 +3,7 @@ using CSRApi._Repositories.Interfaces;
 using CSRApi._Services.Interfaces;
 using CSRApi.Dtos;
 using VsiriusDataModel.DataModel;
+using VSiriusSystemLog.WriteLog;
 
 namespace CSRApi._Services.Services
 {
@@ -12,9 +13,9 @@ namespace CSRApi._Services.Services
         private readonly ISecretUserRepository _secretUserRepository;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogService _logService;
+        private ILoggerCustom _logService;
 
-        public PageViewService(IPageViewRepository pageViewRepository, IMapper mapper, ISecretUserRepository secretUserRepository, IHttpContextAccessor httpContextAccessor, ILogService logService)
+        public PageViewService(IPageViewRepository pageViewRepository, IMapper mapper, ISecretUserRepository secretUserRepository, IHttpContextAccessor httpContextAccessor, ILoggerCustom logService)
         {
             _secretUserRepository = secretUserRepository;
             _pageViewRepository = pageViewRepository;
@@ -62,7 +63,7 @@ namespace CSRApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
             }
         }
 
@@ -77,7 +78,7 @@ namespace CSRApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return false;
             }
         }
