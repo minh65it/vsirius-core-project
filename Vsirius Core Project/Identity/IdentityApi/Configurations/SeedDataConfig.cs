@@ -1,6 +1,6 @@
 ﻿using IdentityApi._Repositoties;
 using IdentityApi.Helpers.Utilities;
-using IdentityApi.Models;
+using VsiriusDataModel.DataModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityApi.Configurations
@@ -36,7 +36,7 @@ namespace IdentityApi.Configurations
                 Employee seedDataAdmin = new Employee();
                 seedDataAdmin.Email = "admin@vsirius.com";
                 seedDataAdmin.UserName =  "Admin";
-                var passwordHash = _function.HashPasswordUser("P@ssword123");
+                var passwordHash = _function.HashPasswordUser("VsiriusP@ssword123");
                 seedDataAdmin.PasswordHash = passwordHash;
 
                 _repo.employee.Add(seedDataAdmin);
@@ -87,7 +87,8 @@ namespace IdentityApi.Configurations
                     UserRolesEmployee employeeRoles = new UserRolesEmployee()
                     {
                         Email = "admin@vsirius.com",
-                        Id = roleClaim.Id,
+                        RoleId = roleClaim.Id,
+                        Id = Guid.NewGuid().ToString(),
                     };
                     _repo.userRolesEmployee.Add(employeeRoles);
                     await _repo.userRolesEmployee.SaveChangesAsync();

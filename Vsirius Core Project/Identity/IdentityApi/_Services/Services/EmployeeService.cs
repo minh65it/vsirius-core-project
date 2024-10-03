@@ -1,32 +1,33 @@
 ﻿using AutoMapper;
 using IdentityApi._Repositoties;
 using IdentityApi._Services.Interfaces;
-using IdentityApi.Data;
 using IdentityApi.Dtos.Auth;
 using IdentityApi.Helpers.Utilities;
-using IdentityApi.Models;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using VsiriusDataModel.DataContext;
+using VsiriusDataModel.DataModel;
+using VSiriusSystemLog.WriteLog;
 
 namespace IdentityApi._Services.Services
 {
     public class EmployeeService : IEmployeeService
     {
         private readonly IRepositoryAccessor _repo;
-        private readonly IdentityContext _context;
+        private readonly VsiriusContext _context;
         private readonly IMapper _mapper;
         private readonly IFunctionUtilities _functionUtilities;
-        private ILogService _logService;
+        private ILoggerCustom _logService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public EmployeeService(IRepositoryAccessor repo, IMapper mapper, IFunctionUtilities functionUtilities,
-             ILogService logService, IHttpContextAccessor httpContextAccessor, IdentityContext context)
+             IHttpContextAccessor httpContextAccessor, VsiriusContext context, ILoggerCustom logService)
         {
             _repo = repo;
             _mapper = mapper;
             _functionUtilities = functionUtilities;
-            _logService = logService;
             _httpContextAccessor = httpContextAccessor;
             _context = context;
+            _logService = logService;
         }
 
         public async Task<OperationResult> CreateEmployee(EmployeeDto Dto)
@@ -36,12 +37,12 @@ namespace IdentityApi._Services.Services
             {
                 return new OperationResult { Message = "Your email is not in the correct format", Success = false };
             }
-            if (string.IsNullOrWhiteSpace(Dto.Password))
+
+            var checkPassword = _functionUtilities.IsValidPassword(Dto.Password);
+            if(!checkPassword)
             {
-                return new OperationResult { Message = "Your password is not in the correct format", Success = false };
+                return new OperationResult { Message = "Password must contain uppercase letters, lowercase letters, and numbers", Success = false };
             }
-            if (string.IsNullOrWhiteSpace(Dto.Email))
-                return new OperationResult { Message = "Your email is not null", Success = false };
 
             if (!string.IsNullOrWhiteSpace(Dto?.PhoneNumber))
             {
@@ -65,6 +66,7 @@ namespace IdentityApi._Services.Services
                 }
             }
             Dto.IsActive = true;
+            Dto.UserName = Dto.Email;
             Dto.Id = Guid.NewGuid();
             if (Dto.Avatar != null)
                 Dto.Avatar = @"upload/Employee/" + await _functionUtilities.UploadAsync(Dto.Avatar, @"upload/Employee", Dto.Id.ToString());
@@ -89,7 +91,8 @@ namespace IdentityApi._Services.Services
                         userRolesEmployees.Add(new UserRolesEmployee
                         {
                             Email = Dto.Email,
-                            Id = x,
+                            RoleId = x,
+                            Id = Guid.NewGuid().ToString(),
                         });
                     });
 
@@ -100,7 +103,7 @@ namespace IdentityApi._Services.Services
             }
             catch (System.Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
 
                 return new OperationResult { Message = "An error has occurred, contact Vsirus for support", Success = false };
             }
@@ -142,9 +145,67 @@ namespace IdentityApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Message = "Add error role", Success = false };
             }
+        }
+        public async Task<OperationResult> CreateAllRole()
+        {
+            List<Permissions> permissions = new List<Permissions> {
+                Permissions.Employee,
+                Permissions.Product,
+                Permissions.Order,
+                Permissions.Contact,
+                Permissions.Cart,
+                Permissions.System,
+                Permissions.Notification,
+                Permissions.DrivenHTML 
+            };
+
+            foreach (Permissions item in permissions)
+            {
+                var checkRole = await _context.RolesEmployee.FirstOrDefaultAsync(x => x.Name == item.ToString());
+                if (checkRole != null)
+                {
+                    continue;
+                }
+                RolesEmployee role = new RolesEmployee() 
+                {
+                    Id = Guid.NewGuid(),
+                    Name = item.ToString(),
+                    NormalizedName = item.ToString(),
+                };
+                _context.RolesEmployee.Add(role);
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    var roleE = await _context.RolesEmployee.FirstOrDefaultAsync(x => x.Name == item.ToString());
+                    List<RoleClaimsEmployee> claimsEmployee = new List<RoleClaimsEmployee>();
+                    List<string>? claimType = new List<string> { "Create", "Update", "Read", "Delete" };
+                    if (claimType.Any())
+                    {
+                        claimType.ForEach(x =>
+                        {
+                            claimsEmployee.Add(new RoleClaimsEmployee
+                            {
+                                RoleId = roleE.Name,
+                                ClaimType = x,
+                            });
+                        });
+                        _context.RoleClaimsEmployee.AddRange(claimsEmployee);
+                        await _context.SaveChangesAsync();
+                    }
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    await _logService.CreateLogError(exception: ex.Message);
+                    return new OperationResult { Message = "Add error role", Success = false };
+                }
+            }
+
+            return new OperationResult { Message = "Success Add Role", Success = true };
         }
 
         public async Task<OperationResult> DeleteEmployee(string id)
@@ -171,7 +232,7 @@ namespace IdentityApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Message = "Delete failed", Success = false };
             }
         }
@@ -200,7 +261,7 @@ namespace IdentityApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Message = "Delete failed", Success = false };
             }
         }
@@ -225,7 +286,7 @@ namespace IdentityApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return null;
             }
            
@@ -247,7 +308,7 @@ namespace IdentityApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new List<RolesEmployeeDto>();
             }
             
@@ -266,7 +327,7 @@ namespace IdentityApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new RolesEmployeeDto();
             }
            
@@ -280,7 +341,7 @@ namespace IdentityApi._Services.Services
                 if (data == null) return null;
                 var roles = await _repo.userRolesEmployee.FindAll(x => x.Email == mail).Join(
                         _repo.rolesEmployee.FindAll(),
-                        x => x.Id, y => y.Id,
+                        x => x.RoleId, y => y.Id,
                         (x, y) => new {
                             y.Name,
                         }).Select(x => x.Name).ToListAsync();
@@ -290,7 +351,7 @@ namespace IdentityApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new EmployeeDto();
             }
         }
@@ -302,8 +363,14 @@ namespace IdentityApi._Services.Services
             {
                 return new OperationResult { Message = "Your email is not in the correct format", Success = false };
             }
-            if (string.IsNullOrWhiteSpace(Dto.Email))
-                return new OperationResult { Message = "Your email is not null", Success = false };
+            if(!string.IsNullOrEmpty(Dto.Password)) 
+            {
+                var checkPassword = _functionUtilities.IsValidPassword(Dto.Password);
+                if (!checkPassword)
+                {
+                    return new OperationResult { Message = "Password must contain uppercase letters, lowercase letters, and numbers", Success = false };
+                }
+            }
 
             var checkMail = await _repo.employee.FindSingle(x => x.Email.Trim() == Dto.Email.Trim());
             if (checkMail == null)
@@ -319,17 +386,19 @@ namespace IdentityApi._Services.Services
                     return new OperationResult { Message = "Your phone number is not in the correct format", Success = false };
                 }
             }
-            if (checkMail.Avatar != null)
+            if (checkMail.Avatar != null && Dto.Avatar != null)
             {
                 _functionUtilities.DeleteFile(checkMail.Avatar);
             }
             _repo.employee.Remove(checkMail);
-            _repo.userRolesEmployee.RemoveMultiple(await _repo.userRolesEmployee.FindAll(x => x.Email == checkMail.Email).ToListAsync());
+            _repo.userRolesEmployee.RemoveMultiple(await _repo.userRolesEmployee.FindAll(x => x.Email == checkMail.Email).AsNoTracking().ToListAsync());
 
             Dto.Id = Guid.NewGuid();
             Dto.IsActive = true;
             if (Dto.Avatar != null)
                 Dto.Avatar = @"upload/Employee/" + await _functionUtilities.UploadAsync(Dto.Avatar, @"upload/Employee", Dto.Id.ToString());
+            else
+                Dto.Avatar = checkMail.Avatar;
             Employee Employee = _mapper.Map<Employee>(Dto);
             if(!string.IsNullOrWhiteSpace(Dto.Password))
             {
@@ -351,7 +420,8 @@ namespace IdentityApi._Services.Services
                         userRolesEmployees.Add(new UserRolesEmployee
                         {
                             Email = Dto.Email,
-                            Id = x,
+                            RoleId = x,
+                            Id = Guid.NewGuid().ToString(),
                         });
                     });
 
@@ -362,7 +432,7 @@ namespace IdentityApi._Services.Services
             }
             catch (System.Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
 
                 return new OperationResult { Message = "An error has occurred, contact Vsirus for support", Success = false };
             }
@@ -408,7 +478,7 @@ namespace IdentityApi._Services.Services
             }
             catch (Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new OperationResult { Message = "Update error role", Success = false };
             }
         }

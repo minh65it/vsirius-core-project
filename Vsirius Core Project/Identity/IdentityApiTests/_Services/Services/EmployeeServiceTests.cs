@@ -62,9 +62,9 @@ namespace IdentityApi._Services.Services.Tests
 
             var userRoles = new List<UserRolesEmployee>
                 {
-                    new UserRolesEmployee { Email = "test1@test.com", Id = Guid.NewGuid() },
-                    new UserRolesEmployee { Email = "test2@test.com", Id = Guid.NewGuid() },
-                    new UserRolesEmployee { Email = "test3@test.com", Id = Guid.NewGuid() }
+                    new UserRolesEmployee { Email = "test1@test.com", Id = Guid.NewGuid().ToString() },
+                    new UserRolesEmployee { Email = "test2@test.com", Id = Guid.NewGuid().ToString() },
+                    new UserRolesEmployee { Email = "test3@test.com", Id = Guid.NewGuid().ToString() }
                 };
 
             _context.UserRolesEmployee.AddRange(userRoles);

@@ -1,12 +1,12 @@
 ﻿using IdentityApi._Repositories.Interfaces;
-using IdentityApi.Data;
-using IdentityApi.Models;
+using VsiriusDataModel.DataContext;
+using VsiriusDataModel.DataModel;
 
 namespace IdentityApi._Repositories.Repositories
 {
     public class UserRolesEmployeeRepository : Repository<UserRolesEmployee>, IUserRolesEmployeeRepository
     {
-        public UserRolesEmployeeRepository(IdentityContext context) : base(context)
+        public UserRolesEmployeeRepository(VsiriusContext context) : base(context)
         {
         }
     }

@@ -16,6 +16,7 @@ namespace IdentityApi._Services.Interfaces
         //Roles
         Task<List<RolesEmployeeDto>> GetAllRole();
         Task<OperationResult> CreateRole(RolesEmployeeDto roles);
+        Task<OperationResult> CreateAllRole();
         Task<OperationResult> DeleteRole(string id);
         Task<OperationResult> UpdateRole(RolesEmployeeDto roles);
         Task<RolesEmployeeDto> GetDetailRole(string id);

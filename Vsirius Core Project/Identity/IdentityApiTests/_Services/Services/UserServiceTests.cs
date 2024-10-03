@@ -33,6 +33,7 @@ namespace IdentityApi._Services.Services.Tests
         private Mock<IHttpContextAccessor> _httpContextAccessor;
         private IdentityContext _context;
         private Mock<IUrlHelper> _urlHelper;
+        private  Mock<IValidUser> _validUser;
         [TestInitialize]
         public void Initialize()
         {
@@ -57,6 +58,7 @@ namespace IdentityApi._Services.Services.Tests
             _configuration = new Mock<IConfiguration>();
             _logService = new Mock<ILogService>();
             _urlHelper = new Mock<IUrlHelper>();
+            _validUser = new Mock<IValidUser>();
 
             
             _yourClass = new UserService(
@@ -67,9 +69,9 @@ namespace IdentityApi._Services.Services.Tests
                 _emailSender.Object,
                 _httpContextAccessor.Object,
                 _repositoryAccessor.Object, 
-                _configuration.Object,
                 _logService.Object,
-                _context);
+                _validUser.Object,
+                _configuration.Object);
         }
         [TestCleanup]
         public void Cleanup()
@@ -90,7 +92,7 @@ namespace IdentityApi._Services.Services.Tests
             {
                 Email = "UserTest@gmail.com",
                 FullName = "User test",
-                Password = "Password",
+                Password = "password",
                 PhoneNumber = "+17897895555"
             };
             var urlHelper = _urlHelper.Object;
@@ -118,10 +120,10 @@ namespace IdentityApi._Services.Services.Tests
                 x.CheckEmailExists(userDto.Email, "Confirm your email", It.IsAny<string>())).ReturnsAsync(true);
 
             //Act
-            var data = await _yourClass.CreateUser(userDto, urlHelper);
+            var data = await _yourClass.CreateUser(userDto, urlHelper,"");
             //Assert
-            Assert.IsTrue(true);
-            Assert.AreEqual(data.Message, "Successful registration, check your email to verify your account");
+            Assert.IsFalse(data.Success);
+            Assert.AreEqual(data.Message, "Password must contain uppercase letters, lowercase letters, and numbers");
         }
     }
 }

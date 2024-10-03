@@ -1,10 +1,12 @@
-﻿using IdentityApi.Models.User;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using VsiriusDataModel.DataModel;
 
 namespace IdentityApi.Controllers
 {
-    public class ConfirmController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ConfirmController : ControllerBase
     {
         private readonly UserManager<VsiriusUser> _userManager;
         private readonly SignInManager<VsiriusUser> _signInManager;
@@ -14,23 +16,13 @@ namespace IdentityApi.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
         }
-
-        public async Task<IActionResult> Index(string email, string token)
+        [HttpPost]
+        public async Task<bool> Index([FromQuery] string email, [FromQuery] string token)
         {
             var user = await _userManager.FindByEmailAsync(email);
             var result = await _userManager.ConfirmEmailAsync(user, token);
-            if (result.Succeeded)
-            {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction(nameof(Error));
-            }
-        }
-        public IActionResult Error()
-        {
-            return View();
+
+            return result.Succeeded;
         }
     }
 }

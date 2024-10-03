@@ -8,7 +8,7 @@ namespace IdentityApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Employee")]
     public class EmployeeController : ControllerBase
     {
         readonly private IEmployeeService _employeeService;
@@ -29,10 +29,38 @@ namespace IdentityApi.Controllers
             var result = await _employeeService.CreateEmployee(dto);
             return Ok(result);
         }
+
+        /// <summary>
+        /// create 1 permission with a certain name
+        /// </summary>
+        /// <param name="roles"></param>
+        /// <returns></returns>
         [HttpPost("CreateRole")]
         public async Task<IActionResult> CreateRole([FromBody] RolesEmployeeDto roles)
         {
             var result = await _employeeService.CreateRole(roles);
+            return Ok(result);
+        }
+        /// <summary>
+        /// create multiple default permissions
+        /// </summary>
+        /// <remarks>
+        /// Admin,
+        /// Employee,
+        /// Product,
+        /// Order,
+        /// Contact,
+        /// Cart,
+        /// System,
+        /// Notification,
+        /// DrivenHTML
+        /// </remarks>
+        /// <param name="roles"></param>
+        /// <returns></returns>
+        [HttpPost("CreateAllRole")]
+        public async Task<IActionResult> CreateAllRole()
+        {
+            var result = await _employeeService.CreateAllRole();
             return Ok(result);
         }
         [HttpDelete("DeleteEmployee")]
