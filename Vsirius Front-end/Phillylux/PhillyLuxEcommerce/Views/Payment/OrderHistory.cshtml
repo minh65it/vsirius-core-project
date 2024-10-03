@@ -1,0 +1,281 @@
+﻿@model OrderHistoryPagingVM
+
+
+<section class="section-content padding-y mt-5">
+    <div class="container">
+        <div class="row bg-white">
+            <div class="col-12 ">
+                <ul class="p-md-3 p-2">
+                    <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                    <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                    <li class="d-inline-block hr_ font-weight-bolder">Order</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <aside class="col-md-3 mt-2">
+                <nav class="list-group">
+                    <nav class="list-group">
+                        <a class="list-group-item " asp-controller="User" asp-action="Index"> Account </a>
+                        <a class="list-group-item active" asp-controller="Payment" asp-action="OrderHistory"> My Orders </a>
+                        <a class="list-group-item " asp-controller="User" asp-action="Wishlist"> My wishlist </a>
+                        <a class="list-group-item" asp-controller="User" asp-action="Notification"> Notification </a>
+                    </nav>
+                </nav>
+            </aside> <!-- col.// -->
+            <main class="col-md-9 mt-2">
+                @if (Model != null)
+                {
+                    <div id="wishlist_page" class="wishlist-page animate__animated animate__fadeInUp">
+                        <div class="card">
+                            <div class="card-body">
+                                <div>
+                                    <div class="row sh_page border-bottom mb-4">
+                                        <div class="col-6">
+                                            <span class="font-weight-bold" style="font-size: 20px;">Order History</span>
+                                        </div>
+                                        @if (Model.ListOrderHistory.Count > 0)
+                                        {
+                                            <div class="col-6">
+                                                <span class="font-weight-bold" style="font-size: 16px; float:right">Total History: @Model.Pagination.totalCount</span>
+                                            </div>
+                                        }
+                                    </div>
+                                    @if (Model.ListOrderHistory.Count > 0)
+                                    {
+                                        @foreach (var item in Model.ListOrderHistory)
+                                        {
+                                            <div class="row sh_page border-bottom item" style="cursor: pointer;"
+                                                 onclick="redirectToOtherPage('@Url.Action("OrderDetail", "Payment", new { orderId = item.Order.OrderId })')"
+                                                 oncontextmenu="openInNewTab('@Url.Action("OrderDetail", "Payment", new { orderId = item.Order.OrderId })'); return false;">
+                                                <div class="col-12 col-md-7 pr-0">
+                                                    <div class="d-flex mb-4">
+                                                        <div class=" col-xl-6 col-lg-5 col-md-5 col-4 px-0">
+                                                            @if (string.IsNullOrEmpty(item.Product.main_image_url))
+                                                            {
+                                                                <img src="~/img/no-photo/no-photo_800x800.png"
+                                                                     class="fst-image mx-auto d-block img-fluid border rounded"
+                                                                     alt="placeholder" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src="@($"{item.Product.main_image_url}")"
+                                                                     class="fst-image mx-auto d-block img-fluid border rounded"
+                                                                     alt="category" />
+                                                            }
+                                                            @if (item.Order.TotalQuantityItem > item.Product.QuantityItem)
+                                                            {
+                                                                <div class="d-flex">
+                                                                    <div class=" col-12">
+                                                                        <hr />
+                                                                        <p style="text-align:center; font-size:14px">
+                                                                            See more products
+                                                                        </p>
+                                                                    </div>
+
+                                                                </div>
+                                                            }
+                                                        </div>
+
+                                                        <div class=" col-xl-6 col-lg-7 col-md-7 col-8 pr-0">
+                                                            <h5 class="w_product_name">@item.Product.ProductName</h5>
+                                                            <h6>#@item.Product.SKU</h6>
+                                                            @if (string.IsNullOrEmpty(item.Product.PriceSale))
+                                                            {
+                                                                <h6>
+                                                                    $ @item.Product.Price
+                                                                </h6>
+                                                            }
+                                                            else
+                                                            {
+                                                                <h6>
+                                                                    $ @item.Product.PriceSale
+                                                                    <del class="text-muted">$@item.Product.Price</del>
+                                                                </h6>
+                                                            }
+
+                                                            <ul>
+                                                                <li class="my-1">
+                                                                    <span>size:</span>
+                                                                    <span>@item.Product.Size</span>
+                                                                </li>
+                                                                <li class="">
+                                                                    <span>color:</span>
+                                                                    <span>@item.Product.Color</span>
+                                                                </li>
+                                                                <li class="">
+                                                                    <span>Qty:</span>
+                                                                    <span>@item.Product.QuantityItem</span>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+
+
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="col-12 col-md-5 mt-1">
+                                                    <div class="d-flex flex-wrap justify-content-end" style="font-size: 16px;">
+                                                        <div class="col-md-10">
+                                                            <span class="font-weight-bold">
+                                                                Order Id:
+                                                            </span>
+                                                            <span>@item.Order.OrderId</span>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="d-flex flex-wrap justify-content-end" style="font-size: 16px;">
+                                                        <div class="col-md-10 mt-2">
+                                                            <span class="font-weight-bold ">
+                                                                order date:
+                                                            </span>
+                                                            <span>@item.Order.CreateOrderDate</span>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="d-flex flex-wrap justify-content-end" style="font-size: 16px;">
+                                                        <div class="col-md-10 mt-2">
+                                                            <span class="font-weight-bold">
+                                                                Total Quantity:
+                                                            </span>
+                                                            <span>@item.Order.TotalQuantityItem</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex flex-wrap justify-content-end" style="font-size: 16px;">
+                                                        <div class="col-md-10 mt-2">
+                                                            <span class="font-weight-bold">
+                                                                Total Price:
+                                                            </span>
+                                                            <span>$@item.Order.TotalPrice</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex flex-wrap justify-content-end" style="font-size: 16px;">
+                                                        <div class="col-md-10 mt-2">
+                                                            <span class="font-weight-bold">
+                                                                Status:
+                                                            </span>
+                                                            <span>@item.Order.StatusName</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            <hr />
+                                        }
+                                        @if (Model.Pagination.totalPage > 1)
+                                        {
+                                            <div class="row">
+                                                <div class="col-12 mt-4">
+                                                    <div class="">
+                                                        <p class="font-weight-bold" style="margin-bottom: 0;float: right">
+                                                            Total Page: @Model.Pagination.totalPage
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <nav class="float-right mt-2 mt-col-3">
+                                                        <ul class="pagination">
+                                                            <li class="page-item">
+                                                                <a type="submit" class="page-link" href="OrderHistory?pageNumber=1">
+                                                                    <span aria-hidden="true">&laquo;</span>
+                                                                </a>
+                                                            </li>
+
+                                                            @if (Model.Pagination.totalPage > 0)
+                                                            {
+                                                                int startPage = Model.Pagination.pageNumber - 1;
+                                                                if (startPage < 1)
+                                                                {
+                                                                    startPage = 1;
+                                                                }
+                                                                int endPage = startPage + 2;
+                                                                if (endPage > Model.Pagination.totalPage)
+                                                                {
+                                                                    endPage = Model.Pagination.totalPage;
+                                                                    startPage = endPage - 2;
+                                                                    if (startPage < 1)
+                                                                    {
+                                                                        startPage = 1;
+                                                                    }
+                                                                }
+                                                                for (int i = startPage; i <= endPage; i++)
+                                                                {
+                                                                    <li class="page-item">
+                                                                        @if (i == Model.Pagination.pageNumber)
+                                                                        {
+                                                                            <a class="page-link" style="background-color:#d69531" aria-current="page" href="OrderHistory?pageNumber=@i" disabled>@i</a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a class="page-link" href="OrderHistory?pageNumber=@i">@i</a>
+                                                                        }
+                                                                    </li>
+                                                                }
+                                                            }
+
+                                                            <li class="page-item">
+                                                                <a type="submit" class="page-link" href="OrderHistory?pageNumber=@Model.Pagination.totalPage">
+                                                                    <span aria-hidden="true">&raquo;</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="row sh_page mt-5">
+                                            <div class="col-12">
+                                                <h5 style="text-align:center; font-size: 30px;">No order</h5>
+                                                <div class="text-center  mt-4">
+                                                    <a asp-controller="SearchProduct" asp-action="Index" asp-route-productType="ring"
+                                                       class="btn btn-primary" style="font-size: 16px;">
+                                                        Go to shopping
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </main>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function redirectToOtherPage(url) {
+            window.location.href = url;
+        }
+
+        function openInNewTab(url) {
+            var win = window.open(url, '_blank');
+            win.focus();
+        }
+    </script>
+}
+<style>
+
+    .item {
+        border-bottom: 1px solid #ccc; /* Màu và độ dày ban đầu của border-bottom */
+    }
+
+
+    .item:hover {
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        transform: translateY(-2px);
+            border-bottom: 2px solid #000;
+    }
+</style>

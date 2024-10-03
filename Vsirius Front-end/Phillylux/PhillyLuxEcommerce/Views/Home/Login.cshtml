@@ -1,0 +1,134 @@
+﻿<!-- login page -->
+<div id="login_page" class="login-page animate__animated animate__fadeInUp">
+    <div class="sp_header bg-white">
+        <div class="container custom_container bg-white">
+            <div class="row ">
+                <div class="col-12 ">
+                    <ul class="p-md-3 p-2">
+                        <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                        <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                        <li class="d-inline-block hr_ font-weight-bolder">login</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container custom_container ">
+        <h3 class="text-center">Log in to your account </h3>
+        <div id="login" class="page-content card card-block p-3 p-sm-4 ">
+            <form id="loginForm" class="needs-validation" method="post" asp-controller="Home" asp-action="Login">
+                <div class="form-group">
+                    @if (ViewBag.Message != null)
+                    {
+                        @Html.Raw(ViewBag.Message)
+                    }
+                </div>
+                <div class="form-group">
+                    <label for="Email" class="font-weight-bolder">Email address</label>
+                    <input type="email" name="Email" class="form-control" id="Email" aria-describedby="emailHelp" autocomplete="on">
+                    <div class="invalid-feedback">Please Enter your Email.</div>
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+                <div class="form-group font-weight-bolder">
+                    <label for="Password" class="font-weight-bolder">Password</label>
+                    <input type="password" name="Password" class="form-control" id="Password">
+                    <div class="invalid-feedback">Please enter your password.</div>
+                </div>
+                @*<div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="user_check">
+                <label class="form-check-label" for="user_check">Check me out</label>
+                </div>*@
+                <div class="row d-flex justify-content-center">
+                    <div class="col-8">
+                        <input style="width:inherit" id="submit_btn" type="submit" name="submit" class="btn btn-primary mb-3" value="Login">
+                    </div>
+                    <div class="col-8">
+                        <a style="width:inherit" class="btn btn-outline-dark mb-3" asp-controller="Home" asp-action="ExternalLogin" asp-route-provider="Google">
+                            <img style="margin-bottom:3px; margin-right:5px; width:20px" alt="Google sign-in" src="~/img/Google__G__Logo.svg.png" /> Continue with Google
+                        </a>
+                    </div>
+                    <div class="col-8">
+                        <a style="width:inherit" class="btn btn-outline-dark mb-3" asp-controller="Home" asp-action="ExternalLogin" asp-route-provider="Facebook">
+                            <img style="margin-bottom:3px; margin-right:5px; width:20px" alt="Facebook sign-in" src="~/img/facebook_Logo.png" /> Continue with Facebook
+                        </a>
+                    </div>
+                </div>
+                <div class="pass_acc border-top pt-3">
+                    @*<span class="forgot_password font-weight-bolder"><a href="forgot.html">Forgot your password? </a></span>*@
+                    <span class="no_account float-right font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Register">No account? Create one here</a></span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- login_page -->
+@section Scripts {
+    <script type="text/javascript">
+        const emailInput = document.getElementById('Email');
+        const passwordInput = document.getElementById('Password');
+        const submitBtn = document.getElementById('submit_btn');
+
+        emailInput.addEventListener('blur', function () {
+            const message = document.getElementById('message');
+            if (message) {
+                message.style.display = 'none';
+            }
+            isEmailValid();
+        });
+
+        passwordInput.addEventListener('blur', function () {
+            const message = document.getElementById('message');
+            if (message) {
+                message.style.display = 'none';
+            }
+            isPasswordValid();
+        });
+
+        submitBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (isEmailValid() && isPasswordValid()) {
+                let form = document.getElementById('loginForm');
+                HTMLFormElement.prototype.submit.call(form);
+            }
+        });
+
+        function isEmailValid() {
+            let email = emailInput.value.trim();
+            let validate = emailInput.nextElementSibling;
+
+            if (email) {
+                if (!validateEmail(email)) {
+                    validate.textContent = "Please Enter a valid Email";
+                    validate.style.display = "block";
+                    return false;
+                } else {
+                    validate.style.display = "none";
+                    return true;
+                }
+            } else {
+                validate.textContent = "Please Enter your Email";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function isPasswordValid() {
+            let password = passwordInput.value.trim();
+            let validate = passwordInput.nextElementSibling;
+            if (password) {
+                validate.style.display = "none";
+                return true;
+            } else {
+                validate.textContent = "Please Enter your Password";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function validateEmail(email) {
+            var re = /\S+@@\S+\.\S+/;
+            return re.test(email);
+        }
+    </script>
+}

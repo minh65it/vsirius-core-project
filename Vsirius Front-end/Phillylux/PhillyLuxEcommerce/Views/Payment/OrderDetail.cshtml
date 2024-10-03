@@ -1,0 +1,493 @@
+﻿@model OrderDetailVM
+
+@{
+    if (Model.OrderInformation.FirstName == null) { Model.OrderInformation.FirstName = ""; }
+    if (Model.OrderInformation.LastName == null) { Model.OrderInformation.LastName = ""; }
+    if (Model.OrderInformation.Phone == null) { Model.OrderInformation.Phone = ""; }
+    if (Model.OrderInformation.Email == null) { Model.OrderInformation.Email = ""; }
+
+    OrderStatusVM orderStatus = new OrderStatusVM();
+    if (Model.ListOrderStatus?.Count > 0)
+    {
+        orderStatus = Model.ListOrderStatus.Where(x => x.Key == Model.OrderInformation.StatusId).FirstOrDefault();
+    }
+}
+<style>
+
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+        .tooltip::after {
+            content: "Lưu ý: Thông tin về phương thức thanh toán";
+            position: absolute;
+            top: -30px;
+            left: 0;
+            width: 200px;
+            padding: 5px;
+            background-color: #000;
+            color: #fff;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+
+    .card-stepper {
+        z-index: 0
+    }
+
+    #progressbar-2 {
+        color: #455A64;
+    }
+
+        #progressbar-2 li {
+            list-style-type: none;
+            font-size: 13px;
+            width: 33.33%;
+            float: left;
+            position: relative;
+        }
+
+    .custom-status-first:before {
+        content: '\f058';
+        font-family: "Font Awesome 5 Free";
+        color: #fff;
+        width: 37px;
+        margin-left: 0px;
+        padding-left: 0px;
+    }
+
+    .custom-status-first:after {
+        left: 1%;
+        width: 100%
+    }
+
+    .custom-status-center:before {
+        content: '\f058';
+        font-family: "Font Awesome 5 Free";
+        color: #fff;
+        width: 37px;
+    }
+
+    .custom-status-end:before {
+        content: '\f111';
+        font-family: "Font Awesome 5 Free";
+        color: #fff;
+        width: 37px;
+        margin-right: 0;
+        text-align: center;
+    }
+
+    .li-custom-status-end {
+        left: 0;
+        width: 37px;
+    }
+
+        .li-custom-status-end:after {
+            left: 0;
+            width: 0;
+        }
+
+    #progressbar-2 li:before {
+        line-height: 37px;
+        display: block;
+        font-size: 12px;
+        background: #c5cae9;
+        border-radius: 50%;
+    }
+
+    #progressbar-2 li:after {
+        content: '';
+        width: 100%;
+        height: 10px;
+        background: #c5cae9;
+        position: absolute;
+        left: 0%;
+        right: 0%;
+        top: 15px;
+        z-index: -1;
+    }
+
+    #progressbar-2 li:nth-child(1):after {
+        left: 1%;
+        width: 100%
+    }
+
+    #progressbar-2 li:nth-child(2):after {
+        left: 1%;
+        width: 100%;
+    }
+
+    #progressbar-2 li:nth-child(3):after {
+        left: 1%;
+        width: 100%;
+    }
+
+    #progressbar-2 li.active:before,
+    #progressbar-2 li.active:after {
+        background: #d69531;
+    }
+
+</style>
+
+<div id="orderdetail_page" class="checkout-page animate__animated animate__fadeInUp">
+    <div class="sp_header bg-white">
+        <div class="container custom_container bg-white">
+            <div class="row ">
+                <div class="col-12 ">
+                    <ul class="p-md-3 p-2">
+                        <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                        <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                        <li class="d-inline-block hr_ font-weight-bolder">Order Detail</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container custom_container">
+        <div class="row mt-2">
+            <div class="col-lg-8 col-12 mb-5">
+                <div class="card card-stepper text-black">
+                    <div class="card-body p-5">
+                        <form id="orderForm" method="post" asp-controller="Payment" asp-action="CancelOrder">
+                            <input type="hidden" name="QuantityTotalItem" value="@Model.OrderInformation.TotalQuantityItem">
+                            <input type="hidden" name="TotalPrice" value="@Model.OrderInformation.TotalPrice">
+                            <input type="hidden" name="CartId" value="@Model.OrderInformation.CartId">
+                            <input type="hidden" name="UserId" value="@Model.OrderInformation.UserId">
+                            <input type="hidden" name="PaymentMethod" value="@Model.OrderInformation.PaymentMethod">
+                            <input type="hidden" name="StatusId" value="@Model.OrderInformation.StatusId">
+                            <input type="hidden" name="OrderId" value="@Model.OrderInformation.OrderId">
+                            <input type="hidden" name="CreateOrderDate" value="@Model.OrderInformation.CreateOrderDate">
+                            <input type="hidden" name="Tax" value="@Model.OrderInformation.Tax">
+                            <input type="hidden" name="Shipping" value="@Model.OrderInformation.Shipping">
+
+                            <div class="d-flex justify-content-between align-items-center mb-5 row">
+                                <div class="col-md-6">
+                                    <h6 class="mb-0 font-weight-bolder">
+                                        Order Detail
+                                        <span class="font-weight-bold" style="color: #d69531;"> #@Model.OrderInformation.OrderId</span>
+                                    </h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-0">
+                                        Expected Arrival <br />
+                                        <span>@Model.OrderInformation.CreateOrderDate</span>
+                                    </p>
+                                    @*<p class="mb-0">USPS <span class="font-weight-bold">234094567242423422898</span></p>*@
+                                </div>
+                            </div>
+
+                            <div class="row mb-5">
+                                @*<div class="col-3">
+                                <label for="f_name" class="font-weight-bolder" style="font-size: 16px; white-space: nowrap; text-overflow: ellipsis;">
+                                First name
+                                </label>
+                                <input type="text" class="form-control" id="f_name" style="font-size: 14px;" asp-for="OrderInformation.FirstName" value="@Model.OrderInformation.FirstName" readonly>
+                                </div>
+                                <div class="col-3">
+                                <label for="l_name" class="font-weight-bolder" style="font-size: 16px; white-space: nowrap; text-overflow: ellipsis;">
+                                Last name
+                                </label>
+                                <input type="text" class="form-control" id="l_name" style="font-size: 14px;" asp-for="OrderInformation.LastName" value="@Model.OrderInformation.LastName" readonly>
+                                </div>*@
+                                <div class="col-md-4">
+                                    <label for="l_name" class="font-weight-bolder" style="font-size: 16px; white-space: nowrap; text-overflow: ellipsis;">
+                                        Full Name
+                                    </label>
+                                    <input type="text" class="form-control" id="l_name" style="font-size: 14px;" asp-for="OrderInformation.Fullname" value="@Model.OrderInformation.Fullname" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="email" class="font-weight-bolder" style="font-size: 16px; white-space: nowrap; text-overflow: ellipsis;">
+                                        Email address
+                                    </label>
+                                    <input autocomplete="off"
+                                           class="form-control"
+                                           id="email"
+                                           style="font-size: 14px;"
+                                           asp-for="OrderInformation.Email"
+                                           value="@Model.OrderInformation.Email"
+                                           readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="phone" class="font-weight-bolder" style="font-size: 16px;">
+                                        Phone
+                                    </label>
+                                    <input autocomplete="off" class="form-control" id="phone" style="font-size: 14px;" asp-for="OrderInformation.Phone" value="@Model.OrderInformation.Phone" readonly>
+                                </div>
+                            </div>
+
+
+                            <div class="row mb-5">
+                                <div class="col-md-3">
+                                    <label for="address2" class="font-weight-bolder" style="font-size: 16px;">
+                                        Building
+                                    </label>
+                                    <input type="text" class="form-control" id="address2" style="font-size: 14px;" asp-for="OrderInformation.Address2" value="@Model.OrderInformation.Address2" readonly>
+                                </div>
+                                <div class="col-md">
+                                    <label for="address1" class="font-weight-bolder" style="font-size: 16px;">
+                                        Address
+                                    </label>
+                                    <input type="text" class="form-control" id="address1" style="font-size: 14px;" asp-for="OrderInformation.Address1" value="@Model.OrderInformation.Address1" readonly>
+                                </div>
+                                <div class="col-md">
+                                    <label for="city" class="font-weight-bolder" style="font-size: 16px;">
+                                        State
+                                    </label>
+                                    <input type="text" class="form-control" id="city" style="font-size: 14px;" asp-for="OrderInformation.City" value="@Model.OrderInformation.City" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row mb-5">
+                                <div class="col-md">
+                                    <label for="country" class="font-weight-bolder" style="font-size: 16px;">
+                                        country
+                                    </label>
+                                    <input autocomplete="off" class="form-control" id="country" style="font-size: 14px;" asp-for="OrderInformation.Country" value="@Model.OrderInformation.Country" readonly>
+                                </div>
+                                <div class="col-md">
+                                    <label for="postcode" class="font-weight-bolder" style="font-size: 16px;">
+                                        post code
+                                    </label>
+                                    <input type="text" class="form-control" id="postcode" style="font-size: 14px;" asp-for="OrderInformation.PostCode" value="@Model.OrderInformation.PostCode" readonly>
+                                </div>
+                                <div class="col-md">
+                                    <label for="check_payment" class="font-weight-bolder" style="font-size: 16px; white-space: nowrap; text-overflow: ellipsis;">
+                                        Payment Method
+                                        @*<i class="fas fa-info-circle icon-info" style="cursor: pointer; font-size: 14px; margin-bottom: 3px;" title="Be changed only when in pending state"></i>*@
+                                    </label>
+                                    @if (Model.OrderInformation.PaymentMethod == 0)
+                                    {
+                                        <input type="text" class="form-control" id="check_payment" style="font-size: 14px;" value="Pay by Check" readonly>
+                                    }
+                                    else
+                                    {
+                                        <input type="text" class="form-control" id="check_payment" style="font-size: 14px;" value="Pay by Bank" readonly>
+                                    }
+                                    @* <select id="check_payment" class="form-control" style="font-size: 14px;" readonly>
+                                    <option value="0" selected="@(Model.OrderInformation.PaymentMethod == 0 ? "selected" : null)">Pay by Check</option>
+                                    <option value="1" selected="@(Model.OrderInformation.PaymentMethod == 1 ? "selected" : null)">Pay by Bank</option>
+                                    </select>*@
+                                </div>
+                                @if (orderStatus != null)
+                                {
+                                    <div class="col-md-3">
+                                        <label for="statusId" class="font-weight-bolder" style="font-size: 16px; white-space: nowrap; text-overflow: ellipsis;">
+                                            Order Status
+                                        </label>
+                                        <input type="text" class="form-control" id="statusId" style="font-size: 14px;" value="@orderStatus.Value" readonly>
+                                    </div>
+                                }
+                            </div>
+
+
+                            @if (Model.OrderInformation.StatusId == 5)
+                            {
+                                <h3 style="text-align: center;">Order is Canceled </h3>
+                            }
+                            else
+                            {
+                                <div class="row mb-2">
+                                    @if (Model.OrderInformation.StatusId == 1)
+                                    {
+                                        <div class="col-md-3">
+                                            <button id="submit_btnCancel" type="submit" class="btn btn-primary f_13" style="font-size: 14px;  white-space: nowrap; text-overflow: ellipsis;">
+                                                Cancel Order
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                                @* <ul id="progressbar-2" class="d-flex justify-content-between mx-0 mt-0 mb-5 px-0 pt-0 pb-2">
+                            @foreach (var item in Model.ListOrderStatus)
+                            {
+                            <li class="step0 text-muted text-center" id="step-@item.Key"></li>
+                            }
+                            <li class="step0 text-muted text-center" id="step-1"></li>
+                            <li class="step0 text-muted text-center" id="step-2"></li>
+                            <li class="step0 text-muted text-center" id="step-3"></li>
+                            <li class="step0 text-muted text-end" id="step-4"></li>
+                            </ul>
+                            <div class="d-flex justify-content-between">
+                            @foreach(var item in Model.ListOrderStatus)
+                            {
+                            <div class="d-lg-flex align-items-center">
+                            <div style="margin-left: 8px;">
+                            <p class="fw-bold mb-1">@item.Value</p>
+                            </div>
+                            </div>
+                            }
+
+                            <div class="d-lg-flex align-items-center">
+                            <div style="margin-left: 8px;">
+                            <p class="fw-bold mb-1">Order</p>
+                            <p class="fw-bold mb-0">Pending</p>
+                            </div>
+                            </div>
+                            <div class="d-lg-flex align-items-center">
+                            <div style="margin-left: 8px;">
+                            <p class="fw-bold mb-1">Order</p>
+                            <p class="fw-bold mb-0">Processed</p>
+                            </div>
+                            </div>
+                            <div class="d-lg-flex align-items-center">
+                            <div style="margin-left: 8px;">
+                            <p class="fw-bold mb-1">Order</p>
+                            <p class="fw-bold mb-0">Shipped</p>
+                            </div>
+                            </div>
+                            <div class="d-lg-flex align-items-center">
+                            <div style="margin-left: 8px;">
+                            <p class="fw-bold mb-1">Order</p>
+                            <p class="fw-bold mb-0">Arrived</p>
+                            </div>
+                            </div>
+                            </div>*@
+                            }
+
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col-lg-4 col-12">
+                <div class="border rounded bg-white final_payment">
+                    <div class="card-body" style="max-height:500px; overflow-y: auto">
+                        @foreach (var item in Model.ListProductByOrderId)
+                        {
+                            <div class="row">
+                                <div class="col-sm-4 col-xs-12 mb-3">
+                                    @if (string.IsNullOrEmpty(@item.main_image_url))
+                                    {
+                                        <img src="~/img/no-photo/no-photo_800x800.png"
+                                             class="fst-image mx-auto d-block img-fluid border rounded"
+                                             alt="placeholder" />
+                                    }
+                                    else
+                                    {
+                                        <img src="@($"{item.main_image_url}")"
+                                             class="fst-image mx-auto d-block img-fluid border rounded"
+                                             alt="category" />
+                                    }
+                                </div>
+                                <div class="col-sm-8 col-xs-12">
+                                    <h6 class="font-weight-bolder" id="">@item.ProductName</h6>
+                                    <div class="font-weight-bolder pb-1" id="">#@item.SKU</div>
+
+                                    @*<div class="font-weight-bolder" id="">$@item.Price</div>*@
+                                    @if (string.IsNullOrEmpty(item.PriceSale))
+                                    {
+                                        <span class="font-weight-bolder price">
+                                            $@item.Price
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="font-weight-bolder price">
+                                            $@item.PriceSale
+                                            <del class="text-muted">$@item.Price </del>
+                                        </span>
+                                    }
+                                    <div>
+                                        <span class="f_13 pb-1">Size: </span>
+                                        <span class="float-right" style="margin-right: 1rem">@item.Size</span>
+                                    </div>
+                                    <div>
+                                        <span class="f_13 pb-1">Color: </span>
+                                        <span class="float-right" style="margin-right: 1rem">@item.Color</span>
+                                    </div>
+
+                                    <div>
+                                        <span class="f_13 pb-1">Qty: </span>
+                                        <span class="float-right" style="margin-right: 1rem">@item.QuantityItem</span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <hr />
+                        }
+                    </div>
+                    <div class="card-body  border-bottom">
+
+                        <p class="text-muted" style="font-size: 14px;">@Model.OrderInformation.TotalQuantityItem items</p>
+                        <p class="font-weight-bolderer">show details</p>
+                        <div style="font-size: 16px;">
+                            <span class="font-weight-bolder">subtotal</span>
+                            <span class="float-right font-weight-bolder">$@Model.OrderInformation.TotalPrice</span>
+                        </div>
+                        <div style="margin-top: 15px; font-size: 16px;">
+                            <span class="font-weight-bolder">shipping</span>
+                            <span class="float-right font-weight-bolder">Free</span>
+                        </div>
+                    </div>
+                    <div class="card-body ">
+                        <div style="font-size: 16px;">
+                            <span class="font-weight-bolder">taxes</span>
+                            @*<span class="float-right font-weight-bolder">$@Model.OrderInformation.Tax</span>*@
+                            <span class="float-right font-weight-bolder">$0</span>
+                        </div>
+                        <div style="font-size: 16px;">
+                            <span class="font-weight-bolder">total(tax excl.)</span>
+                            <span class="float-right font-weight-bolder">$@Model.OrderInformation.TotalPrice</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            // const statusId = parseInt(document.querySelector('input[name="StatusId"]').value);
+            // updateStepStatus(statusId, true);
+
+            // const step1 = document.querySelector('#step-1');
+            // step1.classList.add('custom-status-first');
+            // const step2 = document.querySelector('#step-2');
+            // step2.classList.add('custom-status-center');
+            // const step3 = document.querySelector('#step-3');
+            // step3.classList.add('custom-status-center');
+
+            // const step4 = document.querySelector('#step-4');
+            // step4.classList.add('custom-status-end');
+
+            //const step4li = document.querySelector('#progressbar-2 li:nth-child(4)');
+            //step4.classList.add('li-custom-status-end');
+        });
+
+        const steps = document.querySelectorAll('.step0');
+
+        function updateStepStatus(stepIndex, isActive) {
+            for (let i = 0; i < stepIndex; i++) {
+                const step = steps[i];
+                debugger;
+                if (isActive) {
+                    step.classList.add('active');
+                    step.classList.remove('text-muted');
+                } else {
+                    step.classList.remove('active');
+                    step.classList.add('text-muted');
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusId = parseInt(document.querySelector('input[name="StatusId"]').value);
+
+            const selectElement = document.getElementById('check_payment');
+
+            if (statusId !== 1) {
+                selectElement.disabled = true;
+            }
+        });
+
+    </script>
+}

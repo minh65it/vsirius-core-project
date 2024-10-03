@@ -1,0 +1,24 @@
+﻿@inject PhillyLuxEcommerce.Services.Interfaces.INotificationService _notification;
+
+@{
+    var notify = await _notification.GetTopNotification();
+}
+
+<div class="topbar-outer py-2 border-bottom d-md-none d-none d-none d-lg-block">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 topbar_left">
+                <ul>
+                    <li>
+                        <span class="font-weight-bolderer">@(string.IsNullOrWhiteSpace(notify?.Content) ? "Welcome to my store" : notify.Content)</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-4 text-xs-right topbar_right text-right">
+                <nav class="navbar d-flex align-items-center justify-content-end">
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,700 @@
+﻿@model ProductDetailVM
+
+<style>
+    .heart-red {
+        color: red;
+    }
+</style>
+<!-- single product header area -->
+<div id="single_product"
+     class="single_product_page animate__animated animate__fadeInUp">
+    <div class="sp_header bg-white">
+        <div class="container custom_container bg-white">
+            <div class="row ">
+                <div class="col-12 ">
+                    <ul class="p-md-3 p-2">
+                        <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                        <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                        <li class="d-inline-block hr_ font-weight-bolder">
+                            <a class="home-link" href="#">category</a>
+                        </li>
+                        <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                        <li class="d-inline-block hr_ font-weight-bolder">@Model.ItemType</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sp_header bg-white">
+        <div class="container sp_pro_container custom_container pt-2">
+            <div class="row sh_page bg-white rounded border py-2">
+                <div class="col-xl-4 col-lg-6 col-md-6 col-12 sp_left_product px-2">
+                    <div id="content" class="page-content">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-12 sp_zoom_pro mb-5">
+                                @*<img id="zoom_03"
+                                src="~/img/product/placeholder.jpg"
+                                class="rounded img-fluid js-product-cover"
+                                data-zoom-image="img/product/placeholder.jpg" />*@
+
+                                <img id="zoom_03"
+                                     src="@Model.main_image_url"
+                                     class="rounded img-fluid js-product-cover" style="max-width:95%"
+                                     data-zoom-image="@Model.main_image_url" />
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-12 sp_muti_pro">
+                                <div id="gallery_02" class="row owl-carousel owl-theme">
+                                    @{
+                                        var imageUrls = new List<string>
+                                        {
+                                            Model.main_image_url,
+                                            Model.other_image_url1,
+                                            Model.other_image_url2,
+                                            Model.other_image_url3,
+                                            Model.other_image_url4,
+                                            Model.other_image_url5,
+                                            Model.other_image_url6,
+                                            Model.other_image_url7,
+                                            Model.other_image_url8
+                                        };
+
+                                        foreach (var imageUrl in imageUrls.Where(url => !string.IsNullOrWhiteSpace(url)))
+                                        {
+                                            var imageGallery = new ImageGalleryVM { imageUrl = imageUrl };
+                                            <partial name="_ImageGallery" for="@imageGallery" />
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-8 col-lg-6 col-md-6 col-12 sp_right_product pl-lg-3 pl-2 pr-2">
+                    <div class="sp_ri_leftpart">
+                        <div class="sp_product_detail">
+                            <h1 class="font-weight-bolder">
+                                @Model.Title
+                            </h1>
+                            <span class="sp_price font-weight-bold">$@Model.Price</span>
+                            <div class="text-secondary sp_tax">Tax included.</div>
+                            <div class="sp_add_info">
+                                <ul>
+                                    <li class="sku my-2">
+                                        <span class="text-uppercase font-weight-bolder tags-title">sku:</span>
+                                        <span id="sku">@Model.SKU</span>
+                                    </li>
+                                    <li class="availability my-2">
+                                        <span class="font-weight-bolder tags-title">Availability:</span>
+                                        <span class="p_quantity">@Model.Quantity</span>
+                                        <span>in stock</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="sp_rating">
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                            </div>
+                            <div class="sp_text">
+                                <ul>
+                                    @{
+                                        if (!string.IsNullOrWhiteSpace(Model.BulletPoints))
+                                        {
+                                            foreach (var item in Model.BulletPoints.Split("|"))
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(item))
+                                                {
+                                                    <li class="my-2">
+                                                        <strong>-</strong> @item
+                                                    </li>
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                </ul>
+                            </div>
+
+
+                            @*<div id="clockdiv" class="sp_clockdiv">
+                            <div class="main_box rounded">
+                            <span class="days"></span>
+                            <div class="smalltext">Day</div>
+                            </div>
+                            <div class="main_box rounded">
+                            <span class="hours"></span>
+                            <div class="smalltext">Hour</div>
+                            </div>
+                            <div class="main_box rounded">
+                            <span class="minutes"></span>
+                            <div class="smalltext">Min</div>
+                            </div>
+                            <div class="main_box rounded">
+                            <span class="seconds"></span>
+                            <div class="smalltext">Sec</div>
+                            </div>
+                            </div>*@
+                            @*<div class="sp_color my-4">
+                            <ul>
+                            <li class="font-weight-bold text-uppercase my-2">color:</li>
+                            <li class="btn-group btn-group-toggle my-2"
+                            data-toggle="buttons">
+                            <label class="btn yellow rounded active">
+                            <input class="" type="radio" name="options" />
+                            </label>
+                            <label class="btn black rounded">
+                            <input class="" type="radio" name="options" />
+                            </label>
+                            </li>
+                            </ul>
+                            </div>*@
+                            @*<div class="sp_size">
+                            <ul>
+                            <li class="font-weight-bold text-uppercase my-2">size:</li>
+                            <li class="btn-group btn-group-toggle my-2"
+                            data-toggle="buttons">
+                            <label class="btn size_ rounded active">
+                            <input class="" type="radio" name="options" />S
+                            </label>
+                            <label class="btn size_ rounded">
+                            <input class="" type="radio" name="options" />M
+                            </label>
+                            <label class="btn size_ rounded">
+                            <input class="" type="radio" name="options" />L
+                            </label>
+                            </li>
+                            </ul>
+                            </div>*@
+
+                            <div class="sp_counter mt-4">
+                                <div class="sp_c_count1">
+                                    <div class="number">
+                                        <!-- <span class="minus">-</span>
+                                        <input type="text" value="1"/>
+                                        <span class="plus">+</span> -->
+                                        <div class="sp_counter">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <button type="button"
+                                                            class="btn btn-default btn-number p-0"
+                                                            disabled="disabled"
+                                                            data-type="minus"
+                                                            data-field="quant[1]">
+                                                        <span class="minus">-</span>
+                                                    </button>
+                                                </span>
+                                                <input type="number" id="productQty"
+                                                       name="quant[1]"
+                                                       class="form-control input-number"
+                                                       value="1"
+                                                       min="1"
+                                                       max="10" />
+                                                <span class="input-group-btn">
+                                                    <button type="button"
+                                                            class="btn btn-default btn-number p-0"
+                                                            data-type="plus"
+                                                            data-field="quant[1]">
+                                                        <span class="plus">+</span>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="sp_c_count2">
+                                    <a id="btnAddCart" class="btn btn-primary primary"
+                                       data-toggle="modal" data-target="#cart_model">
+                                        add to cart
+                                    </a>
+                                </span>
+                            </div>
+
+                            <div class="sp_about my-3">
+                                <span class="sp_comn1">
+                                    <a href="#"
+                                       class="font-weight-bolder home-link"
+                                       data-toggle="modal"
+                                       data-target="#shippingModal"><i class="fas fa-box-open"></i>shipping</a>
+                                </span>
+                               
+                            <div class="sp_buy my-3">
+                                <form id="buyItNow" action="/Payment">
+                                    <button type="submit" onclick="btnBuyItNow()" class="btn btn-primary primary">
+                                        buy it now
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="sp_wish_com my-3">
+
+                                @if (Model.CheckWishlist == true)
+                                {
+                                    <span class="sp_comp1">
+                                        <a id="heartIcon-@Model.SKU"
+                                           href="#" data-productId="@Model.SKU" data-idWishlist="@Model.WishListId.ToString()"
+                                           class="symbol pro_heart text-uppercase font-weight-bolder wishlist-load home-link wishlist-active"
+                                           data-toggle="modal"
+                                           data-target="#heart_model"><i class="fa fa-heart heart-red"></i><span>Remove To Wishlist</span></a>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="sp_comp1">
+                                        <a id="heartIcon-@Model.SKU"
+                                           href="#" data-productId="@Model.SKU"
+                                           class="symbol pro_heart font-weight-bolder text-uppercase wishlist-load home-link"
+                                           data-toggle="modal"
+                                           data-target="#heart_model"><i class="fa fa-heart"></i><span>Add To Wishlist</span></a>
+                                    </span>
+                                }
+                                @* <span class="sp_comp2">
+                                <a href="#" class="text-uppercase font-weight-bolder"><i class="fas fa-tasks"></i>ADD TO COMPARE</a>
+                                </span>*@
+                            </div>
+                            <div class="sp_ad_info">
+
+                            </div>
+                            <div class="sp_collapse_block my-4">
+                                <div class="accordion" id="collapse_block">
+
+                                    <div class="card">
+                                        <div class="card-header" id="heading_Two">
+                                            <h2 class="mb-0">
+                                                <button class="btn btn-link btn-block text-left collapsed"
+                                                        type="button"
+                                                        data-toggle="collapse"
+                                                        data-target="#collapse_Two"
+                                                        aria-expanded="false"
+                                                        aria-controls="collapse_Two">
+                                                    ADDITIONAL INFORMATION
+                                                    <span class="float-right">
+                                                        <i class="fas fa-angle-down"></i>
+                                                    </span>
+                                                </button>
+                                            </h2>
+                                        </div>
+                                        <div id="collapse_Two"
+                                             class="collapse"
+                                             aria-labelledby="heading_Two"
+                                             data-parent="#collapse_block">
+                                            <div class="card-body">
+                                                <table>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="pr-5">item type:</td>
+                                                            <td>@Model.ItemType</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>color:</td>
+                                                            <td>@Model.Color</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>metal type:</td>
+                                                            <td>@Model.MetalType</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-header" id="heading_Three">
+                                            <h2 class="mb-0">
+                                                <button class="btn btn-link btn-block text-left collapsed"
+                                                        type="button"
+                                                        data-toggle="collapse"
+                                                        data-target="#collapse_Three"
+                                                        aria-expanded="false"
+                                                        aria-controls="collapse_Three">
+                                                    REVIEW<span class="float-right">
+                                                        <i class="fas fa-angle-down"></i>
+                                                    </span>
+                                                </button>
+                                            </h2>
+                                        </div>
+                                        <div id="collapse_Three"
+                                             class="collapse"
+                                             aria-labelledby="heading_Three"
+                                             data-parent="#collapse_block">
+                                            <div class="card-body">
+                                                <span class="font-weight-bolder tags-title">This feature is not currently available.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- single product img and detail -->
+    <!-- related product -->
+    <div class="sp_header bg-white">
+        <div class="container custom_container t_pro_container fadeInUp">
+            <div class="row">
+                <div class="col-12">
+                    <div class="title_outer">
+                        <h5 class="font-weight-bolder mb-4 d-inline-block">
+                            related products
+                        </h5>
+                    </div>
+                    <!-- title_outer -->
+                </div>
+                <!-- col-12 -->
+            </div>
+            <!-- row -->
+            <div class="sp_header bg-white">
+                <div class="row">
+                    @{
+                        if (Model.RelatedProducts != null)
+                        {
+                            if (Model.RelatedProducts.Count() > 0)
+                            {
+                                <div id="related_product_carousel"
+                                     class="srelated_product_carousel owl-carousel owl-theme pro_thumb">
+
+                                    @foreach (var item in Model.RelatedProducts)
+                                    {
+                                        <div class="item">
+                                            <div class="col-12 no-padding-x">
+                                                <div class="product_thumb bg-yellow-custom rounded">
+                                                    <div class="pro_image">
+                                                        <a asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.ProductId">
+                                                            <img src="@item.MainImageUrl"
+                                                                 class="fst-image mx-auto d-block img-fluid"
+                                                                 alt="placeholder" />
+                                                        </a>
+                                                        <a asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.ProductId">
+                                                            <img src="@item.SubImageUrl"
+                                                                 class="second-img mx-auto d-block img-fluid"
+                                                                 alt="placeholder" />
+                                                        </a>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <div class="button-group">
+                                                            @if (item.CheckWishlist == true)
+                                                            {
+                                                                <a class="symbol pro_heart delete-wishlist-link wishlist-active" data-productId="@item.ProductId" data-idWishlist="@item.WishListId.ToString()" data-toggle="modal" data-target="#heart_model"></a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a class="symbol pro_heart add-wishlist-link" data-productId="@item.ProductId" data-toggle="modal" data-target="#heart_model"></a>
+                                                            }
+                                                            <a href="#"
+                                                               class="symbol pro_eye"
+                                                               data-toggle="modal"
+                                                               data-target="#eye_model"
+                                                               onclick="getModalDataProduct('@item.ProductId', '@item.ProductName', '@item.Price', '@item.ProductDescription', '@item.MainImageUrl');"></a>
+                                                            <a href="#"
+                                                               class="symbol pro_compare"
+                                                               data-toggle="modal"
+                                                               data-target="#compare_model "></a>
+                                                        </div>
+
+                                                        <div class="main_text">
+                                                            <h2 class="text-center pro-heading my-2">
+                                                                <a class="item-product" asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.ProductId" class="font-weight-bolderer">@item.ProductName</a>
+                                                            </h2>
+                                                            <div class="star">
+
+                                                                @if (item.CheckWishlist == true)
+                                                                {
+                                                                    <i id="heartIcon-@item.ProductId" class="fa fa-heart heart-blue iconVisible"></i>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <i id="heartIcon-@item.ProductId" class="fa fa-heart heart-blue iconHidden"></i>
+                                                                }
+
+                                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                                <i class="fa fa-star" aria-hidden="true"></i>
+                                                                <i class="fa fa-star" aria-hidden="true"></i>
+
+                                                                @if (item.CheckCart == true)
+                                                                {
+                                                                    <i id="cartIcon-@item.ProductId" class="fa fa-shopping-cart cart-blue iconVisible"></i>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <i id="cartIcon-@item.ProductId" class="fa fa-shopping-cart cart-blue iconHidden"></i>
+                                                                }
+
+                                                            </div>
+                                                            <span class="text-center prices">
+                                                                @{
+                                                                    if (!string.IsNullOrWhiteSpace(item.SalePrice))
+                                                                    {
+                                                                        <span class="font-weight-bolder price">$@item.SalePrice </span>
+                                                                        <del class="text-muted">$@item.Price</del>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="font-weight-bolder price">$@item.Price</span>
+                                                                    }
+                                                                }
+                                                            </span>
+                                                            <a href="#"
+                                                               onclick="addToCart('@item.ProductId',1)"
+                                                               class="symbol add_to_cart"
+                                                               data-toggle="modal" data-target="#cart_model">
+                                                                + ADD TO CART
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                    }
+                    <!-- product_carousel2 -->
+                </div>
+            </div>
+        </div>
+        <!-- related product end -->
+        <!-- product descr-->
+        <div class="sp_header bg-white">
+            <div class="container custom_container t_pro_container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="title_outer text-left">
+                            <h5 class="font-weight-bolder mb-4 d-inline-block">
+                                product description
+                            </h5>
+                        </div>
+                        <!-- title_outer -->
+                    </div>
+                    <!-- col-12 -->
+                </div>
+                <!-- row -->
+                <div class="row mx-0 pb-3">
+
+                    @Html.Raw(Model.Description)
+                </div>
+            </div>
+        </div>
+        <!-- product descr end -->
+        <!-- custom product -->
+        <div class="test">
+         
+        </div>
+    </div>
+</div>
+<!-- single_product_page -->
+@section Scripts {
+    <script src="~/js/jquery.elevatezoom.js"></script>
+    <script type="text/javascript">
+        //gallery  sm-product
+        $(document).ready(function () {
+            $("#gallery_02").owlCarousel({
+                itemsCustom: [
+                    [0, 3],
+                    [375, 2],
+                    [600, 5],
+                    [768, 5],
+                    [1199, 4],
+                    [1599, 5],
+                ],
+                autoPlay: 4000,
+                loop: true,
+                navigationText: [
+                    '<i class="fas fa-long-arrow-alt-left"></i>',
+                    '<i class="fas fa-long-arrow-alt-right"></i>',
+                ],
+                navigation: false,
+                pagination: false,
+            });
+
+            $('#btnAddCart').on('click', function () {
+                addToCart($('#sku').text().trim(), $('#productQty').val());
+            });
+        });
+
+        if (jQuery(window).width() >= 992) {
+            $(document).ready(function () {
+                $("#zoom_03").elevateZoom({
+                    gallery: "gallery_02",
+                    cursor: "pointer",
+                    easing: true,
+                    galleryActiveClass: "active",
+                    imageCrossfade: true,
+                    loadingIcon: "https://giphy.com/embed/hTrXs1jw6ABY9dDyxS",
+                });
+                //pass the images to Fancybox
+                //$("#zoom_03").bind("click", function (e) {
+                //    var ez = $("#zoom_03").data("elevateZoom");
+                //    $.fancybox(ez.getGalleryList());
+                //    return false;
+                //});
+            });
+        }
+
+        if (jQuery(window).width() <= 991) {
+            $(document).ready(function () {
+                $("#gallery_02 img").click(function () {
+                    var src = $(this).attr("src");
+                    $(this)
+                        .closest(".sp_pro_container .page-content")
+                        .find(".js-product-cover")
+                        .attr("src", src);
+                });
+            });
+        }
+
+        //getTimeRemaining
+        function getTimeRemaining(endtime) {
+            var t = Date.parse(endtime) - Date.now();
+            var seconds = Math.floor((t / 1000) % 60);
+            var minutes = Math.floor((t / 1000 / 60) % 60);
+            var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+            var days = Math.floor(t / (1000 * 60 * 60 * 24));
+            return {
+                total: t,
+                days: days,
+                hours: hours,
+                minutes: minutes,
+                seconds: seconds,
+            };
+        }
+
+        //function initializeClock(id, endtime) {
+        //    var clock = document.getElementById(id);
+        //    var daysSpan = clock.querySelector(".days");
+        //    var hoursSpan = clock.querySelector(".hours");
+        //    var minutesSpan = clock.querySelector(".minutes");
+        //    var secondsSpan = clock.querySelector(".seconds");
+
+        //    function updateClock() {
+        //        var t = getTimeRemaining(endtime);
+
+        //        if (t.total <= 0) {
+        //            document.getElementById("clockdiv").className = "hidden-div";
+        //            document.getElementById("timeIsNow").className = "visible-div";
+        //            clearInterval(timeinterval);
+        //            return true;
+        //        }
+
+        //        daysSpan.innerHTML = t.days;
+        //        hoursSpan.innerHTML = ("0" + t.hours).slice(-2);
+        //        minutesSpan.innerHTML = ("0" + t.minutes).slice(-2);
+        //        secondsSpan.innerHTML = ("0" + t.seconds).slice(-2);
+        //    }
+
+        //    updateClock();
+        //    var timeinterval = setInterval(updateClock, 1000);
+        //}
+
+        //var deadline = "2022-12-14T20:14:00+02:00";
+
+        //initializeClock("clockdiv", deadline);
+
+        //window.onload = function () {
+        //    // load thumbnails
+        //    photo = document.querySelectorAll(".photo-item");
+        //    photoLength = photo.length;
+        //    for (i = 0; i < photoLength; i++) {
+        //        photoW = photo[i].naturalWidth;
+        //        photoH = photo[i].naturalHeight;
+        //        if (photoW >= photoH) {
+        //            photo[i].style.height = "100px";
+        //        } else {
+        //            photo[i].style.width = "100px";
+        //        }
+        //    }
+        //    conentW = photoLength * 115;
+        //    document.getElementById("photo-container").style.width = conentW + "";
+
+        //    // load first photo
+        //    firstPhoto = document.querySelectorAll(".photo-item");
+        //    firstPhoto = firstPhoto[0];
+        //    firstPhotoUrl = firstPhoto.src;
+        //    firstPhotoAlt = firstPhoto.alt;
+        //    document.getElementById("photo-display").innerHTML =
+        //        '<a href="' +
+        //        firstPhotoUrl +
+        //        '" id="selected-photo"><img src="' +
+        //        firstPhotoUrl +
+        //        '" id="selected-photo" alt=""></a>';
+        //};
+
+        marginL = 0;
+        function leftRight(obj) {
+            spaceLeft = document.getElementById("photo-container").style.marginLeft;
+            spaceLeft = spaceLeft.replace("px", null);
+            spaceLeft = parseInt(spaceLeft);
+            step = 300;
+            totalLength = document.querySelectorAll(".photo-item").length;
+            totalLength *= -115;
+            objId = obj.id;
+            if (objId == "left") {
+                if (spaceLeft >= -step) {
+                    marginL = 0;
+                } else {
+                    marginL += step;
+                }
+            }
+            if (objId == "right") {
+                if (spaceLeft <= totalLength + 500 + step) {
+                    marginL = totalLength + 500;
+                } else {
+                    marginL -= step;
+                }
+            }
+            document.getElementById("photo-container").style.marginLeft =
+                marginL + "px";
+        }
+        function viewPhoto(obj) {
+            objUrl = obj.src;
+            objAlt = obj.alt;
+            document.getElementById("photo-display").innerHTML =
+                '<a href="' +
+                objUrl +
+                '" id="selected-photo"><img src="' +
+                objUrl +
+                '" id="selected-photo" alt=""></a>';
+        }
+
+        async function btnBuyItNow() {
+            var productQtyInput = document.getElementById('productQty');
+            var skuInput = document.getElementById('sku');
+
+
+            var response = await buyItNow(skuInput.textContent, productQtyInput.value)
+            if (respose.success) {
+                document.getElementById('buyItNow').submit();
+            }
+        }
+
+        async function buyItNow(itemsku, quantity) {
+            try {
+
+                let url = `/ProductDetail/BuyItNow?productId=${itemsku}&quantity=${quantity}`;
+
+                let response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    return { success: true };
+                }
+                else {
+                    return { success: false };
+                }
+            } catch (error) {
+                console.log(error)
+                return { success: false };
+            }
+        }
+    </script>
+}

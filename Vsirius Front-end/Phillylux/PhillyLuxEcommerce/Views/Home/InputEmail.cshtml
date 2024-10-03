@@ -1,0 +1,28 @@
+﻿<div id="forgot_page" class="forgot-page animate__animated animate__fadeInUp">
+    <div class="sp_header bg-white">
+        <div class="container custom_container bg-white">
+            <div class="row ">
+                <div class="col-12 ">
+                    <ul class="p-md-3 p-2">
+                        <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                        <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                        <li class="d-inline-block hr_ font-weight-bolder">Account Email</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container custom_container  mt-2">
+        <h3 class="text-center">Enter your email</h3>
+        <div id="forgot" class="page-content card card-block p-3 p-sm-4">
+            <form class="needs-validation" method="post" asp-action="InputEmail" asp-controller="Home">
+                <div class="form-group">
+                    <p class="renew_pass text-muted">Enter email to finish</p>
+                    <label for="Email" class="font-weight-bolder">Email </label>
+                    <input id="Enail" name="Email" type="text" class="form-control" required>
+                </div>
+                <input type="submit" name="submit" class="btn btn-primary mt-3" value="send">
+            </form>
+        </div>
+    </div>
+</div>

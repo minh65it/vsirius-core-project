@@ -1,0 +1,268 @@
+﻿@model CartDto
+
+<!-- cart page -->
+<div id="cart_page" class="cart-page animate__animated animate__fadeInUp">
+    <div class="sp_header bg-white">
+        <div class="container custom_container bg-white">
+            <div class="row ">
+                <div class="col-12 ">
+                    <ul class="p-md-3 p-2">
+                        <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                        <li class="d-inline-block font-weight-bolder">/</li>
+                        <li class="d-inline-block font-weight-bolder">Cart</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container custom_container ">
+        <div class="row">
+            <div class="col-12">
+                <div class="title_outer">
+                    <h1 class="mb-3 d-inline-block pb-3 position-relative h1_ font-weight-bolder">Cart</h1>
+                </div>
+                <!-- title_outer -->
+            </div>
+            <!-- col-12 -->
+        </div>
+        <!-- row -->
+        <div class="cart_details p-md-2 p-1">
+
+            @if (Model != null)
+            {
+                <div class="row">
+                    <div class="col-12 col-lg-8">
+                        <div class="card">
+                            <div class="card-header cart_header bg-white">
+                                <div class="card-title mb-0">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h5 class="mb-0" style="color:#d69531;">
+                                                <i class="fas fa-shopping-cart"></i>&nbsp;&nbsp;Shopping Cart
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body cart_body">
+                                @{
+                                    if (Model.ListCartDetailsDtos != null)
+                                    {
+                                        for (int i = 0; i < Model.ListCartDetailsDtos.Count; i++)
+                                        {
+                                            var item = Model.ListCartDetailsDtos[i];
+                                            <div id="cart-@i" class="row view-cart-d">
+                                                <div class="col-12 my-2 mt-1 text-right view-cart-d ">
+                                                    <a class="cart-trash" href="#cart-@(i-1)<0 ? 0 : i"><i class="fas fa-trash-alt"></i></a>
+                                                </div>
+                                                <div class="col-12 col-md-6 pr-0">
+                                                    <div class="d-flex">
+                                                        <input class="productId" name="productId" hidden value="@item.ProductId" />
+                                                        <div class=" col-xl-4 col-lg-5 col-md-4 col-4 px-0">
+                                                            <a asp-action="Index" asp-controller="ProductDetail" asp-route-productId="@item.ProductId">
+                                                                <img src="@item.Image" class="fst-image mx-auto d-block img-fluid border " alt="placeholder">
+                                                            </a>
+                                                        </div>
+                                                        <div class=" col-xl-8 col-lg-7 col-md-8 col-8 pr-0">
+                                                            <h4 class="product-name font-weight-bolder mb-2 mb-sm-3 mb-xl-3 mt-sm-2 mt-md-2">
+                                                                <a asp-action="Index" asp-controller="ProductDetail" asp-route-productId="@item.ProductId">
+                                                                    @item.ProductName
+                                                                </a>
+                                                            </h4>
+                                                            <div>
+                                                                @if (item.PriceSale != null)
+                                                                {
+                                                                    <span class="font-weight-bolderer price">$@item.PriceSale </span> <del class="text-muted">$@item.Price</del>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="font-weight-bolderer price">$@item.Price </span>
+                                                                }
+                                                            </div>
+                                                            @*<div class="my-1 f_13">
+                                            <span>size:</span>
+                                            <span>s</span>
+                                            </div>
+                                            <div class="f_13">
+                                            <span>color:</span>
+                                            <span>white</span>
+                                            </div>*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6 mt-4">
+                                                    <div class="d-flex justify-content-end">
+                                                        <div class=" col-5 text-right my-2 ">
+                                                            <span class="font-weight-bolder">$@(item.PriceSale ?? item.Price * item.Quantity)</span>
+                                                        </div>
+                                                        <div class=" col">
+                                                            <input type="number" name="quantity" class="form-control border itemQty" placeholder="0" value="@item.Quantity">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @if (i < Model.ListCartDetailsDtos.Count - 1)
+                                            {
+                                                <hr />
+                                            }
+                                        }
+                                    }
+                                }
+                                @* <div class="card-footer">
+                            <div class="row">
+                            <div class="col-6 col-sm-7 text-right">
+                            <div class="my-2 font-weight-bolder">
+                            <span>total:</span>
+                            <span>$@Model.TotalPrice</span>
+                            </div>
+                            </div>
+                            <div class="col-6 col-sm-5 checkout-btn">
+                            <a asp-controller="Payment" asp-action="Index"
+                            class="btn btn-block f_13 font-weight-bolder">Checkout</a>
+                            </div>
+                            </div>
+                            </div>*@
+                            </div>
+
+                            <p class="text-center cartempty1">Your Shopping cart is empty!</p>
+
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <div class="border rounded bg-white final_payment">
+                            <div class="card-body  border-bottom">
+                                <p class="text-muted">@Model.ListCartDetailsDtos?.Count items</p>
+                                <div>
+                                    <span class="font-weight-bolder">taxes</span>
+                                    <span class="float-right font-weight-bolder">$@(Model.Tax ?? 0)</span>
+                                </div>
+                                <div>
+                                    <span class="font-weight-bolder">total</span>
+                                    <span class="float-right font-weight-bolder">$@Model.TotalPrice</span>
+                                </div>
+                            </div>
+                            <div class="card-body text-center row">
+                                <div class="col-12 checkout-btn">
+                                    <a id="btnUpdateCart" class="btn btn-primary btn-block f_13 font-weight-bolderer">Update Cart</a>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col-6 text-right">
+                                        <div class="my-2 font-weight-bolder">
+                                            <span>total(tax excl.):</span>
+                                            <span>$@((Model.Tax ?? 0) + Model.TotalPrice)</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 checkout-btn">
+                                        <a asp-controller="Payment" asp-action="Index"
+                                           class="btn btn-block btn-primary f_13 font-weight-bolderer">Checkout</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-12 col-lg-8">
+                        <div class="card">
+                            <div class="card-body cart_body d-flex justify-content-center">
+                                <div class="row sh_page mt-5">
+                                    <div class="col-12">
+                                        <h5 style="text-align:center; font-size: 30px;">No Cart</h5>
+                                        <div class="text-center  mt-4">
+                                            <a asp-controller="SearchProduct" asp-action="Index" asp-route-productType="ring"
+                                               class="btn btn-primary f_13" style="font-size: 16px;">
+                                                Go to shopping
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <div class="border rounded bg-white final_payment">
+                            <div class="card mb-4 mb-lg-0">
+                                <div class="card-body">
+                                    <p style="font-size:14px; margin-left: 23px;"><strong>We accept</strong></p>
+                                    <div class="row justify-content-center">
+                                        <div class="col-4 text-center">
+                                            <img class="me-2" width="100"
+                                                 src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg"
+                                                 alt="Visa" />
+                                        </div>
+                                        <div class="col-4 text-center">
+                                            <img class="me-2" width="100"
+                                                 src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg"
+                                                 alt="American Express" />
+                                        </div>
+                                        <div class="col-4 text-center">
+                                            <img class="me-2" width="100"
+                                                 src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg"
+                                                 alt="Mastercard" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".cart-trash").click(function () {
+                let product = $(this).parent().parent();
+
+                let hr = product.next();
+                $(product).fadeOut("slow", function () {
+                    // After animation completed:
+                    $(product).remove();
+                    hr.remove();
+                });
+                $(product).fadeOut("slow", function () {
+                    // After animation completed:
+                    $(product).remove();
+                    hr.remove();
+                });
+            });
+
+            $('#btnUpdateCart').on('click', function () {
+                let arr = [];
+
+                $('.productId').each(function (index, element) {
+                    let item = {
+                        ProductId: $(element).val(),
+                        Quantity: $('.itemQty').eq(index).val()
+                    };
+
+                    arr.push(item);
+                });
+
+                $.ajax({
+                    url: '@Url.Action("UpdateCart","Cart")',
+                    async: false,
+                    data: { lstData: arr },
+                    type: 'POST',
+                    success: function (result) {
+                        if (result) {
+
+                            location.reload();
+                        } else {
+                            alert('Update failed!')
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    }

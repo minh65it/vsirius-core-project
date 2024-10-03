@@ -1,0 +1,358 @@
+﻿ <!-- cart-model -->
+<div class="modal fade" id="cart_model" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title f_13 font-weight-bolder">
+                    Notification
+                </div>
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <strong>Product successfully added to your shopping cart</strong>
+            </div>
+            <div class="modal-footer">
+                <a asp-controller="Cart" asp-action="Index"
+                   class="btn btn-primary mt-2 f_13 px-3 py-2 rounded">view cart</a>
+                <a asp-controller="Payment" asp-action="Index"
+                   class="btn btn-primary mt-2 f_13 px-3 py-2 rounded">check out</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- cart_model -->
+<!-- eye-model -->
+<div class="modal fade" id="eye_model" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-5 col-12">
+                        <img id="imageMainShowModalProduct" src=""
+                             class="fst-image mx-auto d-block img-fluid border rounded"
+                             alt="placeholder" />
+                    </div>
+                    <div class="col-sm-7 col-12">
+                        <h5 class="border-bottom me_name">
+                            <span id="productnameModalProduct"></span>
+                        </h5>
+                        <div class="font-weight-bolder border-bottom me_price">
+                            <span id="item_sku"></span>
+                        </div>
+                        <div class="font-weight-bolder border-bottom me_price">
+                            $ <span id="priceModalProduct"></span>
+                        </div>
+                        <div class="my-2 border-bottom me_des">
+                            <span id="descriptionModalProduct"></span>
+                        </div>
+                        <div class="me_quan">
+                            <div class="sp_counter">
+                                <div class="input-group">
+                                    <span class="input-group-btn">
+                                        <button type="button"
+                                                class="btn btn-default btn-number"
+                                                disabled="disabled"
+                                                data-type="minus"
+                                                data-field="quant[1]">
+                                            <span class="minus">-</span>
+                                        </button>
+                                    </span>
+                                    <input type="number"
+                                           name="quant[1]"
+                                           class="form-control input-number"
+                                           value="1"
+                                           min="1"
+                                           max="10" id="quantity" />
+                                    <span class="input-group-btn">
+                                        <button type="button"
+                                                class="btn btn-default btn-number"
+                                                data-type="plus"
+                                                data-field="quant[1]">
+                                            <span class="plus">+</span>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <span>
+                                <a id="addCart"
+                                   class="btn btn-primary primary mt-3"
+                                   data-dismiss="modal">add to cart</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<div class="modal fade" id="eye_model" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+    <div class="modal-header">
+    <button type="button"
+    class="close"
+    data-dismiss="modal"
+    aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    <div class="modal-body">
+    <div class="row">
+    <div class="col-sm-5 col-12">
+    <img src="~/img/main-banner/a.png"
+    class="fst-image mx-auto d-block img-fluid border rounded"
+    alt="placeholder" />
+    </div>
+    <div class="col-sm-7 col-12">
+    <h5 class="border-bottom me_name"></h5>
+    <div class="font-weight-bolder border-bottom me_price">
+    $19.12
+    </div>
+    <div class="my-2 border-bottom me_des">
+    Fashion has been creating well-designed collections since
+    2010.
+    </div>
+    <div class="me_quan">
+    <div class="sp_counter">
+    <div class="input-group">
+    <span class="input-group-btn">
+    <button type="button"
+    class="btn btn-default btn-number"
+    disabled="disabled"
+    data-type="minus"
+    data-field="quant[1]">
+    <span class="minus">-</span>
+    </button>
+    </span>
+    <input type="number"
+    name="quant[1]"
+    class="form-control input-number"
+    value="1"
+    min="1"
+    max="10" />
+    <span class="input-group-btn">
+    <button type="button"
+    class="btn btn-default btn-number"
+    data-type="plus"
+    data-field="quant[1]">
+    <span class="plus">+</span>
+    </button>
+    </span>
+    </div>
+    </div>
+    <span>
+    <a href="cart.html" class="btn btn-primary primary mt-3">add to cart</a>
+    </span>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>*@
+<!-- eye_model -->
+<!-- compare-model -->
+<div class="modal fade" id="compare_model" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="checked"></p>
+                <h5>Compare list updated!</h5>
+                <p class="text-muted font-weight-bolder">
+                    Temporarily in Development
+                    @* Product successfully removed from the product comparison!*@
+                </p>
+                @*<div class="text-danger font-weight-bolder">
+                <a href="compare.html">Go to Compare</a>
+                </div>*@
+            </div>
+        </div>
+    </div>
+</div>
+<!-- compare_model -->
+<!-- heart-model -->
+@if (Context?.User?.Identity?.IsAuthenticated ?? false) { }
+else
+{
+    <div class="modal fade" id="heart_model" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+
+                    @*<h4 id="wishlistTitle" class="font-weight-bolder" style="text-align: center; margin-bottom: 23px;"></h4>
+                <p class="checked"></p>
+                <p class="text-muted font-weight-bolder">
+                You must be logged in to manage your wishlist.
+                </p>
+                <div class="text-danger font-weight-bolder font-weight-bolder">
+                <a asp-controller="User" asp-action="Wishlist">
+                <button class="btn btn-warning">Go to wishlist</button>
+                </a>
+                </div>*@
+
+                    <h4 class="font-weight-bolder" style="text-align: center; margin-bottom: 23px;">Please Login And You Will Add Product To Your Wishlist !</h4>
+                    <p class="checked"></p>
+
+                    <div class="text-danger font-weight-bolder font-weight-bolder">
+                        <a asp-controller="Home" asp-action="Login" class="btn btn-warning">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- heart_model -->
+<!-- shipping -->
+<div class="modal fade"
+     id="shippingModal"
+     tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li>
+                        Fashion has been creating well-designed collections since 2010.
+                    </li>
+                    <li>
+                        The brand offers feminine designs delivering stylish separates
+                        and statement dresses which have since evolved into a full
+                        ready-to-wear collection in which every item is a vital part of
+                        a woman's wardrobe.
+                    </li>
+                    <li>
+                        The result? Cool, easy, chic looks with youthful elegance and
+                        unmistakable signature style.
+                    </li>
+                    <li>
+                        All the beautiful pieces are made in Italy and manufactured with
+                        the greatest attention. Now Fashion extends to a range of
+                        accessories including shoes, hats, belts and more!
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- shipping -->
+<!-- ask about product -->
+<div class="modal fade"
+     id="question_Modal"
+     tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">shipping</h5>
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body que_form">
+                <h6>have a any question?</h6>
+                <form>
+                    <div>
+                        <div class="col-12 sp_form pl-0 pb-3">
+                            <textarea id="question-message" class="form-control"
+                                      rows="3"
+                                      placeholder="Enter Your Message"></textarea>
+                        </div>
+                        <div class="col-12 sp_form pl-0 pb-3">
+                            <input id="question-name" type="text"
+                                   class="form-control"
+                                   placeholder="Enter Your Name" />
+                        </div>
+                        <div class="col-12 sp_form pl-0 pb-3">
+                            <input id="question-email" type="email"
+                                   class="form-control"
+                                   placeholder="Enter Your Mail" />
+                        </div>
+                        <div class="col-12 sp_form pl-0 pb-3">
+                            <input type="tel"
+                                   pattern=".{10}"
+                                   class="form-control"
+                                   id="other_number"
+                                   oninput="check(this)"
+                                   required
+                                   placeholder="Enter Your Phone" />
+                        </div>
+                        <div class="col-12 sp_form pl-0 pb-3">
+                            <button type="submit" class="btn btn-primary">
+                                submit review
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ask about product -->
+<!-- add to wishlist -->
+<div class="modal fade"
+     id="wish_Modal"
+     tabindex="-1"
+     aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                Please login and you will add product to your wishlist
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Sign In</button>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- add to wishlist -->

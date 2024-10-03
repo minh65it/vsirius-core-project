@@ -1,0 +1,171 @@
+﻿@model RegisterParam
+<!-- registration page -->
+<div id="Registration_page" class="Registration-page animate__animated animate__fadeInUp">
+    <div class="sp_header bg-white">
+        <div class="container custom_container bg-white">
+            <div class="row ">
+                <div class="col-12 ">
+                    <ul class="p-md-3 p-2">
+                        <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                        <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                        <li class="d-inline-block hr_ font-weight-bolder">Registration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container custom_container">
+        <h1 class="text-center h1_">Create your account </h1>
+        <div id="Registration" class="page-content card card-block p-3 p-sm-4  ">
+            <form class="needs-validation" method="post" id="registerForm"
+            asp-action="Register" asp-controller="Home">
+                <p>Already have an account?<a class="font-weight-bolder" asp-controller="Home" asp-action="Login"> Log in instead!</a></p>
+                <div class="form-group">
+                    @if (ViewBag.MessageEmail != null)
+                    {
+                        @Html.Raw(ViewBag.MessageEmail)
+                    }
+                </div>
+                <div class="form-group">
+                    <label for="FullName" class="font-weight-bolder">Full Name</label>
+                    <input type="text" class="form-control" id="FullName" name="FullName" value="@Model.FullName" required>
+                    <div class="invalid-feedback">Please Enter your Name.</div>
+                </div>
+                <div class="form-group">
+                    <label for="Email" class="font-weight-bolder">Email</label>
+                    <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" autocomplete="off" required>
+                    <div class="invalid-feedback">Valid email</div>
+                </div>
+                <div class="form-group">
+                    <label for="PhoneNumber" class="font-weight-bolder">Phone</label>
+                    <input type="text" class="form-control" pattern="[0-9]{10}" id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber" required>
+                    <div class="invalid-feedback">Please Enter your Account Name.</div>
+                </div>
+                <div class="form-group">
+                    <label for="Password" class="font-weight-bolder">Password</label>
+                    <input type="password" class="form-control" id="Password" name="Password" value="@Model.Password" required>
+                    <div class="invalid-feedback">Please Enter your password.</div>
+                </div>
+                <div class="form-group">
+                    <label for="RePassword" class="font-weight-bolder">Re-enter password</label>
+                    <input type="password" class="form-control" id="RePassword" required value="@Model.Password">
+                    <div class="invalid-feedback">Please Enter your password.</div>
+                </div>
+                <div>
+                    <button id="clearButton" type="reset" class="btn btn-primary rese float-left mt-3">reset</button>
+                    <input id="submitBtn" type="submit" name="submit" class="btn btn-primary mt-3 float-right" value="Save">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- registration page -->
+@section Scripts{
+    <script type="text/javascript">
+        const submitBtn = document.getElementById('submitBtn');
+        const nameInput = document.getElementById('FullName');
+        const emailInput = document.getElementById('Email');
+        const passwordInput = document.getElementById('Password');
+        const rePasswordInput = document.getElementById('RePassword');
+        const phoneInput = document.getElementById('PhoneNumber');
+
+        nameInput.addEventListener('blur', function () {
+            isNotNull(nameInput);
+        });
+
+        emailInput.addEventListener('blur', function () {
+            isEmailValid();
+        });
+
+        phoneInput.addEventListener('blur', function () {
+            isPhoneValid();
+        });
+
+        passwordInput.addEventListener('blur', function () {
+            isNotNull(passwordInput);
+        });
+
+        rePasswordInput.addEventListener('blur', function () {  
+            isNotNull(rePasswordInput);
+        });
+
+        submitBtn.addEventListener('click', function (event) {
+            event.preventDefault();
+            let password = passwordInput.value.trim();
+            let rePassword = rePasswordInput.value.trim();
+
+            if (isEmailValid() && isNotNull(passwordInput) && isNotNull(rePasswordInput) && isPhoneValid()) {
+                if(password == rePassword){
+                    let form = document.getElementById('registerForm');
+                    HTMLFormElement.prototype.submit.call(form);
+                }else{
+                    let validate = rePasswordInput.nextElementSibling;
+                    validate.textContent = "Passwords must match";
+                    validate.style.display = "block";
+                }               
+            }
+        });
+
+        function isPhoneValid(){
+            let phone = phoneInput.value.trim();
+            let validate = phoneInput.nextElementSibling;
+            if (phone) {
+                if (!phonenumber(phone)) {
+                    validate.textContent = "Please enter a valid phone (10 digits)";
+                    validate.style.display = "block";
+                    return false;
+                } else {
+                    validate.style.display = "none";
+                    return true;
+                }
+            } else {
+                validate.textContent = "Please enter your Phone";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function isEmailValid() {
+            let email = emailInput.value.trim();
+            let validate = emailInput.nextElementSibling;
+            if (email) {
+                if (!validateEmail(email)) {
+                    validate.textContent = "Please enter a valid Email";
+                    validate.style.display = "block";
+                    return false;
+                } else {
+                    validate.style.display = "none";
+                    return true;
+                }
+            } else {
+                validate.textContent = "Please enter your Email";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function isNotNull(element) {
+            let id = element.id
+            let password = element.value.trim();
+            let validate = element.nextElementSibling;
+            if (password) {
+                validate.style.display = "none";
+                return true;
+            } else {
+                validate.textContent = `Please Enter your ${id}`;
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function validateEmail(email) {
+            var re = /\S+@@\S+\.\S+/;
+            return re.test(email);
+        }
+
+        function phonenumber(phone) {
+            var re = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+            return re.test(phone);
+        }
+    </script>
+}

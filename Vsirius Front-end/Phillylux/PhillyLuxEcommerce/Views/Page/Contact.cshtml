@@ -1,0 +1,220 @@
+﻿@model ContactVM
+
+<section class="contact-page">
+    <div class="sp_header bg-white">
+        <div class="container custom_container bg-white">
+            <div class="row ">
+                <div class="col-12 ">
+                    <ul class="p-md-3 p-2">
+                        <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                        <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                        <li class="d-inline-block hr_ font-weight-bolder">Contact Us</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- title_outer -->
+    <div class="sp_header">
+        <div class="container custom_container">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 col-sm-12 col-12">
+                    <form id="contactForm" method="post" asp-controller="Page" asp-action="AddContact">
+                        <div class="row" style="font-size:16px">
+                            <div class="form-group mb-3 col-sm-12 col-12" style="font-size:14px">
+                                <label for="FullName" class="font-weight-bolder">Your Name</label>
+                                <input autocomplete="off" type="text" class="form-control" name="FullName" id="FullName" placeholder="Your Name*" asp-for="FullName" value="@Model.FullName" required="">
+                                <div class="invalid-feedback" style="font-size: 14px;">Please Enter your FullName.</div>
+                            </div>
+                            <div class="form-group mb-3 col-sm-12 col-12" style="font-size:14px">
+                                <label for="Email" class="font-weight-bolder">Your Email</label>
+                                <input autocomplete="off" type="email" class="form-control" name="Email" required="" id="Email" placeholder="Your Email*" value="@Model.Email" asp-for="Email">
+                                <div class="invalid-feedback" style="font-size: 14px;">Please Enter your Email.</div>
+                            </div>
+                            <div class="form-group mb-3 col-12" style="font-size:14px">
+                                <label for="Phone" class="font-weight-bolder">Your Phone</label>
+                                <input autocomplete="off" type="text" class="form-control" maxlength="10" name="Phone" id="Phone" placeholder="Your Phone" asp-for="Phone">
+                            </div>
+                            <div class="form-group mb-3 col-12" style="font-size:14px">
+                                <label for="Message" class="font-weight-bolder">Your Message</label>
+                                <textarea class="form-control" name="Message" id="Message" placeholder="Your Message" rows="7" asp-for="Message"></textarea>
+                                <div class="invalid-feedback" style="font-size: 14px;">Please Enter your Message.</div>
+                            </div>
+                            <div class="contact-us-btn col-12" style="font-size:16px">
+                                <button id="btnContact" type="submit" class="btn btn-small btn-primary">contact us</button>
+                            </div>
+                            <div id="message" class="ajax_response"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-6 col-md-12 col-sm-12 col-12 col-sm-offset-2 pt-lg-0 pt-md-4 pt-sm-4 pt-4">
+                    <div class="our_off">
+                        <h4 class="mb-3">Our Office</h4>
+                        <ul class="list list-icons list-icons-style-2 mt-2">
+                            <li class="mb-3"><i class="fas fa-map-marker-alt top-6"></i> <strong class="text-dark">Address:</strong> 630 Church ln, Yeadon, PA 19050, United States</li>
+                            <li class="mb-3"><i class="fas fa-phone top-6"></i> <strong class="text-dark">Phone:</strong> 215-500-2667</li>
+                            <li class="mb-0"><i class="fas fa-envelope top-6"></i> <strong class="text-dark">Email:</strong> <a href="#">admin@vsirius.com</a></li>
+                        </ul>
+                    </div>
+                    <div class="buss_hou">
+                        <h4 class="pt-5 mb-3">Business Hours</h4>
+                        <ul class="list list-icons list-dark mt-2">
+                            <li class="mb-3"><i class="far fa-clock top-6"></i> Monday - Friday - 9am to 5pm</li>
+                            <li class="mb-3"><i class="far fa-clock top-6"></i> Saturday - 9am to 2pm</li>
+                            <li class="mb-0"><i class="far fa-clock top-6"></i> Sunday - Closed</li>
+                        </ul>
+                    </div>
+                    <div class="pt-5">
+                        <h4>Get in Touch</h4>
+                        <p class="lead mb-0 get_in">
+                            We always strive to maintain contact with our customers!
+                            If you have any questions, requests, or concerns, please feel free to get in touch with us.
+                            We are ready to listen and assist you. You can reach us through phone, email, or by filling out the contact form on our website.
+                            Let us know how we can help you, and we will respond to you as soon as possible.
+                            Thank you for your interest, and we look forward to hearing from you!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script type="text/javascript">
+        const submitBtnContact = document.getElementById('btnContact');
+
+        submitBtnContact.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (validateFormContact()) {
+                let form = document.getElementById('contactForm');
+                HTMLFormElement.prototype.submit.call(form);
+            }
+        });
+
+
+        function validateFormContact() {
+            let isValid = true;
+
+            const fullNameInput = document.getElementById('FullName');
+            const emailInput = document.getElementById('Email');
+
+            const messageInput = document.getElementById('Message');
+
+            if (!isFieldValid(fullNameInput)) {
+                isValid = false;
+            }
+
+            if (!isEmailValid(emailInput)) {
+                isValid = false;
+            }
+
+
+            if (!isFieldValid(messageInput)) {
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function isFieldValid(field) {
+            let value = field.value.trim();
+            let validate = field.nextElementSibling;
+
+            field.addEventListener("input", function () {
+                value = field.value.trim();
+                if (value) {
+                    validate.style.display = "none";
+                }
+                else {
+                    validate.textContent = "Please enter a value";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (!value) {
+                validate.textContent = "Please enter a value";
+                validate.style.display = "block";
+                return false;
+            } else {
+                validate.style.display = "none";
+                return true;
+            }
+        }
+
+        function isEmailValid(emailInput) {
+            let email = emailInput.value.trim();
+            let validate = emailInput.nextElementSibling;
+            let emailRegex = /\S+@@\S+\.\S+/;
+
+            emailInput.addEventListener("input", function () {
+                email = emailInput.value.trim();
+                if (email) {
+                    if (!emailRegex.test(email)) {
+                        validate.textContent = "Please Enter a valid Email";
+                        validate.style.display = "block";
+                    } else {
+                        validate.style.display = "none";
+                    }
+                }
+                else {
+                    validate.textContent = "Please Enter your Email";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (email) {
+                if (!emailRegex.test(email)) {
+                    validate.textContent = "Please Enter a valid Email";
+                    validate.style.display = "block";
+                    return false;
+                } else {
+                    validate.style.display = "none";
+                    return true;
+                }
+            } else {
+                validate.textContent = "Please Enter your Email";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function isPhoneNumberValid(phoneInput) {
+            let phoneNumber = phoneInput.value.trim();
+            let validate = phoneInput.nextElementSibling;
+            let phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
+
+            phoneInput.addEventListener("input", function () {
+                phoneNumber = phoneInput.value.trim();
+                if (phoneNumber) {
+                    if (phoneRegex.test(phoneNumber)) {
+                        validate.style.display = "none";
+                    } else {
+                        validate.textContent = "Please enter a 10-digit phone number";
+                        validate.style.display = "block";
+                    }
+                }
+                else {
+                    validate.textContent = "Please Enter your Phone";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (phoneNumber) {
+                if (phoneRegex.test(phoneNumber)) {
+                    validate.style.display = "none";
+                    return true;
+                } else {
+                    validate.textContent = "Please enter a 10-digit phone number";
+                    validate.style.display = "block";
+                    return false;
+                }
+
+            } else {
+                validate.textContent = "Please Enter your Phone";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+    </script>
+}

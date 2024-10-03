@@ -1,0 +1,62 @@
+{
+  "BaseURLImage": "",
+  "BaseURLImageUser": "",
+  "ViewAnalytic": "http://192.168.2.163:5202/csr/api/PageView/",
+  "SecretInfoUser": "http://192.168.2.163:5202/csr/api/PageView/IndentityUser/",
+  "VsiriusSystemApi": "http://192.168.2.163:5202/system/api/Log/",
+  "NotificationService": {
+    "URL_MarkReadNotifications": "http://192.168.2.163:5202/csr/api/Notifications/UpdateView",
+    "URL_TopNotification": "http://192.168.2.163:5202/csr/api/Notifications/GetNotificationMain/",
+    "URL_AllNotifications": "http://192.168.2.163:5202/csr/api/Notifications/GetNotificationByUser/",
+    "URL_NotReadNotification": "http://192.168.2.163:5202/csr/api/Notifications/NotReadNotifications"
+  },
+  "ProductDetailService": {
+    "URL_Detail": "http://192.168.2.163:5202/product/api/VsiriusProduct/SKU/",
+    "URL_Related": "http://192.168.2.163:5202/product/api/VsiriusHomeProduct/GetRelatedProduct/"
+  },
+  "SearchService": {
+    "URL_Filter": "http://192.168.2.163:5202/product/api/VsiriusProduct/Filter/",
+    "URL_Search": "http://192.168.2.163:5202/product/api/VsiriusProduct/",
+    "URL_TopProduct": "http://192.168.2.163:5202/product/api/VsiriusTopProduct/"
+  },
+  "HomeService": {
+    "APIURlVsiriusFilter": "http://192.168.2.163:5202/product/api/VsiriusFilter/",
+    "APIURlVsiriusHomeProduct": "http://192.168.2.163:5202/product/api/VsiriusHomeProduct/",
+    "URL_RegisterAccount": "http://192.168.2.163:5202/identity/api/User/CreateUser/",
+    //"URL_CheckLogin": "https://localhost:7021/api/User/Login/",
+    "URL_CheckLogin": "http://192.168.2.163:5202/identity/api/User/Login/"
+  },
+  "CartService": {
+    "URL_CartDetails": "http://192.168.2.163:5202/order/api/VsiriusCart/ListCartByUser/",
+    "URL_AddToCart": "http://192.168.2.163:5202/order/api/VsiriusCart/AddCartOrDelete/"
+  },
+  "OrderService": {
+    "URL_Order": "http://192.168.2.163:5202/order/api/Order/",
+    "URL_Cart": "http://192.168.2.163:5202/order/api/VsiriusCart/",
+    //"URL_User": "https://localhost:7021/api/User/",
+    "URL_User": "http://192.168.2.163:5202/identity/api/User/",
+    "URL_OrderStatus": "http://192.168.2.163:5202/order/api/OrderStatus/"
+  },
+  "UserService": {
+    "URL_UserInfo": "http://192.168.2.163:5202/identity/api/User/GetUserDetail/",
+    "URL_ConfirmEmail": "http://192.168.2.163:5202/identity/api/User/ConfirmEmail/",
+    "URL_SendOTP": "http://192.168.2.163:5202/identity/api/User/SendSMS/",
+    "URL_ConfirmPhone": "http://192.168.2.163:5202/identity/api/User/VerifySMS/",
+    "URL_UpdateUser": "http://192.168.2.163:5202/identity/api/User/UpdateUser/",
+    "URL_UserWishlist": "http://192.168.2.163:5202/csr/api/Favorites/"
+  },
+  "PageService": {
+    "URL_Contact": "http://192.168.2.163:5202/csr/api/Contacts/",
+    "URL_ListPage": "http://192.168.2.163:5202/csr/api/DrivenHtmlPages/GetListData",
+    "URL_DetailPage": "http://192.168.2.163:5202/csr/api/DrivenHtmlPages/GetDetail"
+  },
+  "SignalR": {
+    "NotificationHub": "http://192.168.2.163:5202/csr/notificationhub"
+  },
+  "ApiVsiriusCredentials": {
+    "ClientId": "FrontEnd",
+    "ClientSecret": "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJkYXRhIjoiZjQyNTUxNzktMmNiYi00OTI5LThjMTgtOGJhMzc2NTUzOTAyLUZyb250RW5kIiwibmJmIjoxNjg3NTA3NDg2LCJleHAiOjE2ODc1MTEwODYsImlhdCI6MTY4NzUwNzQ4Nn0.",
+    "ClientIdOrder": "OrderApi",
+    "ClientSecretOrder": "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJkYXRhIjoiN2MwMTgxOTMtN2I4Yi00ODNmLTllZDAtNTUxZjk5NTQ1YzI2LU9yZGVyQXBpIiwibmJmIjoxNjg3NTA3NDAzLCJleHAiOjE2ODc1MTEwMDMsImlhdCI6MTY4NzUwNzQwM30."
+  }
+}
