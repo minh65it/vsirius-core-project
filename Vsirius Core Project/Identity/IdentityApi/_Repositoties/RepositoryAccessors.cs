@@ -1,13 +1,13 @@
 ﻿using IdentityApi._Repositories.Interfaces;
 using IdentityApi._Repositories.Repositories;
-using VsiriusDataModel.DataContext;
+using IdentityApi.Data;
 
 namespace IdentityApi._Repositoties
 {
     public class RepositoryAccessor : IRepositoryAccessor
     {
-        private VsiriusContext _dentityContext;
-        public RepositoryAccessor(VsiriusContext dentityContext)
+        private IdentityContext _dentityContext;
+        public RepositoryAccessor(IdentityContext dentityContext)
         {
             _dentityContext = dentityContext;
             employee = new EmployeeRepository(_dentityContext);

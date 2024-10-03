@@ -1,4 +1,4 @@
-﻿using VsiriusDataModel.DataModel;
+﻿using IdentityApi.Models;
 
 namespace IdentityApi._Repositories.Interfaces
 {

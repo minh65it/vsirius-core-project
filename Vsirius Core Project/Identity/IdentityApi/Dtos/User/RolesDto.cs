@@ -1,4 +1,4 @@
-﻿using VsiriusDataModel.DataModel;
+﻿using IdentityApi.Models.User;
 
 namespace IdentityApi.Dtos.User
 {

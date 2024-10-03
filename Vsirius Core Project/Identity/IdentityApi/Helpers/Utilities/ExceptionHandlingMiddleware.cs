@@ -1,17 +1,9 @@
 ﻿using System.Net;
-using VSiriusSystemLog.WriteLog;
 
 namespace IdentityApi.Helpers.Utilities
 {
     public class ExceptionHandlingMiddleware : IMiddleware
     {
-        private ILoggerCustom _logService;
-
-        public ExceptionHandlingMiddleware(ILoggerCustom logService)
-        {
-            _logService = logService;
-        }
-
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try
@@ -41,7 +33,6 @@ namespace IdentityApi.Helpers.Utilities
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;
                         break;
                 }
-                await _logService.CreateLogError(error.Message, "");
                 await context.Response.WriteAsync(error.Message);
             }
         }

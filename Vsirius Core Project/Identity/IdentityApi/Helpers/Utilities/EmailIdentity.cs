@@ -3,16 +3,16 @@ using System.Net;
 
 namespace IdentityApi.Helpers.Utilities
 {
-    public interface IEmailSenderSmtp
+    public interface IEmailSender
     {
         Task SendEmailAsync(string email, string subject, string message);
         Task<bool> CheckEmailExists(string email, string subject, string message);
     }
-    public class EmailSenderSmtp : IEmailSenderSmtp
+    public class EmailSender : IEmailSender
     {
         private readonly IConfiguration _configuration;
 
-        public EmailSenderSmtp(IConfiguration configuration)
+        public EmailSender(IConfiguration configuration)
         {
             _configuration = configuration;
         }

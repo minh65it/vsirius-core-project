@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using IdentityApi.Dtos.Auth;
 using IdentityApi.Dtos.User;
-using VsiriusDataModel.DataModel;
+using IdentityApi.Models;
+using IdentityApi.Models.User;
 using Microsoft.AspNetCore.Identity;
 
 namespace IdentityApi.Helpers.AutoMapper

@@ -1,19 +1,16 @@
 ﻿using AutoMapper;
 using IdentityApi._Repositoties;
 using IdentityApi._Services.Interfaces;
-using IdentityApi.Dtos;
+using IdentityApi.Data;
 using IdentityApi.Dtos.User;
 using IdentityApi.Helpers.Utilities;
-using VsiriusDataModel.DataModel;
+using IdentityApi.Models.User;
 using LinqKit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Azure.Core;
-using IdentityApi._Repositoties.Interfaces;
-using System.Web;
-using VSiriusSystemLog.WriteLog;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace IdentityApi._Services.Services
 {
@@ -23,26 +20,18 @@ namespace IdentityApi._Services.Services
         private readonly SignInManager<VsiriusUser> _signInManager;
         private readonly IMapper _mapper;
         private readonly IFunctionUtilities _functionUtilities;
-        private readonly IValidUser _validUser;
         private readonly IEmailSender _emailSender;
         private HttpRequest _request;
         private readonly IRepositoryAccessor _repositoryAccessor;
-        private ILoggerCustom _logService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
-        private readonly IAzureStorage _azureStorage;
-
-        public UserService(UserManager<VsiriusUser> userManager,
-            IMapper mapper,
-            IFunctionUtilities functionUtilities,
-            SignInManager<VsiriusUser> signInManager,
-            IEmailSender emailSender,
-            IHttpContextAccessor httpContextAccessor,
-            IRepositoryAccessor repositoryAccessor,
-            IValidUser validUser,
-            IConfiguration configuration,
-            IAzureStorage azureStorage,
-            ILoggerCustom logService)
+        private ILogService _logService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IdentityContext _context;
+        public UserService(UserManager<VsiriusUser> userManager, IMapper mapper,
+            IFunctionUtilities functionUtilities, SignInManager<VsiriusUser> signInManager, 
+            IEmailSender emailSender, IHttpContextAccessor httpContextAccessor, 
+            IRepositoryAccessor repositoryAccessor, IConfiguration configuration, 
+            ILogService logService, IdentityContext context)
         {
             _userManager = userManager;
             _mapper = mapper;
@@ -51,16 +40,14 @@ namespace IdentityApi._Services.Services
             _emailSender = emailSender;
             _httpContextAccessor = httpContextAccessor;
             _repositoryAccessor = repositoryAccessor;
-            _validUser = validUser;
             _configuration = configuration;
-            _azureStorage = azureStorage;
             _logService = logService;
+            _context = context;
         }
 
 
-        public async Task<OperationResult> CreateUser(UserDto Dto, IUrlHelper urlHelper, string originUrl)
+        public async Task<OperationResult> CreateUser(UserDto Dto, IUrlHelper urlHelper)
         {
-            //check mail
             var checkValid = _functionUtilities.IsValidEmail(Dto.Email);
             if (!checkValid)
             {
@@ -71,15 +58,9 @@ namespace IdentityApi._Services.Services
             {
                 return new OperationResult { Message = "Account already exists", Success = false };
             }
-            // check password
-            var checkPassword = _functionUtilities.IsValidPassword(Dto.Password);
-            if (!checkPassword)
-            {
-                return new OperationResult { Message = "Password must contain uppercase letters, lowercase letters, and numbers", Success = false };
-            }
-
             if (!string.IsNullOrWhiteSpace(Dto?.PhoneNumber))
             {
+                Dto.PhoneNumber = "+1" + Dto.PhoneNumber;
                 var checkValidPhone = _functionUtilities.IsValidPhone(Dto.PhoneNumber);
                 if (!checkValidPhone)
                 {
@@ -95,27 +76,20 @@ namespace IdentityApi._Services.Services
 
             try
             {
-                if (Dto.Avatar != null)
+                if(Dto.Avatar != null)
                 {
-                    var UploadRs = await _azureStorage.UploadAsync(Dto.Avatar);
-                    if(UploadRs.Error == true)
-                    {
-                        return new OperationResult { Message = "Can not upload image, please try again", Success = false };
-                    }
-                    user.Avatar = UploadRs.Blob.Uri;
+                    user.Avatar = @"upload/user/" + await _functionUtilities.UploadAsync(Dto.Avatar, @"upload/user", user.Id);
                 }
                 var result = await _userManager.CreateAsync(user, Dto.Password);
                 //Send mail confirm
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 _request = _httpContextAccessor.HttpContext.Request;
-                originUrl = originUrl != null ? originUrl : _configuration["FrontEndUrl"];
-                var confirmationLink = urlHelper.Action("Index", "Confirm", new { email = Dto.Email, token = token, redirect = originUrl }, _request.Scheme);
-                var checkMail = await _emailSender.SendEmailSendgird(Dto.Email, "Confirm your email from Vsirius", $"Confirm email for Vsirius at: <a href='{confirmationLink}'>{confirmationLink}</a>.");
+                var confirmationLink = urlHelper.Action("Index", "Confirm", new { email = Dto.Email, token = token }, _request.Scheme);
+                var checkMail = await _emailSender.CheckEmailExists(Dto.Email, "Confirm your email", $"Please confirm your email by clicking this link: <a href='{confirmationLink}'>link</a>.");
                 if (!checkMail)
                 {
                     await _userManager.DeleteAsync(user);
-                    await _azureStorage.DeleteAsync(Common.GetFileNameFromBlob(user.Avatar));
-                    //_functionUtilities.DeleteFile(user.Avatar);
+                    _functionUtilities.DeleteFile(user.Avatar);
                     return new OperationResult { Message = "Registered email does not exist", Success = false };
                 }
                 //await SendSMS(Dto.Email);
@@ -126,18 +100,17 @@ namespace IdentityApi._Services.Services
                 else
                 {
                     await _userManager.DeleteAsync(user);
-                    await _azureStorage.DeleteAsync(Common.GetFileNameFromBlob(user.Avatar));
-                    //_functionUtilities.DeleteFile(user.Avatar);
+                    _functionUtilities.DeleteFile(user.Avatar);
                     return new OperationResult { Message = "An error has occurred, contact Vsirus for support", Success = result.Succeeded };
                 }
             }
             catch (System.Exception ex)
             {
-                await _logService.CreateLogError(exception: ex.Message);
+                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new OperationResult { Message = "An error has occurred, contact Vsirus for support", Success = false };
             }
         }
-        public async Task ConfirmEmail(string email, IUrlHelper urlHelper, string originUrl)
+        public async Task ConfirmEmail(string email, IUrlHelper urlHelper)
         {
             try
             {
@@ -146,23 +119,17 @@ namespace IdentityApi._Services.Services
                 {
                     return;
                 }
-                _request = _httpContextAccessor.HttpContext.Request;
-                originUrl ??= _configuration["FrontEndUrl"];
-
                 var user = await _userManager.FindByEmailAsync(email);
 
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                _request = _httpContextAccessor.HttpContext.Request;
+                var confirmationLink = urlHelper.Action("Index", "Confirm", new { email = email, token = token }, _request.Scheme);
 
-                var confirmationLink = $"{originUrl}/Confirm?email={HttpUtility.UrlEncode(email)}&token={HttpUtility.UrlEncode(token)}";
-
-                await _emailSender.SendEmailSendgird(email, 
-                    "Confirm your email from Vsirius", $"Confirm email for Vsirius at:<br/> " +
-                    $"<button class = 'btn-primary'> <a href='{confirmationLink}'>Confirm</a> </button>" +
-                    $"<a href='{confirmationLink}'>{confirmationLink}</a>");
+                await _emailSender.SendEmailAsync(email, "Confirm your email", $"Please confirm your email by clicking this link: <a href='{confirmationLink}'>link</a>.");
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                await _logService.CreateLogError(exception: ex.Message);
+                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
             }
         }
         public async Task SendSMS(string email)
@@ -172,15 +139,23 @@ namespace IdentityApi._Services.Services
                 var user = await _userManager.FindByEmailAsync(email);
                 var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, user.PhoneNumber);
 
-                var message = $"Your authentication code is: {code}";
 
-                var sendSMS = await _functionUtilities.SendSMSWithAzure(user.PhoneNumber, message);
-                if (!sendSMS)
-                    new OperationResult { Message = "Gửi mã xác thực bị lỗi", Success = false };
+                var twilioAccountSid = _configuration["Twilio:AccountSid"];
+                var twilioAuthToken = _configuration["Twilio:AuthToken"];
+                var twilioFromPhoneNumber = _configuration["Twilio:FromPhoneNumber"];
+
+                TwilioClient.Init(twilioAccountSid, twilioAuthToken);
+
+                var message = $"Your authentication code is: {code}";
+                await MessageResource.CreateAsync(
+                    body: message,
+                    from: new Twilio.Types.PhoneNumber(twilioFromPhoneNumber),
+                    to: new Twilio.Types.PhoneNumber(user.PhoneNumber)
+                );
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                await _logService.CreateLogError(exception: ex.Message);
+                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
             }
         }
 
@@ -195,8 +170,7 @@ namespace IdentityApi._Services.Services
                 {
                     await _userManager.RemoveFromRoleAsync(user, item);
                 }
-                //_functionUtilities.DeleteFile(user.Avatar); 
-                await _azureStorage.DeleteAsync(Common.GetFileNameFromBlob(user.Avatar));
+                _functionUtilities.DeleteFile(user.Avatar);
                 var result = await _userManager.DeleteAsync(user);
                 if (result.Succeeded)
                     return new OperationResult { Message = "Deleted Success", Success = true };
@@ -205,19 +179,19 @@ namespace IdentityApi._Services.Services
             }
             catch (System.Exception ex)
             {
-                await _logService.CreateLogError(exception: ex.Message);
+                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new OperationResult { Message = "Deleted Error", Success = false, Caption = ex.ToString() };
             }
         }
 
         public async Task<PaginationUtility<UserDto>> GetAllUser(PaginationParam pagination, string inputSearch)
         {
-            var predicate = PredicateBuilder.New<VsiriusUser>(true);
+            var predicate = PredicateBuilder.New<VsiriusUser>(x => x.IsActive != false);
             if (!string.IsNullOrWhiteSpace(inputSearch))
             {
                 predicate = predicate.And(x => x.Email.ToLower().Contains(inputSearch.ToLower()) ||
                     x.UserName.ToLower().Contains(inputSearch.ToLower()) ||
-                    x.PhoneNumber.ToLower().Contains("+1" + inputSearch.ToLower()) ||
+                    x.PhoneNumber.ToLower().Contains(inputSearch.ToLower()) ||
                     x.Address1.ToLower().Contains(inputSearch.ToLower()) ||
                     x.Address2.ToLower().Contains(inputSearch.ToLower())
                     );
@@ -229,12 +203,12 @@ namespace IdentityApi._Services.Services
                 var result = _mapper.Map<List<UserDto>>(data);
                 return PaginationUtility<UserDto>.Create(result, pagination.PageNumber, pagination.PageSize, true);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                await _logService.CreateLogError(exception: ex.Message);
+                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return null;
             }
-
+         
         }
 
         public async Task<UserDto> GetUserDetail(string mail)
@@ -247,123 +221,46 @@ namespace IdentityApi._Services.Services
                 }
                 var data = await _userManager.FindByEmailAsync(mail);
                 var result = _mapper.Map<UserDto>(data);
-
-                // tạm thời không cần xác thực phone
-                result.PhoneNumberConfirmed = true;
-                result.TwoFactorEnabled = true;
                 return result;
             }
-            catch (Exception ex)
+            catch(Exception ex) 
             {
-                await _logService.CreateLogError(exception: ex.Message);
+                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new UserDto();
             }
-
+            
         }
 
         public async Task<UserForLoggedDto> Login(UserForLoginParam param)
         {
             try
             {
+                var checkMail = _functionUtilities.IsValidEmail(param.Email);
+                if (!checkMail)
+                {
+                    return null;
+                }
+                if (string.IsNullOrEmpty(param.Email))
+                {
+                    return null;
+                }
                 VsiriusUser user = new VsiriusUser();
                 if (param.IsAuthen)
                 {
-                    if (param.Provider == "Google")
+                    user = await _repositoryAccessor.user.FindSingle(x => x.Email == param.Email);
+                    if (user == null)
                     {
-                        // Gửi yêu cầu xác thực đến Google API sử dụng access token
-                        var httpClient = new HttpClient();
-                        var response = await httpClient.GetAsync($"https://www.googleapis.com/oauth2/v3/userinfo?access_token={param.Password}");
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            // Đọc và xử lý phản hồi từ Google API
-                            var content = await response.Content.ReadAsStringAsync();
-                            var googleUser = JsonConvert.DeserializeObject<GoogleUser>(content);
-
-                            if (googleUser.email_verified)
-                            {
-                                user = await _repositoryAccessor.user.FindSingle(x => x.Email == googleUser.email && x.IsActive == true);
-                                if (user == null)
-                                {
-                                    user = new VsiriusUser
-                                    {
-                                        Email = googleUser.email,
-                                        UserName = googleUser.email,
-                                        FullName = googleUser.name,
-                                        NormalizedEmail = googleUser.email.ToUpper(),
-                                        NormalizedUserName = googleUser.email.ToUpper(),
-                                        Avatar = googleUser.picture,
-                                        EmailConfirmed = true,
-                                        IsActive = true
-                                    };
-                                    _repositoryAccessor.user.Add(user);
-                                    await _repositoryAccessor.Save();
-                                }
-                                else
-                                {
-                                    user.EmailConfirmed = true;
-                                    _repositoryAccessor.user.Update(user);
-                                    await _repositoryAccessor.Save();
-                                }
-                            }
-                            else
-                            {
-                                return null;
-                            }
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    }
-                    if (param.Provider == "Facebook")
-                    {
-                        var httpClient = new HttpClient();
-                        var response = await httpClient.GetAsync($"https://graph.facebook.com/v18.0/me?fields=id,name,email,picture&access_token={param.Password}");
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            // Đọc và xử lý phản hồi từ Google API
-                            var content = await response.Content.ReadAsStringAsync();
-                            var fbUser = JsonConvert.DeserializeObject<FacebookUser>(content);
-                            var email = string.IsNullOrEmpty(fbUser.Email) ? param.Email : fbUser.Email;
-
-                            user = await _repositoryAccessor.user.FindSingle(x => x.Email == email && x.IsActive == true);
-
-                            if (user == null)
-                            {
-                                user = new VsiriusUser
-                                {
-                                    Email = email,
-                                    UserName = email,
-                                    FullName = fbUser.Name,
-                                    NormalizedEmail = fbUser.Email.ToUpper(),
-                                    NormalizedUserName = email.ToUpper(),
-                                    Avatar = fbUser.Picture.Data.Url,
-                                    EmailConfirmed = false,
-                                    IsActive = true
-                                };
-                                _repositoryAccessor.user.Add(user);
-                                await _repositoryAccessor.Save();
-                            }
-                        }
-                        else
-                        {
-                            return null;
-                        }
+                        var newUser = new VsiriusUser { UserName = param.Email, Email = param.Email };
+                        newUser.UserName = param.Email;
+                        newUser.NormalizedUserName = param.Email.ToUpper();
+                        newUser.NormalizedEmail = param.Email.ToUpper();
+                        _repositoryAccessor.user.Add(newUser);
+                        await _repositoryAccessor.Save();
+                        user = newUser;
                     }
                 }
                 else
                 {
-                    var checkMail = _functionUtilities.IsValidEmail(param.Email);
-                    if (!checkMail)
-                    {
-                        return null;
-                    }
-                    if (string.IsNullOrEmpty(param.Email))
-                    {
-                        return null;
-                    }
                     var checkData = await _signInManager.PasswordSignInAsync(param.Email,
                                   param.Password, true, lockoutOnFailure: true);
                     if (!checkData.Succeeded) return null;
@@ -371,7 +268,6 @@ namespace IdentityApi._Services.Services
                 }
                 //create claims details based on the user information
                 if (user == null) return null;
-                if (user.IsActive != true) return null;
                 var rolesToken = new string[] { "Customer" };
                 var token = _functionUtilities.GenerateToken(user.UserName, user.Email, rolesToken, 10);
 
@@ -380,17 +276,16 @@ namespace IdentityApi._Services.Services
                 {
                     isLogin = true,
                     user = _mapper.Map<UserDto>(user),
-                    token = token,
-                    Message = "Login Success"
+                    token = token
                 };
                 return result;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                await _logService.CreateLogError(exception: ex.Message);
+                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new UserForLoggedDto();
             }
-
+           
         }
 
         public Task<OperationResult> LogOut()
@@ -405,42 +300,64 @@ namespace IdentityApi._Services.Services
             {
                 return new OperationResult { Message = "Account does not exist", Success = false };
             }
-            Dto.Email = user.Email;
-            var checkDto = _validUser.IsValidUpdateUser(Dto);
-            if (!checkDto.Success)
-                return checkDto;
-
-            if (Dto.PasswordHash != user.PasswordHash)
+            if(!string.IsNullOrWhiteSpace(Dto.OldPassword) && user.PasswordHash == null)
             {
-                return new OperationResult { Message = "You can't change information", Success = false };
+                return new OperationResult { Message = "You are already signed with Google, Password null", Success = false };
+            }
+            if(!string.IsNullOrWhiteSpace(Dto?.PhoneNumber))
+            {
+                Dto.PhoneNumber = "+1" + Dto.PhoneNumber;
+                var checkValidPhone = _functionUtilities.IsValidPhone(Dto.PhoneNumber);
+                if (!checkValidPhone)
+                {
+                    return new OperationResult { Message = "Your phone number is not in the correct format", Success = false };
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(Dto.OldPassword))
+            {
+                var IsCheckPassword = await _userManager.CheckPasswordAsync(user, Dto?.OldPassword);
+                if (!IsCheckPassword)
+                {
+                    return new OperationResult { Message = "Wrong password", Success = false };
+                }
+                if(Dto.Password != null)
+                {
+                    var savePassword =  await _userManager.ChangePasswordAsync(user, Dto.OldPassword, Dto.Password);
+                    if (savePassword.Succeeded == false)
+                    {
+                        return new OperationResult { Message = "Save password error", Success = false };
+                    }
+                }
+            }
+            else
+            {
+                if(Dto.Password != null)
+                {
+                    var result =  await _userManager.AddPasswordAsync(user, Dto.Password);
+                    if (result.Succeeded == false)
+                    {
+                        return new OperationResult { Message = "Save password error", Success = false };
+                    }
+                }
             }
 
             if (user.PhoneNumber != Dto?.PhoneNumber)
             {
                 user.TwoFactorEnabled = false;
-                user.PhoneNumberConfirmed = false;
             }
             user.PhoneNumber = Dto?.PhoneNumber;
             user.Address1 = Dto?.Address1;
-            user.Address2 = Dto?.Address2;
-            user.State = Dto?.State;
+            user.IsActive = true;
+            user.Address2 =Dto?.Address2;
             user.City = Dto?.City;
             user.Country = Dto?.Country;
             user.FullName = Dto?.FullName;
             user.PostCode = Dto?.PostCode;
-            user.IsActive = Dto?.IsActive;
-
-            if (!string.IsNullOrWhiteSpace(Dto.Avatar))
+            
+            if (Dto.Avatar != null)
             {
-                await _azureStorage.DeleteAsync(Common.GetFileNameFromBlob(user.Avatar));
-
-                //_functionUtilities.DeleteFile(user.Avatar);
-                var updateRs = await _azureStorage.UploadAsync(Dto.Avatar);
-                if(updateRs.Error == true)
-                {
-                    return new OperationResult { Message = "An error has occurred, contact Vsirus for support", Success = false };
-                }
-                user.Avatar = updateRs.Blob.Uri;
+                _functionUtilities.DeleteFile(user.Avatar);
+                user.Avatar = @"upload/user/" + await _functionUtilities.UploadAsync(Dto.Avatar, @"upload/user", user.Id);
             }
 
             try
@@ -453,7 +370,7 @@ namespace IdentityApi._Services.Services
             }
             catch (System.Exception ex)
             {
-                await _logService.CreateLogError(exception: ex.Message);
+                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new OperationResult { Message = "An error has occurred, contact Vsirus for support", Success = false, Caption = ex.ToString() };
             }
         }
@@ -521,7 +438,7 @@ namespace IdentityApi._Services.Services
             var result = "";
             foreach (var item in data)
             {
-                result += item.Key + "|" + item.Value + ", ";
+                result += item.Key + "|" +item.Value + ", ";
             }
             return result;
         }
@@ -538,110 +455,9 @@ namespace IdentityApi._Services.Services
             {
                 return new OperationResult { Message = "Invalid token.", Success = false };
             }
-            try
-            {
-                user.PhoneNumberConfirmed = true;
-                var resultUpdate = await _userManager.UpdateAsync(user);
-                if (resultUpdate.Succeeded)
-                    return new OperationResult { Message = "Verify phone", Success = true };
-                else
-                    return new OperationResult { Message = "Phone number validation failed", Success = false };
-            }
-            catch (Exception)
-            {
+            await _userManager.SetTwoFactorEnabledAsync(user, true);
+            return new OperationResult { Message = "Verify phone", Success = true};
 
-                return new OperationResult { Message = "An error has occurred, contact Vsirus for support", Success = false };
-            }
-            //await _userManager.SetTwoFactorEnabledAsync(user, true);
-            //return new OperationResult { Message = "Verify phone", Success = true};
-
-        }
-        public async Task<OperationResult> UpdatePassword(UpdatePasswordDto Dto)
-        {
-
-            var user = await _userManager.FindByIdAsync(Dto.Id);
-            if (user == null)
-            {
-                return new OperationResult { Message = "Account does not exist", Success = false };
-            }
-            if (!string.IsNullOrWhiteSpace(Dto.OldPassword) && user.PasswordHash == null)
-            {
-                return new OperationResult { Message = "You are already signed with Google", Success = false };
-            }
-            //check password
-            var checkPassword = _functionUtilities.IsValidPassword(Dto.Password);
-            if (!checkPassword)
-            {
-                return new OperationResult { Message = "Password must contain uppercase letters, lowercase letters, and numbers", Success = false };
-            }
-
-            try
-            {
-                if (!string.IsNullOrWhiteSpace(Dto.OldPassword))
-                {
-                    var IsCheckPassword = await _userManager.CheckPasswordAsync(user, Dto?.OldPassword);
-                    if (!IsCheckPassword)
-                    {
-                        return new OperationResult { Message = "Wrong password", Success = false };
-                    }
-                    if (Dto.Password != null)
-                    {
-                        var savePassword = await _userManager.ChangePasswordAsync(user, Dto.OldPassword, Dto.Password);
-                        if (savePassword.Succeeded == false)
-                        {
-                            return new OperationResult { Message = "Save password error", Success = false };
-                        }
-                    }
-                }
-                else
-                {
-                    if (Dto.Password != null)
-                    {
-                        var result = await _userManager.AddPasswordAsync(user, Dto.Password);
-                        if (result.Succeeded == false)
-                        {
-                            return new OperationResult { Message = "Save password error", Success = false };
-                        }
-                    }
-                }
-                return new OperationResult { Message = "Successful updated", Success = true };
-            }
-            catch (System.Exception ex)
-            {
-                await _logService.CreateLogError(exception: ex.Message);
-                return new OperationResult { Message = "An error has occurred, contact Vsirus for support", Success = false, Caption = ex.ToString() };
-            }
-        }
-
-        public async Task<OperationResult> UpdatePasswordByAdmin(UpdatePasswordDto Dto)
-        {
-            var user = await _userManager.FindByIdAsync(Dto.Id);
-            if (user == null)
-            {
-                return new OperationResult { Message = "Account does not exist", Success = false };
-            }
-            if (user.PasswordHash == null)
-            {
-                return new OperationResult { Message = "You are already signed with Google, Password null", Success = false };
-            }
-
-            try
-            {
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var newPassword = string.IsNullOrWhiteSpace(Dto.Password) ? "welcome123" : Dto.Password;
-
-                var savePassword = await _userManager.ResetPasswordAsync(user, token, newPassword);
-                if (savePassword.Succeeded == false)
-                {
-                    return new OperationResult { Message = "Save password error", Success = false };
-                }
-                return new OperationResult { Message = "Successful updated", Success = true };
-            }
-            catch (System.Exception ex)
-            {
-                await _logService.CreateLogError(exception: ex.Message);
-                return new OperationResult { Message = "An error has occurred, contact IT for support", Success = false, Caption = ex.ToString() };
-            }
         }
     }
 }

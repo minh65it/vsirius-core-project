@@ -47,7 +47,7 @@ namespace IdentityApi.Controllers.Auth
             {
                 var roles = await _repo.userRolesEmployee.FindAll(x => x.Email == isLogin.Email).Join(
                     _repo.rolesEmployee.FindAll(),
-                    x => x.RoleId, y => y.Id,
+                    x => x.Id, y => y.Id,
                     (x, y) => new {
                         y.Name,
                     }).Select(x => x.Name).ToListAsync();

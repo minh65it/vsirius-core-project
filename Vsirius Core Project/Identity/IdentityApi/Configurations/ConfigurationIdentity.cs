@@ -1,9 +1,9 @@
-﻿using VsiriusDataModel.DataModel;
+﻿using IdentityApi.Data;
+using IdentityApi.Models.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using VsiriusDataModel.DataContext;
 
 namespace IdentityApi.Configurations
 {
@@ -23,7 +23,7 @@ namespace IdentityApi.Configurations
                 opt.Password.RequireDigit = false;
                 opt.Tokens.EmailConfirmationTokenProvider = "emailconfirmationByVsirius";
             })
-             .AddEntityFrameworkStores<VsiriusContext>()
+             .AddEntityFrameworkStores<IdentityContext>()
              .AddDefaultTokenProviders()
              .AddTokenProvider<EmailConfirmationTokenProvider<VsiriusUser>>("emailconfirmationByVsirius")
              .AddTokenProvider<PhoneNumberTokenProvider<VsiriusUser>>("tokePhonebyVsirius");
