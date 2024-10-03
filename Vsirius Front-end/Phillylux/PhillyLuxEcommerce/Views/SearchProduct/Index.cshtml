@@ -1,0 +1,429 @@
+﻿@model SearchVM
+@* @{
+    ViewData["IsPageSearchProduct"] = false;
+} *@
+<style>
+    .bl-border {
+        border: 1px solid #a0b8fa !important;
+    }
+
+    .filter-title {
+        margin: 0px -2px 0px -2px;
+        border-left: 1px solid #f8f8f9 !important;
+        border-right: 1px solid #f8f8f9 !important;
+        background-color: #d6e1ff;
+    }
+
+    .search-product {
+        position: absolute;
+        top: 50%;
+        left: 51% !important;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        width: 99% !important;
+        display: flex;
+    }
+
+        .search-product .search-field {
+            width: 85%;
+            border: none;
+            padding: 0 20px 0 -10px;
+            outline: none;
+            background-color: transparent;
+            height: 40px;
+        }
+
+        .search-product .search-btn {
+            position: absolute;
+            right: 0;
+            top: 2px;
+            padding: 0;
+            line-height: 29px;
+            background-color: transparent;
+            bottom: auto;
+            height: 40px;
+            float: right;
+            box-sizing: border-box;
+            border: none;
+            color: #fff;
+            font-weight: 500;
+            letter-spacing: 1px;
+            border-radius: 0 4px 4px 0;
+            -webkit-border-radius: 0 4px 4px 0;
+            -khtml-border-radius: 0 4px 4px 0;
+            -moz-border-radius: 0 4px 4px 0;
+            transition: all 500ms ease;
+            -webkit-transition: all 500ms ease;
+            -moz-transition: all 500ms ease;
+            -ms-transition: all 500ms ease;
+            -o-transition: all 500ms ease;
+            vertical-align: top;
+            font-size: 0;
+            background-image: url(../img/svg/search.svg);
+            background-attachment: scroll;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 24px;
+            width: 60px;
+        }
+</style>
+
+
+@* <!--- Slider------>
+<partial name="_Slider" view-data="ViewData" />
+<!--- Slider------> *@
+<slider>
+    <div class="col-lg-12 col-md-12 main_slider">
+        <img src="/img/main-banner/Banner-chinh.png"
+             class="w-100 img-fluid img-custom-desktop-only"
+             alt="s1" />
+        <img src="/img/main-banner/Banner_Products-Mobile.png"
+             class="w-100 img-fluid img-custom-mobile-only"
+             alt="s1" />
+    </div>
+    <!-- col-md-9 main_slider -->
+</slider>
+
+<!-- shop page -->
+<div id="shop_page" class="shop-page animate__animated animate__fadeInUp">
+    <div class="sp_header bg-white">
+        <div class="container custom_container bg-white">
+            <div class="row ">
+                <div class="col-12 ">
+                    <ul class="p-md-3 p-2">
+                        <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                        <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                        <li class="d-inline-block hr_ font-weight-bolder">categories</li>
+                        <li class="d-inline-block hr_ font-weight-bolder float-right">@ViewBag.Category</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container custom_container">
+        <div class="row">
+            <div class="col-lg-3 col-md-4">
+                <form action="#" id="shop_page-form" method="post" class="needs-validation" novalidate>
+                    <div class="shop_sidebar bl-border rounded bg-white">
+                        <h2 class="p-3 text-uppercase font-weight-bolder d-md-block d-none yellow-text"
+                            style="margin: 0">
+                            filter by @ViewBag.KeySearch
+                        </h2>
+                        @foreach (var filter in Model.lstFilter!)
+                        {
+                            <div class="s_filter mb-2">
+                                <input value="@filter.fieldName" hidden="hidden" name="@filter.fieldName">
+                                <h6 class="text-uppercase p-3 filter-title font-weight-bold toggle"
+                                    data-toggle="collapse" data-target="#@filter.fieldName">
+                                    @filter.labelName<button></button>
+                                </h6>
+                                <div class="p-3 collapse show" id="@filter.fieldName">
+                                    @foreach (var item in filter.value!)
+                                    {
+                                        <label class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="@item" name="@item">
+                                            <span class="form-check-label font-weight-bolderer">@item</span>
+                                            @*<span class="text-right float-right font-weight-bolder">(1)</span>*@
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        <div class="p-3">
+                            <button id="clearButton"
+                                    data-search-url="#"
+                                    class="btn clear_btn"
+                                    onclick="()=>location.reload();">
+                                Clear all
+                            </button>
+                        </div>
+                        
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-9 col-md-8">
+                <div class="row shop_grid_list_row mb-3 bg-white">
+                    <div class="col-xl-1 col-sm-2 col-3 bl-border pt-1">
+                        <div class="row">
+                            <div class="col-6 text-center">
+                                <a href="#" id="grid" class="btn">
+                                    <span class="grid_icon"><i class="fas fa-th"></i></span>
+                                </a>
+                            </div>
+                            <div class="col-6 text-center">
+                                <a href="#" id="list" class="btn">
+                                    <span class="list_icon"><i class="fas fa-list"></i></span>
+                                </a>
+                            </div>
+                        </div>  
+                    </div>
+                    <div class="col-xl-4 d-xl-inline-block d-lg-none d-sm-none d-none bl-border">
+                        <div class="show-product pt-2 text-left">
+                            There are <span id="totalCount">@(Model.pagination?.totalCount == null ? 0 : Model.pagination!.totalCount)</span> products
+                        </div>
+                    </div>
+                    <div class="col-xl-7 col-sm-10 col-9 pr-0 sortpro bl-border">
+                        <div class="text-right">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <form method="Get" class="search-product">
+                                    <input id="searchKey" name="search" placeholder="Search here..." autocomplete="on"
+                                           class="search-field" autofocus="autofocus">
+                                    <input id="btnSearch" type="submit" name="search" class="search-btn">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="products">
+                    <partial name="_SearchProducts" model="Model" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- shop_page -->
+@section Scripts
+    {
+    <script type="text/javascript">
+
+        //filter event
+        document.addEventListener("click", async function (event) {
+            if (event.target.classList.contains("form-check-input")) {
+                backToPage1();
+                await getSearchProducts(1);
+            }
+        });
+
+        //search event
+        $(document).on("click", "#btnSearch", async function (e) {
+            e.preventDefault();
+            backToPage1();
+            await getSearchProducts(1);
+        });
+
+        //prev event
+        $(document).on("click", '#btnPrev', async function (e) {
+            e.preventDefault();
+
+            let stopLoop = false;
+            let pageNumber = 0;
+            if (!$(this).hasClass('disabled')) {
+                $('.page-item').not('#btnPrev, #btnNext').each(async function (index, element) {
+                    if ($(element).hasClass('active')) {
+                        if ($(element).text().trim() == '1') {
+                            stopLoop = true;
+                            return false;
+                        } else {
+                            let btnNext = $('.page-item').eq($('.page-item').length - 1);
+                            if (btnNext.hasClass('disabled')) {
+                                btnNext.removeClass('disabled');
+                            }
+
+                            $(element).removeClass('active disabled');
+                            $('.page-item').eq(index).addClass('active disabled');
+
+                            try {
+                                pageNumber = Number($(".page-item.active a").text());
+                            } catch {
+                                pageNumber = Number($(".page-item.active").prev().find("a").text());
+                            }
+                            stopLoop = true;
+                            return false;
+                        }
+                    }
+
+                    if (stopLoop) {
+                        return false;
+                    }
+                })
+
+                await getSearchProducts(pageNumber);
+            }
+
+        });
+
+        //next event
+        $(document).on("click", '#btnNext', async function (e) {
+            e.preventDefault();
+
+            let stopLoop = false;
+            let pageNumber = 0;
+            if (!$(this).hasClass('disabled')) {
+                $('.page-item').not('#btnPrev, #btnNext').each(function (index, element) {
+                    if ($(element).hasClass('active')) {
+                        let totalPage = $('#totalPage').text();
+
+                        if ($(element).text().trim() == totalPage) {
+                            stopLoop = true;
+                            return false;
+                        } else {
+                            let btnPrev = $('.page-item').eq(0);
+                            if (btnPrev.hasClass('disabled')) {
+                                btnPrev.removeClass('disabled');
+                            }
+                            $('.page-item').eq(index + 2).addClass('active disabled');
+                            $(element).removeClass('active disabled');
+
+                            try {
+                                pageNumber = Number($(".page-item.active a").text());
+                            } catch {
+                                pageNumber = Number($(".page-item.active").next().find("a").text());
+                            }
+                            stopLoop = true;
+                            return false;
+                        }
+                    }
+
+                    if (stopLoop) {
+                        return false;
+                    }
+                });
+
+                await getSearchProducts(pageNumber);
+            }
+        });
+
+        //page event
+        $(document).on("click", ".page-item:not(#btnPrev, #btnNext)", async function (e) {
+            let pageNumber = 0;
+            try {
+                pageNumber = Number($(this).find('a').text().trim());
+            } catch {
+                return;
+            }
+            if (pageNumber > 1 && $('#btnPrev').hasClass('disabled')) {
+                $('#btnPrev').removeClass('active disabled');
+            }
+
+            if (pageNumber == 1) {
+                if (!$('#btnPrev').hasClass('disabled')) {
+                    $('#btnPrev').addClass('disabled');
+                }
+            }
+
+            let totalPage = Number($('#totalPage').text().trim());
+
+            if (totalPage == pageNumber) {
+                if (!$('#btnNext').hasClass('disabled')) {
+                    $('#btnNext').addClass('disabled');
+                }
+            }
+
+            if (!$(this).hasClass('active')) {
+                $('.page-item').not('#btnPrev, #btnNext').each(function () {
+                    if ($(this).hasClass('active')) {
+                        $(this).removeClass('active disabled');
+                        return false;
+                    }
+                });
+                $(this).addClass('active disabled');
+
+                try {
+                    pageNumber = Number($(".page-item.active a").text());
+                } catch {
+                    return;
+                }
+                await getSearchProducts(pageNumber);
+            }
+        });
+
+        const getSearchProducts = async function (pageNumber) {
+            loading();
+            try {
+                let filters = [];
+
+                document.querySelectorAll('.s_filter').forEach(function (element) {
+                    let checkedValues = [];
+                    element.querySelectorAll('input[type="checkbox"]:checked').forEach(function (checkbox) {
+                        checkedValues.push(checkbox.value);
+                    });
+
+                    if (checkedValues.length > 0) {
+                        let filter_item = {
+                            fieldName: element.querySelector('input[hidden="hidden"]').value.trim(),
+                            labelName: element.querySelector('h6').textContent.trim(),
+                            productType: '',
+                            value: checkedValues
+                        }
+                        filters.push(filter_item);
+                    }
+                });
+
+                let searchParam = {
+                    keyWord: $("#searchKey").val(),
+                    PageNumber: pageNumber,
+                    filters: filters
+                };
+
+                let response = await fetch('@Url.Action("GetProducts","SearchProduct")', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(searchParam)
+                });
+                let result = await response.text();
+                document.querySelector('#products').innerHTML = result;
+                document.querySelector('#totalCount').innerHTML = document.querySelector('#total').value;
+            }
+            catch (error) {
+                // Xử lý lỗi
+            }
+            hideloading();
+
+            document.querySelector('#products').scrollIntoView({
+                behavior: 'smooth'
+            });
+
+        };
+
+        const backToPage1 = function () {
+            let btnPrev = document.querySelectorAll('.page-item')[0];
+            if (!btnPrev.classList.contains('disabled')) {
+                btnPrev.classList.add('disabled');
+            }
+
+            let btnNext = document.querySelectorAll('.page-item')[document.querySelectorAll('.page-item').length - 1];
+            if (btnNext.classList.contains('disabled')) {
+                btnNext.classList.remove('disabled');
+            }
+
+            document.querySelectorAll('.page-item:not(#btnPrev):not(#btnNext)').forEach(function (element) {
+                if (element.innerText.trim() == '1') {
+                    if (element.classList.contains('active')) {
+                        return false;
+                    } else {
+                        element.classList.add('active', 'disabled');
+                    }
+                } else {
+                    if (element.classList.contains('active')) {
+                        element.classList.remove('active', 'disabled');
+                        return false;
+                    }
+                }
+            });
+        };
+
+        window.onload = function () {
+            window.scrollTo(0, 0);
+            var screenWidth = window.innerWidth;
+            if (screenWidth < 768) {
+                var elements = document.querySelectorAll('h6.toggle');
+                elements.forEach(function (element) {
+                    var nextElement = element.nextElementSibling;
+                    if (nextElement.classList.contains('show')) {
+                        nextElement.classList.remove('show');
+                    }
+
+                    if (!element.classList.contains('collapsed')) {
+                        element.classList.add('collapsed');
+                    }
+                });
+            }
+        };
+    </script>
+}

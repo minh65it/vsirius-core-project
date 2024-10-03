@@ -1,0 +1,53 @@
+﻿@inject PhillyLuxEcommerce.Services.Interfaces.INotificationService _notify;
+@{
+    var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+    List<PhillyLuxEcommerce.Dtos.NotificationDto>? lst = null;
+    if (email != null)
+    {
+        lst = await _notify.GetNotificationNotRead(email);
+    }
+}
+@if (lst != null)
+{
+    if(lst.Count > 0)
+    {
+        <a href="#" class="cart-qty">
+            <span class="d-lg-inline-block d-md-none d-sm-none d-none align-middle font-weight-bolderer"></span>
+            <span class="price_cart d-md-inline-block align-middle font-weight-bolderer"></span>
+        </a>
+    }
+}
+
+<span class="dropdown-toggle my_account"
+      role="menu"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false">
+</span>
+<div class="dropdown-menu r_menu dropdown-menu-right">
+    @if (!(Context?.User?.Identity?.IsAuthenticated ?? false))
+    {
+        <a class="dropdown-item font-weight-bolderer"
+           asp-controller="Home" asp-action="Login">log in</a>
+        <a class="dropdown-item font-weight-bolderer"
+        asp-controller="Home" asp-action="Register">register</a>
+    }
+    else
+    {
+        <a class="dropdown-item font-weight-bolderer" asp-controller="User" asp-action="Notification">
+            Notification
+            @if (lst != null)
+            {
+                if(lst.Count > 0)
+                {
+                    <span class="badge badge-warning">@lst.Count</span>
+                }
+            }
+        </a>
+        <a class="dropdown-item font-weight-bolderer" asp-controller="User" asp-action="Index">Account</a>
+        <a class="dropdown-item font-weight-bolderer" asp-action="OrderHistory" asp-controller="Payment">Orders</a>
+        <form method="post" asp-controller="Home" asp-action="Logout">
+            <input class="dropdown-item font-weight-bolderer" type="submit" value="Logout" />
+        </form>
+    }
+</div>

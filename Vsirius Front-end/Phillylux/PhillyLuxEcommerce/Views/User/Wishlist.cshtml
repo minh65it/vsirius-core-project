@@ -1,0 +1,210 @@
+﻿@model WishlistPagingMV
+
+
+<section class="section-content padding-y mt-5">
+    <div class="container">
+        <div class="row bg-white">
+            <div class="col-12 ">
+                <ul class="p-md-3 p-2">
+                    <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                    <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                    <li class="d-inline-block hr_ font-weight-bolder">wishlist</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <aside class="col-md-3 mt-2">
+                <nav class="list-group">
+                    <nav class="list-group">
+                        <a class="list-group-item " asp-controller="User" asp-action="Index"> Account </a>
+                        <a class="list-group-item" asp-action="OrderHistory" asp-controller="Payment"> My Orders </a>
+                        <a class="list-group-item active" asp-controller="User" asp-action="Wishlist"> My wishlist </a>
+                        <a class="list-group-item" asp-controller="User" asp-action="Notification"> Notification </a>
+                    </nav>
+                </nav>
+            </aside> <!-- col.// -->
+            <main class="col-md-9 mt-2">
+                @if (Model != null)
+                {
+                    <div id="wishlist_page" class="wishlist-page animate__animated animate__fadeInUp">
+                        <div class="card">
+                            <div class="card-body">
+                                <div>
+                                    <div class="row sh_page border-bottom">
+                                        <div class="col-6">
+                                            <span class="font-weight-bold" style="font-size: 20px;">Wishlist</span>
+                                        </div>
+                                        @if (Model.Wishlists.Count > 0)
+                                        {
+                                            <div class="col-6">
+                                                <span class="font-weight-bold" style="font-size: 16px; float:right">Total Wishlist: @Model.Pagination.totalCount</span>
+                                            </div>
+                                        }
+                                    </div>
+                                    @if (Model.Wishlists.Count > 0)
+                                    {
+                                        @foreach (var item in Model.Wishlists)
+                                        {
+                                            <div class="row sh_page border-bottom item mt-4 p-1" style="cursor: pointer;"
+                                                 onclick="redirectToOtherPage('@Url.Action("Index", "ProductDetail", new { productId = item.ProductId })')"
+                                                 oncontextmenu="openInNewTab('@Url.Action("Index", "ProductDetail", new { productId = item.ProductId })'); return false;">
+                                                <div class="col-12 col-md-10 pr-0">
+                                                    <div class="d-flex">
+                                                        <div class=" col-xl-3 col-lg-5 col-md-5 col-4 px-0">
+                                                            @if (string.IsNullOrEmpty(item.main_image_url))
+                                                            {
+                                                                <img src="~/img/no-photo/no-photo_800x800.png"
+                                                                     class="fst-image mx-auto d-block img-fluid border rounded"
+                                                                     alt="placeholder" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src="@($"{item.main_image_url}")"
+                                                                     class="fst-image mx-auto d-block img-fluid border rounded"
+                                                                     alt="category" />
+                                                            }
+                                                        </div>
+                                                        <div class=" col-xl-8 col-lg-7 col-md-7 col-8 pr-0">
+                                                            <h5 class="w_product_name">@item.item_name</h5>
+                                                            <h6>#@item.item_sku</h6>
+                                                            @if (string.IsNullOrEmpty(item.price_seo))
+                                                            {
+                                                                <h6>
+                                                                    $@item.standard_price
+                                                                </h6>
+                                                            }
+                                                            else
+                                                            {
+                                                                <h6>
+                                                                    $@item.price_seo
+                                                                    <del class="text-muted">$@item.standard_price</del>
+                                                                </h6>
+                                                            }
+                                                            <ul>
+                                                                <li class="my-1 f_14">
+                                                                    <span>@item.bullet_point</span>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 col-md-2 pl-0">
+                                                    <a asp-controller="Wishlist" asp-action="DeleteWishlist" asp-route-idWishlist="@item.Id.ToString()"><i class="fas fa-trash-alt " style="font-size: 24px; float:right"></i></a>
+                                                </div>
+                                            </div>
+                                        }
+                                        @if (Model.Pagination.totalPage > 1)
+                                        {
+                                            <div class="row">
+                                                <div class="col-12 mt-4">
+                                                    <div class="">
+                                                        <p class="font-weight-bold" style="margin-bottom: 0;float: right">
+                                                            Total Page: @Model.Pagination.totalPage
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <nav class="float-right mt-2 mt-col-3">
+                                                        <ul class="pagination">
+                                                            <li class="page-item">
+                                                                <a type="submit" class="page-link" href="/User/Wishlist/?pageNumber=1">
+                                                                    <span aria-hidden="true">&laquo;</span>
+                                                                </a>
+                                                            </li>
+
+                                                            @if (Model.Pagination.totalPage > 0)
+                                                            {
+                                                                int startPage = Model.Pagination.pageNumber - 1;
+                                                                if (startPage < 1)
+                                                                {
+                                                                    startPage = 1;
+                                                                }
+                                                                int endPage = startPage + 2;
+                                                                if (endPage > Model.Pagination.totalPage)
+                                                                {
+                                                                    endPage = Model.Pagination.totalPage;
+                                                                    startPage = endPage - 2;
+                                                                    if (startPage < 1)
+                                                                    {
+                                                                        startPage = 1;
+                                                                    }
+                                                                }
+                                                                for (int i = startPage; i <= endPage; i++)
+                                                                {
+                                                                    <li class="page-item">
+                                                                        @if (i == Model.Pagination.pageNumber)
+                                                                        {
+                                                                            <a class="page-link" style="background-color:#d69531" aria-current="page" href="/User/Wishlist/?pageNumber=@i" disabled>@i</a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a class="page-link" href="/User/Wishlist/?pageNumber=@i">@i</a>
+                                                                        }
+                                                                    </li>
+                                                                }
+                                                            }
+
+                                                            <li class="page-item">
+                                                                <a type="submit" class="page-link" href="/User/Wishlist/?pageNumber=@Model.Pagination.totalPage">
+                                                                    <span aria-hidden="true">&raquo;</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="row sh_page mt-5">
+                                            <div class="col-12">
+                                                <h5 style="text-align:center; font-size: 30px;">No product wishlist</h5>
+                                                <div class="text-center  mt-4">
+                                                    <a asp-controller="SearchProduct" asp-action="Index" asp-route-productType="ring"
+                                                       class="btn btn-primary f_13" style="font-size: 16px;">
+                                                        Go to shopping
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </main>
+        </div>
+    </div>
+</section>
+
+<style>
+    .item {
+        border-bottom: 1px solid #ccc; /* Màu và độ dày ban đầu của border-bottom */
+    }
+    .item:hover {
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        transform: translateY(-2px);
+        border-bottom: 2px solid #000;
+    }
+</style>
+
+
+@section Scripts{
+    <script type="text/javascript">
+
+        function redirectToOtherPage(url) {
+            window.location.href = url;
+        }
+        function openInNewTab(url) {
+            var win = window.open(url, '_blank');
+            win.focus();
+        }
+    </script>
+}

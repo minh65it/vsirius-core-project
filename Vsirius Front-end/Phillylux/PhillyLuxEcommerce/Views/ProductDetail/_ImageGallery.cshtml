@@ -1,0 +1,15 @@
+﻿@model ImageGalleryVM
+
+<div class="col-12 px-1">
+    <a href="#zoom_03"
+       class="elevatezoom-gallery"
+       data-image="@Model.imageUrl"
+       data-zoom-image="@Model.imageUrl">
+        @*<img src="~@Model.imageUrl"
+        class="border rounded img-fluid"
+        width="100" />*@
+        <img src="@Model.imageUrl"
+             class="border rounded img-fluid"
+             width="100" />
+    </a>
+</div>

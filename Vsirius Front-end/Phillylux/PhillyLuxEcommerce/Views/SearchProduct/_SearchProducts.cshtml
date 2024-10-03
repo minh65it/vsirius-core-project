@@ -1,0 +1,223 @@
+﻿@model SearchVM
+
+<input id="total" hidden value="@Model.pagination!.totalCount" />
+
+<div class="row justify-content-center pt-3 pr-3"
+     style="background-color: #a0b8fa">
+    @{
+        if (Model.lstSearchProduct!.Count > 0)
+        {
+            foreach (var item in Model.lstSearchProduct!)
+            {
+                <div class="item col-xl-3 no-padding-x">
+                    <div class="product_thumb bg-white rounded">
+                        <div class="pro_image">
+                            <a asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.ProductId">
+                                @if (!string.IsNullOrWhiteSpace(item.MainImageUrl))
+                                {
+                                    <img src="@item.MainImageUrl" class="fst-image mx-auto d-block img-fluid" alt="placeholder">
+                                }
+                                else
+                                {
+                                    <img src="~/img/no-photo/NO-PHOTO_800x800.png" class="fst-image mx-auto d-block img-fluid" alt="placeholder">
+                                }
+
+                            </a>
+                            <a asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.ProductId">
+                                @if (!string.IsNullOrWhiteSpace(item.SubImageUrl))
+                                {
+                                    <img src="@item.SubImageUrl" class="second-img mx-auto d-block img-fluid" alt="placeholder">
+                                }
+                                else
+                                {
+                                    <img src="~/img/no-photo/NO-PHOTO_800x800.png" class="second-img mx-auto d-block img-fluid" alt="placeholder">
+                                }
+                            </a>
+                        </div>
+                        <div class="text-center main_text pt-1">
+                            <div id="search_item">
+                                <div class="star mb-2">
+
+                                    @if (item.CheckWishlist == true)
+                                    {
+                                        <i id="heartIcon-@item.ProductId" class="fa fa-heart heart-blue iconVisible"></i>
+                                    }
+                                    else
+                                    {
+                                        <i id="heartIcon-@item.ProductId" class="fa fa-heart heart-blue iconHidden"></i>
+                                    }
+
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                    @if (item.CheckCart == true)
+                                    {
+                                        <i id="cartIcon-@item.ProductId" class="fa fa-shopping-cart cart-blue iconVisible"></i>
+                                    }
+                                    else
+                                    {
+                                        <i id="cartIcon-@item.ProductId" class="fa fa-shopping-cart cart-blue iconHidden"></i>
+                                    }
+
+                                </div>
+                                <h2 class="pro-heading font-weight-bolderer mb-1 "><a class="item-product" asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.ProductId">@item.ProductName</a></h2>
+                                @if (string.IsNullOrWhiteSpace(item.SalePrice))
+                                {
+                                    <span class="text-center prices"><span class="font-weight-bolder price">$@item.Price </span></span>
+                                }
+                                else
+                                {
+                                    <span class="text-center prices">
+                                        <span class="font-weight-bolder price">$@item.SalePrice </span> <del class="text-muted">$@item.Price</del>
+                                    </span>
+                                }
+                                <p class="description mt-1">
+                                    @item.ProductDescription
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="button-group">
+                            @if (item.CheckWishlist == true)
+                            {
+                                <a class="symbol pro_heart delete-wishlist-link wishlist-active" data-productId="@item.ProductId" data-idWishlist="@item.WishListId.ToString()" data-toggle="modal" data-target="#heart_model"></a>
+                            }
+                            else
+                            {
+                                <a class="symbol pro_heart add-wishlist-link" data-productId="@item.ProductId" data-toggle="modal" data-target="#heart_model"></a>
+                            }
+
+                            <a href="#" class="symbol pro_eye" data-toggle="modal" data-target="#eye_model" onclick="getModalDataProduct('@item.ProductId', '@item.ProductName', '@item.Price', '@item.ProductDescription', '@item.MainImageUrl');"></a>
+                            <a href="#" class="symbol pro_compare" data-toggle="modal" data-target="#compare_model "></a>
+                        </div>
+                        <a href="#" class="symbol add_to_cart" onclick="addToCart('@item.ProductId',1)"
+                           data-toggle="modal" data-target="#cart_model">
+                            + ADD TO CART
+                        </a>
+                    </div>
+
+                </div>
+            }
+        }
+        else
+        {
+            <h4 class="col-4 mt-3">
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />Products not find!
+            </h4>
+        }
+    }
+   
+</div>
+
+<div class="row mt-2">
+    <div class="col-12 p-0">
+        <nav id="pagination" class="float-right mt-2 mt-col-3">
+            @{
+                var lastPage = 0;
+                if (Model.pagination != null)
+                {
+                    lastPage = Model.pagination.totalPage;
+                    <input hidden id="hidden_total" value="@Model.pagination.totalCount" />
+
+                    <ul>
+                        <li class="text-right">
+                            <span class="font-weight-bolder">Total pages: <span id="totalPage">@Model.pagination.totalPage</span></span>
+                        </li>
+                    </ul>
+                    <ul class="pagination mt-2">
+                        @{
+                            if (Model.pagination.pageNumber == 1)
+                            {
+                                <li class="page-item disabled" id="btnPrev">
+                                    <a class="page-link" href="#">
+                                        <span aria-hidden="true" style="font-size: large">&laquo;</span>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item" id="btnPrev">
+                                    <a class="page-link" href="#">
+                                        <span aria-hidden="true" style="font-size: large">&laquo;</span>
+                                    </a>
+                                </li>
+                            }
+                        }
+
+                        @{
+
+                            int middlePageSelect = Model.pagination.pageNumber < 3 ? 3 : Model.pagination.pageNumber;
+                            if (lastPage == 0)
+                            {
+                                <li class="page-item active disabled"><a class="page-link" href="#">1</a></li>
+                            }
+                            else
+                            {
+                                for (int i = 1; i <= lastPage; i++)
+                                {
+
+                                    if (lastPage > 5)
+                                    {
+                                        if ((i >= middlePageSelect - 2 && i <= middlePageSelect + 2))
+                                        {
+                                            if (i == Model.pagination.pageNumber)
+                                            {
+                                                <li class="page-item active disabled"><a class="page-link" href="#">@i</a></li>
+                                            }
+                                            else
+                                            {
+                                                <li class="page-item"><a class="page-link" href="#">@i</a></li>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (i == Model.pagination.pageNumber)
+                                        {
+                                            <li class="page-item active disabled"><a class="page-link" href="#">@i</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li class="page-item"><a class="page-link" href="#">@i</a></li>
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        @{
+
+                            if (Model.pagination.pageNumber == lastPage || Model.pagination.totalPage == 0)
+                            {
+                                <li class="page-item disabled" id="btnNext">
+                                    <a class="page-link" href="#">
+                                        <span aria-hidden="true" style="font-size: large">&raquo;</span>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+
+                                <li class="page-item" id="btnNext">
+                                    <a class="page-link" href="#">
+                                        <span aria-hidden="true" style="font-size: large">&raquo;</span>
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <input hidden id="hidden_total" value="0" />
+                }
+            }
+        </nav>
+    </div>
+</div>

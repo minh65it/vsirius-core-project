@@ -1,0 +1,38 @@
+.setting {
+    border: 1px solid #eee;
+    height: 40px;
+}
+
+/* MOBILE */
+@media (max-width:992px) {
+    .img-custom-mobile-only {
+        display: block;
+    }
+
+    .img-custom-desktop-only {
+        display: none;
+    }
+
+    .custom-search {
+        width: 100%;
+    }
+}
+
+/* DESKTOP IPAD*/
+@media (min-width:768px) {
+    html {
+        font-size: 16px;
+    }
+
+    .img-custom-mobile-only {
+        display: none;
+    }
+
+    .img-custom-desktop-only {
+        display: block;
+    }
+
+    .custom-search {
+        width: 50%;
+    }
+}

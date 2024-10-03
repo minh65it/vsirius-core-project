@@ -1,0 +1,38 @@
+﻿@model PageVM
+
+<!-- information page -->
+<div class="single_product_page animate__animated animate__fadeInUp">
+    <div class="sp_header bg-white">
+        <div class="container custom_container bg-white">
+            <div class="row ">
+                <div class="col-12 ">
+                    <ul class="p-md-3 p-2">
+                        <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                        <li class="d-inline-block  font-weight-bolder">/</li>
+                        <li class="d-inline-block  font-weight-bolder">@Model?.Title</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sp_header ">
+        <div class="container info_container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="title_outer">
+                        <h2 class="mb-3 d-inline-block pb-3 position-relative border-bottom h1_">@Model?.Title</h2>
+                    </div>
+                    <!-- title_outer -->
+                </div>
+                <!-- col-12 -->
+            </div>
+            <!-- row -->
+            <div class="info_description container custom_container">
+                <div class="info_description row">
+                    @Html.Raw(Model?.Description)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

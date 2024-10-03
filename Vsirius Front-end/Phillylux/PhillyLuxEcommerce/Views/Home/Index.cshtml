@@ -1,0 +1,508 @@
+﻿@{
+    ViewData["IsPageSearchProduct"] = true;
+}
+@model HomeVM
+
+<style>
+    .productImage {
+        width: 90% !important;
+        object-fit: contain;
+    }
+</style>
+<!--- Slider------>
+<partial name="_Slider" view-data="ViewData" />
+<!--- Slider------>
+<!-- services -->
+<div class="main_service py-2">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-sm-6 col-6 m_service">
+                <ul class="service service-1 rounded text-center animate__animated animate__fadeInUp"
+                    data-wow-duration="0.8s"
+                    data-wow-delay="0.1s">
+                    <li class="ser-svg d-lg-inline-block d-md-block align-middle">
+                        <span class="icon-image"></span>
+                    </li>
+                    <li class="ser-t d-lg-inline-block d-md-block align-middle text-left">
+                        <h6>24/7 free support</h6>
+                        <p class="mb-0 text-muted">Online Support 24/7</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-3 col-sm-6 col-6 m_service">
+                <ul class="service service-2 rounded text-center animate__animated animate__fadeInUp"
+                    data-wow-duration="0.8s"
+                    data-wow-delay="0.2s">
+                    <li class="ser-svg d-lg-inline-block d-md-block align-middle">
+                        <span class="icon-image"></span>
+                    </li>
+                    <li class="ser-t d-lg-inline-block d-md-block align-middle text-left">
+                        <h6>secure payment</h6>
+                        <p class="mb-0 text-muted">100% Secure Payment</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-3 col-sm-6 col-6 m_service">
+                <ul class="service service-3 rounded text-center animate__animated animate__fadeInUp"
+                    data-wow-duration="0.8s"
+                    data-wow-delay="0.3s">
+                    <li class="ser-svg d-lg-inline-block d-md-block align-middle">
+                        <span class="icon-image"></span>
+                    </li>
+                    <li class="ser-t d-lg-inline-block d-md-block align-middle text-left">
+                        <h6>special gift cards</h6>
+                        <p class="mb-0 text-muted">Give The Perfect Gift</p>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-3 col-sm-6 col-6 m_service">
+                <ul class="service service-4 rounded text-center animate__animated animate__fadeInUp"
+                    data-wow-duration="0.8s"
+                    data-wow-delay="0.4s">
+                    <li class="ser-svg d-lg-inline-block d-md-block align-middle">
+                        <span class="icon-image"></span>
+                    </li>
+                    <li class="ser-t d-lg-inline-block d-md-block align-middle text-left">
+                        <h6>world wide shipping</h6>
+                        <p class="mb-0 text-muted">On Order Over $99</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- row -->
+    </div>
+    <!-- main_services -->
+</div>
+<!-- container  -->
+<!-- services end -->
+<!-- top categories -->
+<div class="category mt-4">
+    <div class="container animate__animated animate__fadeInUp">
+        <div class="row">
+            <div class="col-12">
+                <div class="title_outer">
+                    <h5 class="font-weight-bolderer d-inline-block">Categories</h5>
+                </div>
+                <!-- title_outer -->
+            </div>
+            <!-- col-12 -->
+        </div>
+        <!-- row -->
+        <div class="row">
+            <div id="category_carousel" class="owl-carousel owl-theme pro_thumb">
+                @if (Model.VsiriusFilterDtos != null)
+                {
+                    @foreach (var item in Model.VsiriusFilterDtos)
+                    {
+                        <div class="item">
+                            <div class="col-12">
+                                <div class="category_thumb rounded">
+                                    <div class="cate_image">
+                                        <a asp-controller="SearchProduct" asp-action="Index" asp-route-productType="@item.Value">
+                                            @if (string.IsNullOrEmpty(@item.ImageURL))
+                                            {
+                                                <img src="~/img/no-photo/no-photo_800x800.png"
+                                                     class="fst-image mx-auto d-block img-fluid mt-3"
+                                                     alt="category" />
+                                            }
+                                            else
+                                            {
+                                                <img src="@($"{Model.BaseURLImage}{item.ImageURL}")"
+                                                     class="fst-image mx-auto d-block img-fluid mt-3"
+                                                     alt="category" />
+                                            }
+
+                                        </a>
+                                    </div>
+                                    <div class="category_text">
+                                        <h2 class="text-center pro-heading mt-3">
+                                            <a asp-controller="SearchProduct" asp-action="Index"
+                                               asp-route-productType="@item.Value" class="font-weight-bolderer">@item.Title</a>
+                                        </h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <!-- owl-carousel-1 -->
+        </div>
+    </div>
+</div>
+<!-- top categories end -->
+<!-- banner -->
+<div class="mt-5">
+    <div class="container text-center">
+        <div class="row no-space-se">
+            <div class="col-12 col-sm-4 mb-2">
+                <img src="~/img/main-banner/Banner-1_Web-Phillylux-07 1.png"
+                     class="off-banner img-fluid animate__animated animate__fadeInUp"
+                     data-wow-duration="0.8s"
+                     data-wow-delay="0.4s"
+                     alt="sm1" />
+            </div>
+            <div class="col-12 col-sm-4">
+                <img src="~/img/main-banner/Banner-2_Web-Phillylux-08 1.png"
+                     class="off-banner img-fluid animate__animated animate__fadeInUp"
+                     data-wow-duration="0.8s"
+                     data-wow-delay="0.4s"
+                     alt="sm2" />
+            </div>
+            <div class="col-12 col-sm-4">
+                <img src="~/img/main-banner/Banner-3_Web-Phillylux-09 1.png"
+                     class="off-banner img-fluid animate__animated animate__fadeInUp"
+                     data-wow-duration="0.8s"
+                     data-wow-delay="0.4s"
+                     alt="sm3" />
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="main_top_pro_tab mt-5">
+    <div class="container">
+        <div class="title_outer">
+            <h5 class="font-weight-bolderer d-inline-block">popular Products</h5>
+        </div>
+        <div class="row mt-3 no-space-se">
+            <!-- <div class="col-12 d-flex justify-content-center">
+                 <ul class="nav nav-tabs mb-4" role="tablist">
+                    <li class="nav-item">
+                       <a class="nav-link active" id="featured_tab" role="tab" data-toggle="tab" href="#featured_"
+                          aria-selected="true">Featured</a>
+                    </li>
+                    <li class="nav-item">
+                       <a class="nav-link" id="latest_tab" role="tab" data-toggle="tab" href="#latest_"
+                          aria-selected="true">Latest</a>
+                    </li>
+                    <li class="nav-item">
+                       <a class="nav-link" id="bags_tab" data-toggle="tab" role="tab" href="#bags"
+                          aria-selected="false">bestseller</a>
+                    </li>
+                 </ul>
+              </div> -->
+            <div class="col-md-12 col-sm-12">
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active"
+                         id="featured_" myTabContent
+                         role="tabpanel"
+                         aria-labelledby="featured_tab">
+                        <div id="tab-products" class="tab-products pro_thumb">
+                            @if (Model.VsiriusProductPopular != null)
+                            {
+                                foreach (var item in Model.VsiriusProductPopular)
+                                {
+                                    <div class="item">
+                                        <div class="product_thumb bg-white rounded">
+                                            <div class="pro_image">
+                                                <a asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.SKU">
+                                                    @if (string.IsNullOrEmpty(@item.main_image_url))
+                                                    {
+                                                        <img src="~/img/no-photo/no-photo_800x800.png"
+                                                             class="fst-image mx-auto d-block img-fluid productImage"
+                                                             alt="placeholder" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="@($"{item.main_image_url}")"
+                                                             onerror="this.src='img/no-photo/no-photo_800x800.png';"
+                                                             class="fst-image mx-auto d-block img-fluid productImage"
+                                                             alt="category" />
+                                                    }
+                                                </a>
+                                                <a asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.SKU">
+                                                    @if (string.IsNullOrEmpty(@item.other_image_url1))
+                                                    {
+                                                        <img src="@($"{item.main_image_url}")"
+                                                             class="second-img mx-auto d-block img-fluid productImage"
+                                                             alt="placeholder" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="@($"{item.other_image_url1}")"
+                                                             onerror="this.src='img/no-photo/no-photo_800x800.png';"
+                                                             class="second-img mx-auto d-block img-fluid productImage"
+                                                             alt="category" />
+                                                    }
+                                                </a>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="button-group">
+                                                    @if (item.CheckWishlist == true)
+                                                    {
+                                                        <a class="symbol pro_heart delete-wishlist-link wishlist-active" data-productId="@item.SKU" data-idWishlist="@item.WishListId.ToString()" data-toggle="modal" data-target="#heart_model"></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a class="symbol pro_heart add-wishlist-link" data-productId="@item.SKU" data-toggle="modal" data-target="#heart_model"></a>
+                                                    }
+
+                                                    <a href="#"
+                                                       class="symbol pro_eye"
+                                                       data-toggle="modal"
+                                                       data-target="#eye_model"
+                                                       onclick="getModalDataProduct('@item.SKU','@item.ProductName', '@item.Price' , '@item.BulletPoint1' , '@item.main_image_url' );">
+                                                    </a>
+
+                                                    <a href="#"
+                                                       class="symbol pro_compare"
+                                                       data-toggle="modal"
+                                                       data-target="#compare_model "></a>
+                                                </div>
+                                                <div class="main_text">
+                                                    <div class="star">
+                                                        @if (item.CheckWishlist == true)
+                                                        {
+                                                            <i id="heartIcon-@item.SKU" class="fa fa-heart heart-blue iconVisible"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i id="heartIcon-@item.SKU" class="fa fa-heart heart-blue iconHidden"></i>
+                                                        }
+
+                                                        <i class="fa fa-star iconStar" aria-hidden="true"></i>
+                                                        <i class="fa fa-star iconStar" aria-hidden="true"></i>
+                                                        <i class="fa fa-star iconStar" aria-hidden="true"></i>
+                                                        <i class="fa fa-star iconStar" aria-hidden="true"></i>
+                                                        <i class="fa fa-star iconStar" aria-hidden="true"></i>
+
+                                                        @if (item.CheckCart == true)
+                                                        {
+                                                            <i id="cartIcon-@item.SKU" class="fa fa-shopping-cart cart-blue iconVisible"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i id="cartIcon-@item.SKU" class="fa fa-shopping-cart cart-blue iconHidden" style=""></i>
+                                                        }
+                                                    </div>
+                                                    <h2 class="text-center pro-heading mt-3">
+                                                        <a asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.SKU"
+                                                           class="font-weight-bolderer item-product" style="font-size:15px">@item.ProductName</a>
+                                                    </h2>
+
+                                                    <span class="text-center prices">
+                                                        @if (string.IsNullOrEmpty(item.PriceSale))
+                                                        {
+                                                            <span class="font-weight-bolder price">
+                                                                $ @item.Price
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="font-weight-bolder price">
+                                                                $ @item.PriceSale
+                                                            </span>
+                                                            <del class="text-muted">$ @item.Price</del>
+                                                        }
+                                                    </span>
+                                                    <a onclick="addToCart('@item.SKU',1)"
+                                                       class="symbol add_to_cart"
+                                                       data-toggle="modal"
+                                                       data-target="#cart_model">
+                                                        + ADD TO CART
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                        </div>
+                        <!-- owl-carousel-1 -->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- banner -->
+<div>
+    <div class="row">
+        <div class="col-12">
+            <div class="banner">
+                <img src="~/img/main-banner/Giua-cuoi.png"
+                     class="off-banner img-fluid animate__animated animate__fadeInUp"
+                     data-wow-duration="0.8s"
+                     data-wow-delay="0.4s"
+                     alt="sm1" />
+                <!-- <a href="" class="off-banner">
+                      <img src="~/img/sub-banner.jpg" class=" img-fluid  animate__animated animate__fadeInUp "
+                         data-wow-duration="0.8s" data-wow-delay="0.4s" alt="sm1">
+                   </a>
+                   <div class="banner-text">
+                      <h4 class="light-title">NEW COLLECTION</h4>
+                      <h3 class="dark-title">Diamond Jewellery Collection</h3>
+                      <a href="shop-left-sidebar.html">Shop Now</a>
+                   </div> -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- top product -->
+<div class="Lastest-Products mt-3">
+    <div class="container animate__animated animate__fadeInUp">
+        <div class="row">
+            <div class="col-12">
+                <div class="title_outer">
+                    <h5 class="font-weight-bolderer d-inline-block">
+                        Latest Products
+                    </h5>
+                </div>
+                <!-- title_outer -->
+            </div>
+            <!-- col-12 -->
+        </div>
+        <!-- row -->
+        <div class="row mt-2 ml-0">
+            <div id="lastest_carousel" class="owl-carousel owl-theme pro_thumb">
+                @if (Model.VsiriusProductLatest != null)
+                {
+                    foreach (var item in Model.VsiriusProductLatest)
+                    {
+                        <div class="item">
+                            <div class="product_thumb bg-white rounded">
+                                <div class="pro_image">
+                                    <a asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.SKU">
+                                        @if (string.IsNullOrEmpty(@item.main_image_url))
+                                        {
+                                            <img src="~/img/no-photo/no-photo_800x800.png"
+                                                 class="fst-image mx-auto d-block img-fluid productImage"
+                                                 alt="category" />
+                                        }
+                                        else
+                                        {
+                                            <img src="@($"{item.main_image_url}")"
+                                                 onerror="this.src='img/no-photo/no-photo_800x800.png';"
+                                                 class="fst-image mx-auto d-block img-fluid productImage"
+                                                 alt="category" />
+                                        }
+                                    </a>
+                                    <a asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.SKU">
+
+                                        @if (string.IsNullOrEmpty(@item.other_image_url1))
+                                        {
+                                            <img src="@($"{item.main_image_url}")"
+                                                 class="second-img mx-auto d-block img-fluid productImage"
+                                                 alt="category" />
+                                        }
+                                        else
+                                        {
+                                            <img src="@($"{item.other_image_url1}")"
+                                                 onerror="this.src='img/no-photo/no-photo_800x800.png';"
+                                                 class="second-img mx-auto d-block img-fluid productImage"
+                                                 alt="category" />
+                                        }
+                                    </a>
+                                </div>
+                                <div class="text-center">
+                                    <div class="button-group">
+                                        @if (item.CheckWishlist == true)
+                                        {
+                                            <a class="symbol pro_heart delete-wishlist-link wishlist-active" data-productId="@item.SKU" data-idWishlist="@item.WishListId.ToString()" data-toggle="modal" data-target="#heart_model"></a>
+                                        }
+                                        else
+                                        {
+                                            <a class="symbol pro_heart add-wishlist-link" data-productId="@item.SKU" data-toggle="modal" data-target="#heart_model"></a>
+                                        }
+                                        <a href="#"
+                                           class="symbol pro_eye"
+                                           data-toggle="modal"
+                                           data-target="#eye_model"
+                                           onclick="getModalDataProduct('@item.SKU','@item.ProductName', '@item.Price', '@item.BulletPoint1', '@item.main_image_url');"></a>
+                                        <a href="#"
+                                           class="symbol pro_compare"
+                                           data-toggle="modal"
+                                           data-target="#compare_model "></a>
+                                    </div>
+                                    <div class="main_text">
+                                        <div class="star">
+                                            @if (item.CheckWishlist == true)
+                                            {
+                                                <i id="heartIcon-@item.SKU" class="fa fa-heart heart-blue iconVisible"></i>
+                                            }
+                                            else
+                                            {
+                                                <i id="heartIcon-@item.SKU" class="fa fa-heart heart-blue iconHidden"></i>
+                                            }
+
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+
+                                            @if (item.CheckCart == true)
+                                            {
+                                                <i id="cartIcon-@item.SKU" class="fa fa-shopping-cart cart-blue iconVisible"></i>
+                                            }
+                                            else
+                                            {
+                                                <i id="cartIcon-@item.SKU" class="fa fa-shopping-cart cart-blue iconHidden"></i>
+                                            }
+                                        </div>
+                                        <h2 class="text-center pro-heading mt-3">
+                                            <a asp-controller="ProductDetail" asp-action="Index" asp-route-productId="@item.SKU"
+                                               class="font-weight-bolderer item-product" style="font-size:15px">@item.ProductName</a>
+                                        </h2>
+
+                                        <span class="text-center prices">
+                                            @if (string.IsNullOrEmpty(item.PriceSale))
+                                            {
+                                                <span class="font-weight-bolder price">
+                                                    $ @item.Price
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="font-weight-bolder price">
+                                                    $ @item.Price
+                                                </span>
+                                                <del class="text-muted">$ @item.PriceSale</del>
+                                            }
+                                        </span>
+                                        <a onclick="addToCart('@item.SKU',1)"
+                                           class="symbol add_to_cart"
+                                           data-toggle="modal"
+                                           data-target="#cart_model">
+                                            + ADD TO CART
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+            <!-- owl-carousel-1 -->
+        </div>
+        <div class="text-center mt-3">
+            <a class="btn products-btn" asp-controller="TopProduct" asp-action="Index" asp-route-filter="latest">View More</a>
+        </div>
+    </div>
+</div>
+<!-- top product end -->
+<!-- logo-carousel -->
+<div class="logo-carousel">
+    <div>
+        <div class="row">
+            <div class="col-md-6 col-sm-12 pb-2 pp5">
+                <img class="img-fluid mx-auto"
+                     src="~/img/main-banner/cuoi-1.png"
+                     alt="" />
+            </div>
+            <div class="col-md-6 col-sm-12 pp5">
+                <img class="img-fluid mx-auto"
+                     src="~/img/main-banner/cuoi-2.png"
+                     alt="" />
+            </div>
+        </div>
+    </div>
+</div>
+<!-- logo-carousel End -->

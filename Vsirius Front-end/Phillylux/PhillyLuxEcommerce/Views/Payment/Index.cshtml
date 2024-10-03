@@ -1,0 +1,1221 @@
+﻿@model OrderVM
+@using Newtonsoft.Json;
+@using PhillyLuxEcommerce.Helpers.Utilities
+@{
+    var lstState = Common.lstStateUSA;
+    if (Model.OrderInformation.FirstName == null) { Model.OrderInformation.FirstName = ""; }
+    if (Model.OrderInformation.LastName == null) { Model.OrderInformation.LastName = ""; }
+    if (Model.OrderInformation.Phone == null) { Model.OrderInformation.Phone = ""; }
+    if (!string.IsNullOrWhiteSpace(Model.OrderInformation.Country))
+    {
+        if (Model.OrderInformation.Country.Equals("Canada"))
+        {
+            lstState = Common.lstStateCanada;
+        }
+    }
+    
+    var stateListCanadaJson = JsonConvert.SerializeObject(Common.lstStateCanada);
+    var stateListUSAJson = JsonConvert.SerializeObject(Common.lstStateUSA);
+}
+
+<style>
+    .popover {
+        position: absolute;
+        top: calc(100% + 5px);
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #f8f8f8;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 9999;
+    }
+
+    .payment-li:hover a {
+        color: #d69531;
+    }
+
+    .productImage {
+        width: 100% !important;
+        object-fit: contain;
+    }
+</style>
+<!-- checkout page -->
+@if (Model.OrderCart != null && Model.OrderInformation != null)
+{
+    <div id="checkout_page" class="checkout-page animate__animated animate__fadeInUp">
+        <div class="sp_header bg-white">
+            <div class="container custom_container bg-white">
+                <div class="row ">
+                    <div class="col-12 ">
+                        <ul class="p-md-3 p-2">
+                            <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                            <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                            <li class="d-inline-block hr_ font-weight-bolder">checkout</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container custom_container">
+            <div class="row">
+                <div class="col-lg-8 col-12 mt-2">
+                    <form id="orderForm" method="post" asp-controller="Payment" asp-action="AddOrder">
+
+                        <input type="hidden" name="QuantityTotalItem" value="@Model.OrderCart.QuantityTotalItem">
+                        <input type="hidden" name="TotalPrice" value="@Model.OrderCart.TotalPrice">
+                        <input type="hidden" name="CartId" value="@Model.OrderCart.CartId">
+                        <input type="hidden" name="UserId" value="@Model.OrderInformation.UserId">
+
+                        <div class="accordion" id="check_out_toggle">
+                            <div class="card rounded mb-2 needs-validation">
+                                <div class="card-header bg-white" id="checkout_info">
+                                    <h2 class="mb-0">
+                                        <button id="submit_btnInformation" class="btn btn-link btn-block text-left text-body p-0 font-weight-bolder"
+                                                type="button" data-toggle="collapse" data-target="#check_info" aria-expanded="true" aria-controls="check_info">
+                                            Personal information<span class="float-right"><i class="fas fa-angle-down"></i></span>
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="info" class="collapse show" aria-labelledby="checkout_info" data-parent="#check_out_toggle">
+                                    <div class="card-body">
+                                        @* <ul class="nav nav-tabs " role="tablist">
+                                    <li class="nav-item">
+                                    <a class="nav-link p-0 font-weight-bolder active" id="order_guest_tab" data-toggle="tab" href="#order_guest" role="tab" aria-controls="order_guest" aria-selected="true">order as a guest</a>
+                                    </li>
+                                    <li class="hr_"></li>
+                                    <li class="nav-item">
+                                    <a class="nav-link p-0 font-weight-bolder" id="sign_in_tab" data-toggle="tab" href="#sign_in" role="tab" aria-controls="sign_in" aria-selected="false">sign in</a>
+                                    </li>
+                                    </ul>*@
+                                        <div class="tab-content">
+                                            <div class="tab-pane fade show active" id="order_guest" aria-labelledby="order_guest">
+                                                <div id="Registration" class="page-content mt-4 mb-0">
+                                                    <form>
+                                                        @* <div class="form-group text-left">
+                                                    <label class="font-weight-bolder" style="font-size: 16px;">
+                                                    Social title <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                    </label><br>
+                                                    <span class="form-check">
+                                                    <input class="form-check-input" type="radio" name="gridRadiosGender" id="gender_mr" style="font-size: 14px;" value="false" asp-for="OrderInformation.Gender" onchange="updateGenderValue(this)" required checked="checked">
+                                                    <label class="form-check-label" for="gender_mr" style="font-size: 14px;">
+                                                    mr.
+                                                    </label>
+                                                    </span>
+                                                    <span class="form-check">
+                                                    <input class="form-check-input" type="radio" name="gridRadiosGender" style="font-size: 14px;" id="gender_mrs" value="true" asp-for="OrderInformation.Gender" onchange="updateGenderValue(this)" required>
+                                                    <label class="form-check-label" for="gender_mrs" style="font-size: 14px;">
+                                                    mrs.
+                                                    </label>
+                                                    </span>
+                                                    <div class="invalid-feedback" style="font-size: 14px;">Please choose Gender.</div>
+                                                    </div>*@
+                                                        <div class="form-group">
+                                                            <label for="full_name" class="font-weight-bolder" style="font-size: 16px;">
+                                                                Full name
+                                                                <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                            </label>
+                                                            <input autocomplete="off" type="text" class="form-control" id="full_name" placeholder="Full name" style="font-size: 14px;" asp-for="OrderInformation.Fullname" value="@Model.OrderInformation.Fullname">
+                                                            <div class="invalid-feedback" style="font-size: 14px;">Please enter your fullname.</div>
+                                                        </div>
+                                                        @* <div class="form-group">
+                                                    <label for="f_name" class="font-weight-bolder" style="font-size: 16px;">
+                                                    First name
+                                                    <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                    </label>
+                                                    <input autocomplete="off" type="text" class="form-control" id="f_name" placeholder="First name" style="font-size: 14px;" asp-for="OrderInformation.FirstName" value="@Model.OrderInformation.FirstName">
+                                                    <div class="invalid-feedback" style="font-size: 14px;">Please enter your name.</div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                    <label for="l_name" class="font-weight-bolder" style="font-size: 16px;">
+                                                    Last name
+                                                    <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                    </label>
+
+                                                    <input autocomplete="off" type="text" class="form-control" id="l_name" placeholder="Last Name" style="font-size: 14px;" asp-for="OrderInformation.LastName" value="@Model.OrderInformation.LastName">
+                                                    <div class="invalid-feedback" style="font-size: 14px;">Please enter your name.</div>
+                                                    </div>*@
+                                                        <div class="form-group">
+                                                            <label for="r_email" class="font-weight-bolder" style="font-size: 16px;">
+                                                                Email address
+                                                                <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                            </label>
+                                                            <input autocomplete="off" type="email" class="form-control" id="r_email" aria-describedby="emailHelp" style="font-size: 14px;" placeholder="Email" asp-for="OrderInformation.Email" value="@Model.OrderInformation.Email">
+                                                            <div class="invalid-feedback" style="font-size: 14px;">Please enter your account name.</div>
+                                                        </div>
+                                                        <div class="form-group font-weight-bolder">
+                                                            <label for="r_phone" class="font-weight-bolder" style="font-size: 16px;">
+                                                                Phone
+                                                                <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                            </label>
+                                                            <input autocomplete="off" type="text" maxlength="10" class="form-control" id="r_phone" placeholder="Phone number" style="font-size: 14px;" oninput="formatPhoneNumber(this)" asp-for="OrderInformation.Phone" value="@Model.OrderInformation.Phone">
+                                                            <div class="invalid-feedback" style="font-size: 14px;">Please enter your phone.</div>
+                                                        </div>
+                                                        @*<div class="form-group">
+                                                    <label class="font-weight-bolder" style="font-size: 16px;">birth date</label>
+                                                    <input class="form-control" type="date" id="birthday" style="font-size: 14px;" asp-for="OrderInformation.BirthDay" />
+                                                    <div class="invalid-feedback" style="font-size: 14px;">Please enter your birthdate.</div>
+                                                    </div>*@
+                                                        @*<div class="form-group form-check d-block">
+                                                    <input type="checkbox" class="form-check-input">
+                                                    <label class="form-check-label" for="user_check">Sign up for our newsletter</label>
+                                                    </div>*@
+                                                        @*<div class="form-group form-check d-block">
+                                                    <input type="checkbox" class="form-check-input">
+                                                    <label class="form-check-label" for="user_check" style="font-size: 14px;">I agree to the terms and conditions and the privacy policy</label>
+                                                    </div>*@
+                                                        @*   <div><input  type="submit" name="submit" class="btn btn-primary mt-3" value="Save"></div>*@
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            @* <div class="tab-pane fade" id="sign_in" aria-labelledby="sign_in_tab">
+                                        <div id="login" class="page-content  mt-4 ">
+                                        <form class="needs-validation " method="post" novalidate>
+                                        <div class="form-group">
+                                        <label for="user_email" class="font-weight-bolder">Email address</label>
+                                        <input type="email" class="form-control" id="user_email" aria-describedby="emailHelp" required>
+                                        <div class="invalid-feedback">Please enter account name.</div>
+                                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                                        </div>
+                                        <div class="form-group font-weight-bolder">
+                                        <label for="user_password" class="font-weight-bolder">Password</label>
+                                        <input type="password" class="form-control" id="user_password" required>
+                                        <div class="invalid-feedback">Please enter your Password.</div>
+                                        </div>
+                                        <div class="form-group form-check">
+                                        <input type="checkbox" class="form-check-input" id="user_check">
+                                        <label class="form-check-label" for="user_check">Check me out</label>
+                                        </div>
+                                        <input type="submit" name="submit" class="btn btn-primary mb-3 d-inline-block" value="submit">
+                                        <div class="pass_acc d-inline-block float-right pt-3">
+                                        <span class="forgot_password font-weight-bolderer"><a href="forgot.html">Forgot your password? </a></span>
+                                        </div>
+                                        </form>
+                                        </div>
+                                        </div>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- card -->
+                            <div class="card rounded mb-2 needs-validation">
+                                <div class="card-header bg-white" id="chechout_add">
+                                    <h2 class="mb-0">
+                                        <button id="submit_btnAddress" class="btn btn-link btn-block text-left collapsed text-body p-0 font-weight-bolder"
+                                                type="button" data-toggle="collapse" data-target="#check_add" aria-expanded="false" aria-controls="check_add">
+                                            Shipping Information<span class="float-right"><i class="fas fa-angle-down"></i></span>
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="add" class="collapse" aria-labelledby="chechout_add" data-parent="#check_out_toggle">
+                                    <div class="card-body">
+                                        <div id="c_address" class="page-content">
+                                            @*<form class="needs-validation " method="post" novalidate>*@
+                                            <div class="form-group">
+                                                <label for="address2" class="font-weight-bolder" style="font-size: 16px;">
+                                                    Building                                                  
+                                                </label>
+                                                <input autocomplete="off" type="text" id="address2" class="form-control" placeholder="Building" style="font-size: 14px;" asp-for="OrderInformation.Address2">
+                                                <div class="invalid-feedback" style="font-size: 14px;">Please Enter your address.</div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="address1" class="font-weight-bolder" style="font-size: 16px;">
+                                                    Address
+                                                    <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                </label>
+                                                <input autocomplete="off" type="text" id="address1" class="form-control" placeholder="Address Line" style="font-size: 14px;" asp-for="OrderInformation.Address1">
+                                                <div class="invalid-feedback" style="font-size: 14px;">Please Enter your address.</div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="state" class="font-weight-bolder" style="font-size: 16px;">
+                                                    state
+                                                    <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                </label>
+                                                <select id="state"
+                                                        autocomplete="off"
+                                                        maxlength="2" type="text"
+                                                        class="form-control"
+                                                        style="font-size: 14px;"
+                                                        asp-for="OrderInformation.State">
+                                                    @foreach (var item in lstState)
+                                                    {
+                                                        <option value="@item.Key">@item.Title</option>
+                                                    }
+
+                                                </select>
+                                                <div class="invalid-feedback" style="font-size: 14px;">Please Enter your state.</div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="country" class="font-weight-bolder" style="font-size: 16px;">
+                                                    country
+                                                    <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                </label>
+                                                <select id="country" class="form-control" style="font-size: 14px;" asp-for="OrderInformation.Country" autocomplete="off">
+                                                    @foreach (var item in Common.lstCountry)
+                                                    {
+                                                        <option value="@item.Key">@item.Title</option>
+                                                    }
+                                                </select>
+                                                <div class="invalid-feedback" style="font-size: 14px;">Please Enter your country.</div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="postcode" class="font-weight-bolder" style="font-size: 16px;">
+                                                    post code
+                                                    <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                </label>
+                                                <input autocomplete="off" type="text" id="postcode" class="form-control" placeholder="Post Code" style="font-size: 14px;" asp-for="OrderInformation.PostCode" oninput="formatPostCodeNumber(this)">
+                                                <div class="invalid-feedback" style="font-size: 14px;">Please Enter your post code.</div>
+                                            </div>
+
+                                            @*<div><button id="clearButton" type="reset" class=" f_13 btn btn-primary rese mt-3">reset</button><input type="submit" name="submit" class="f_13 btn btn-primary mt-3 float-right" value="save"></div>*@
+                                            @*</form>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @{
+                                #region
+                                @*
+                        <!-- card -->
+                        <div class="card rounded mb-2">
+                        <div class="card-header bg-white" id="checkout_shipping">
+                        <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed text-body p-0 font-weight-bolder" type="button" data-toggle="collapse" data-target="#check_ship" aria-expanded="false" aria-controls="check_ship">
+                        Shipping Method<span class="float-right"><i class="fas fa-angle-down"></i></span>
+                        </button>
+                        </h2>
+                        </div>
+                        <div id="check_ship" class="collapse" aria-labelledby="checkout_shipping" data-parent="#check_out_toggle">
+                        <div class="card-body">
+                        <div id="ship_check" class="page-content">
+                        <form>
+                        <div class="form-group text-left">
+                        <label class="font-weight-bolder" style="font-size: 16px;">Shipping Method</label><br>
+                        <span class="form-check d-inline-block">
+                        <input class="form-check-input" type="radio" name="gridRadios" id="free_ship" style="font-size: 14px;" checked>
+                        <label class="form-check-label" for="free_ship">
+                        Free shipping
+                        </label>
+                        </span>
+                        <span class="form-check d-inline-block ml-2">
+                        <input class="form-check-input" type="radio" name="gridRadios" id="with_ship" style="font-size: 14px;">
+                        <label class="form-check-label" for="with_ship">
+                        shipping
+                        </label>
+                        </span>
+                        </div>
+                        </form>
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+                        <!-- card -->
+                        *@
+                                #endregion
+                            }
+
+                            <div class="card rounded mb-2 needs-validation">
+                                <div class="card-header bg-white" id="checkout_payment">
+                                    <h2 class="mb-0">
+                                        <button id="submit_btnPayment" class="btn btn-link btn-block text-left collapsed text-body p-0 font-weight-bolder"
+                                                type="button" data-toggle="collapse" data-target="#check_payment" aria-expanded="false" aria-controls="check_payment">
+                                            Payment<span class="float-right"><i class="fas fa-angle-down"></i></span>
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="payment" class="collapsing" aria-labelledby="checkout_payment" data-parent="#check_out_toggle">
+                                    <div class="card-body">
+                                        <div id="pay_check" class="page-content">
+                                            <input type="hidden" id="PaymentMethod" name="OrderInformation.PaymentMethod" value="">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <div class="form-group text-left">
+                                                        <p class="font-weight-bolder" style="font-size: 16px; margin-bottom:0.5rem;">payment Method</p>
+                                                        <span class="form-check d-inline-block" style="font-size: 14px;">
+                                                            <input class="form-check-input" type="radio" value="0" name="OrderInformation.PaymentMethod" id="pay_by_check" checked>
+                                                            <label class="form-check-label" for="pay_by_check" style="font-size: 14px;">
+                                                                Credit Card
+                                                            </label>
+                                                        </span>
+                                                        @*<span class="form-check d-inline-block ml-2" style="font-size: 14px;">
+                                                    <input class="form-check-input" type="radio" value="1" name="OrderInformation.PaymentMethod" id="pay_by_bank">
+                                                    <label class="form-check-label" for="pay_by_bank">
+                                                    pay by bank
+                                                    </label>
+                                                    </span>*@
+                                                    </div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="form-group text-right">
+                                                        <div class="snd_col">
+                                                            <div class="categorie collapse" id="payment" style="float: right;">
+                                                                <ul class="foo_pay">
+                                                                    <li class="payment-li">
+                                                                        <a href="#"><i class="fab fa-cc-mastercard"></i></a>
+                                                                    </li>
+                                                                    <li class="payment-li">
+                                                                        <a href="#"><i class="fab fa-cc-visa"></i></a>
+                                                                    </li>
+                                                                    <li class="payment-li">
+                                                                        <a href="#"><i class="fab fa-cc-amex"></i></a>
+                                                                    </li>
+                                                                    <li class="payment-li">
+                                                                        <a href="#"><i class="fab fa-cc-discover"></i></a>
+                                                                    </li>
+                                                                    <li class="payment-li">
+                                                                        <a href="#"><i class="fab fa-cc-jcb"></i></a>
+                                                                    </li>
+                                                                    @* <li>
+                                                                <a href="#"><i class="fab fa-cc-paypal"></i></a>
+                                                                </li>
+                                                                <li>
+                                                                <a href="#"><i class="fas fa-credit-card"></i></a>
+                                                                </li>*@
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="cardnumber" class="font-weight-bolder" style="font-size: 16px;">
+                                                    Card Number
+                                                    <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                </label>
+                                                <input autocomplete="off" type="text" maxlength="16" id="cardnumber" class="form-control" placeholder="Card Number" oninput="formatPaymentNumber(this)" style="font-size: 14px; border: 1px solid #d7cfcf" asp-for="OrderInformation.CardNumber">
+                                                <div class="invalid-feedback" style="font-size: 14px;">Please Enter your Card Number.</div>
+                                                @if (Model.MessageCardNumber != null)
+                                                {
+                                                    <div id="messageCardNumber" class="invalid-feedback" style="font-size: 14px;display: block">@Model.MessageCardNumber</div>
+                                                }
+                                            </div>
+
+                                            <div class="form-group">
+                                                <p class="font-weight-bolder" style="font-size: 16px; margin-bottom:0.5rem;">
+                                                    Expiration Date
+                                                    <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                </p>
+                                                <div class="row" id="expirationDateRow">
+                                                    <div class="col-md-2 col-sm-12">
+                                                        <input autocomplete="off"
+                                                               type="text" maxlength="2"
+                                                               id="expirationDateMonth"
+                                                               class="form-control"
+                                                               placeholder="Month"
+                                                               oninput="formatPaymentNumber(this)"
+                                                               style="font-size: 14px; border: 1px solid #d7cfcf"
+                                                               asp-for="OrderInformation.ExpirationDateMonth">
+                                                    </div>
+                                                    <span class="font-weight-bolder mt-3" style="font-size: 16px;">/</span>
+                                                    <div class="col-md-2 col-sm-12">
+                                                        <input autocomplete="off"
+                                                               type="text"
+                                                               maxlength="2"
+                                                               id="expirationDateYear"
+                                                               class="form-control"
+                                                               placeholder="Year"
+                                                               oninput="formatPaymentNumber(this)"
+                                                               style="font-size: 14px; border: 1px solid #d7cfcf"
+                                                               asp-for="OrderInformation.ExpirationDateYear">
+                                                    </div>
+                                                </div>
+                                                <div class="invalid-feedback" style="font-size: 14px;">Please Enter your expiration Date.</div>
+                                                @if (Model.MessageExpiredDate != null)
+                                                {
+                                                    <div id="messageExpiredDate" class="invalid-feedback" style="font-size: 14px;display: block">@Model.MessageExpiredDate</div>
+                                                }
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="CCV" class="font-weight-bolder" style="font-size: 16px;">
+                                                    CCV
+                                                    <i class="fa fa-asterisk" aria-hidden="true" style="font-size: 8px;margin-bottom: 8px;color: #c32c2c;"></i>
+                                                </label>
+                                                <input autocomplete="off" type="text" id="CCV" maxlength="4" class="form-control" placeholder="CCV" style="font-size: 14px;border: 1px solid #d7cfcf" asp-for="OrderInformation.CardCode" oninput="formatPaymentNumber(this)">
+                                                <div class="invalid-feedback" style="font-size: 14px;">Please Enter your CCV.</div>
+                                            </div>
+                                            @if (Model.MessageGeneral != null)
+                                            {
+                                                <div id="messageGeneral" class="invalid-feedback" style="font-size: 14px;display: block">@Model.MessageGeneral</div>
+                                            }
+                                            <div class="form-group form-check">
+                                                <input type="checkbox" class="form-check-input" id="user_pay_check">
+                                                <label class="form-check-label" for="user_pay_check" style="font-size: 14px;">I accept the Terms of Use & Privacy Policy</label>
+                                                <div class="invalid-feedback checkbox-validate" style="font-size: 14px; width: 21rem;">Please Check.</div>
+                                            </div>
+                                            <div class="text-center" style="position: relative;">
+                                                <button id="submit_btnOrder" type="submit" class="btn btn-primary f_13" style="font-size: 16px;">
+                                                    Order with an obligation to pay
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- card -->
+                        </div>
+
+                    </form>
+                </div>
+                <div class="col-lg-4 col-12 mt-2">
+                    <div class="border rounded bg-white final_payment">
+
+                        <div class="card-body" style="max-height:500px; overflow-y: auto">
+                            @foreach (var item in Model.OrderCart.ListProductByOrderId)
+                            {
+                                <div class="row">
+                                    <div class="col-sm-4 col-xs-12 mb-3">
+                                        @if (string.IsNullOrEmpty(@item.main_image_url))
+                                        {
+                                            <img src="~/img/no-photo/no-photo_800x800.png"
+                                                 class="fst-image mx-auto d-block img-fluid border rounded productImage"
+                                                 alt="placeholder" />
+                                        }
+                                        else
+                                        {
+                                            <img src="@($"{item.main_image_url}")"
+                                                 class="fst-image mx-auto d-block img-fluid border rounded productImage"
+                                                 alt="category" />
+                                        }
+                                    </div>
+                                    <div class="col-sm-8 col-xs-12">
+                                        <h6 class="font-weight-bolder" id="">@item.ProductName</h6>
+                                        <div class="font-weight-bolder pb-1" id="">#@item.SKU</div>
+                                        @*<div class="font-weight-bolder" id="">$@item.Price</div>*@
+                                        @if (string.IsNullOrEmpty(item.PriceSale))
+                                        {
+                                            <span class="font-weight-bolder price">
+                                                $@item.Price
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="font-weight-bolder price">
+                                                $@item.PriceSale
+                                            </span>
+                                            <del class="text-muted">$@item.Price </del>
+                                        }
+                                        <div>
+                                            <span class="f_13 pb-1">Size: </span>
+                                            <span class="float-right" style="margin-right: 1rem">@item.Size</span>
+                                        </div>
+                                        <div>
+                                            <span class="f_13 pb-1">Color: </span>
+                                            <span class="float-right" style="margin-right: 1rem">@item.Color</span>
+                                        </div>
+
+                                        <div>
+                                            <span class="f_13 pb-1">Qty: </span>
+                                            <span class="float-right" style="margin-right: 1rem">@item.QuantityItem</span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <hr />
+                            }
+                        </div>
+                        <div class="card-body  border-bottom">
+
+                            <p class="text-muted" style="font-size: 14px;">@Model.OrderCart.QuantityTotalItem items</p>
+                            <p class="font-weight-bolderer">show details</p>
+                            <div style="font-size: 16px;">
+                                <span class="font-weight-bolder">subtotal</span>
+                                <span class="float-right font-weight-bolder">$@Model.OrderCart.TotalPrice</span>
+                            </div>
+                            <div style="margin-top: 15px; font-size: 16px;">
+                                <span class="font-weight-bolder">shipping</span>
+                                <span class="float-right font-weight-bolder">Free</span>
+                            </div>
+                        </div>
+                        <div class="card-body ">
+                            <div style="font-size: 16px;">
+                                <span class="font-weight-bolder">taxes</span>
+                                <span class="float-right font-weight-bolder">$@Model.OrderCart.Tax</span>
+                            </div>
+                            <div style="font-size: 16px;">
+                                <span class="font-weight-bolder">total(tax excl.)</span>
+                                <span class="float-right font-weight-bolder">$@Model.OrderCart.TotalPrice</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+<!-- checkout page -->
+
+@section Scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(document).on('change', '#country', function (e) {
+                $('#state').empty();
+
+                let country = $(this).val();
+                if (country === 'Canada') {
+                    let stateList = @Html.Raw(stateListCanadaJson);
+                    stateList.forEach(function (state) {
+                        $('#state').append('<option value="' + state.Key + '">' + state.Title + '</option>');
+                    });
+                } else {
+                    let stateList = @Html.Raw(stateListUSAJson);
+                    stateList.forEach(function (state) {
+                        $('#state').append('<option value="' + state.Key + '">' + state.Title + '</option>');
+                    });
+                }
+            });
+        });
+
+        window.addEventListener('load', function () {
+            var messageCardNumberDiv = document.getElementById("messageCardNumber");
+            var messageExpiredDateDiv = document.getElementById("messageExpiredDate");
+
+            if (messageCardNumberDiv != null) {
+                if (messageCardNumberDiv.innerText.trim() !== "") {
+                    openBtnPaymentValidate()
+                }
+            }
+
+            if (messageExpiredDateDiv != null) {
+                if (messageExpiredDateDiv.innerText.trim() !== "") {
+                    openBtnPaymentValidate()
+                }
+            }
+
+        });
+
+        function openBtnPaymentValidate() {
+            var checkPaymentDiv = document.getElementById("payment");
+            var checkInfoDiv = document.getElementById("info");
+
+            checkInfoDiv.classList.remove("collapse", "show");
+            checkInfoDiv.classList.add("collapse");
+
+            checkPaymentDiv.classList.remove("collapsing");
+            checkPaymentDiv.classList.add("collapse");
+        }
+
+        var checkBox = document.getElementById('user_pay_check');
+        checkBox.addEventListener('change', checkBoxPolicy);
+
+        const submitBtnOrder = document.getElementById('submit_btnOrder');
+        const submitBtnInformation = document.getElementById('submit_btnInformation');
+        const submitBtnAddress = document.getElementById('submit_btnAddress');
+        const submitBtnPayment = document.getElementById('submit_btnPayment');
+
+        submitBtnOrder.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (validateFormInformation()) {
+                if (validateFormAddress()) {
+                    if (validateFormPayment()) {
+                        if (checkBoxPolicy()) {
+                            let form = document.getElementById('orderForm');
+                            HTMLFormElement.prototype.submit.call(form);
+                        }
+                    }
+                }
+            }
+        });
+
+        submitBtnInformation.addEventListener('click', function (event) {
+            event.preventDefault();
+            var checkInfoDiv = document.getElementById("info");
+            var checkAddDiv = document.getElementById("add");
+            var checkPaymentDiv = document.getElementById("payment");
+
+            var isCollapsed = checkInfoDiv.classList == "collapse show";
+            if (!isCollapsed) {
+                checkInfoDiv.classList.add("collapse", "show");
+
+                checkAddDiv.classList.remove("collapse", "show");
+                checkAddDiv.classList.add("collapse");
+
+                checkPaymentDiv.classList.remove("collapse");
+                checkPaymentDiv.classList.add("collapsing");
+            }
+        });
+
+        submitBtnAddress.addEventListener('click', function (event) {
+            event.preventDefault();
+            var checkInfoDiv = document.getElementById("info");
+            var checkAddDiv = document.getElementById("add");
+            var checkPaymentDiv = document.getElementById("payment");
+
+
+            if (!validateFormInformation()) {
+                checkAddDiv.classList.remove("collapse", "show");
+
+                checkAddDiv.classList.add("collapse");
+                checkInfoDiv.classList.add("collapse", "show");
+
+            }
+            else {
+                checkInfoDiv.classList.remove("collapse", "show");
+                checkInfoDiv.classList.add("collapse");
+
+                checkAddDiv.classList.add("collapse", "show");
+
+                checkPaymentDiv.classList.remove("collapse");
+                checkPaymentDiv.classList.add("collapsing");
+            }
+        });
+
+        submitBtnPayment.addEventListener('click', function (event) {
+            event.preventDefault();
+            var checkPaymentDiv = document.getElementById("payment");
+            var checkAddDiv = document.getElementById("add");
+            var checkInfoDiv = document.getElementById("info");
+
+            if (!validateFormAddress()) {
+                if (!validateFormInformation()) {
+                    checkPaymentDiv.classList.remove("collapse");
+
+                    checkPaymentDiv.classList.add("collapsing");
+                    checkInfoDiv.classList.add("collapse", "show");
+                }
+                else {
+                    checkPaymentDiv.classList.remove("collapse");
+                    checkPaymentDiv.classList.add("collapsing");
+
+                    checkInfoDiv.classList.remove("collapse", "show");
+                    checkInfoDiv.classList.add("collapse");
+
+                    checkAddDiv.classList.add("collapse", "show");
+                }
+            }
+            else {
+                if (validateFormInformation()) {
+                    checkAddDiv.classList.remove("collapse", "show");
+                    checkAddDiv.classList.add("collapse");
+
+                    checkInfoDiv.classList.remove("collapse", "show");
+                    checkInfoDiv.classList.add("collapse");
+
+                    checkPaymentDiv.classList.remove("collapsing");
+                    checkPaymentDiv.classList.add("collapse");
+                }
+            }
+        });
+
+        function checkBoxPolicy() {
+            var checkBox = document.getElementById('user_pay_check');
+            var validate = document.querySelector('.checkbox-validate');
+
+            if (checkBox.checked) {
+                validate.style.display = 'none';
+                return true;
+            } else {
+                validate.textContent = 'Please accept the Terms of Use & Privacy Policy';
+                validate.style.display = 'block';
+                return false;
+            }
+        }
+
+        function formatPostCodeNumber(input) {
+            const countryInput = document.getElementById('country');
+
+            const selectedCountry = countryInput.value;
+            if (selectedCountry === "United States") {
+                let formattedValue = input.value.replace(/\D/g, '');
+                formattedValue = formattedValue.slice(0, 5);
+                input.value = formattedValue;
+            } else if (selectedCountry === "Canada") {
+                const formattedValue = input.value.replace(/\W/g, '');
+                if (formattedValue.length > 6) {
+                    input.value = formattedValue.slice(0, 6).replace(/(\w{3})(\w{3})/, '$1 $2');
+                } else {
+                    input.value = formattedValue;
+                }
+            }
+        }
+
+        function formatPaymentNumber(input) {
+            input.value = input.value.replace(/\D/g, '');
+        }
+
+        function formatPhoneNumber(input) {
+            input.value = input.value.replace(/\D/g, '');
+
+            if (input.value.length > 10) {
+                input.value = input.value.slice(0, 10);
+            }
+        }
+
+        function validateFormInformation() {
+            let isValid = true;
+
+            //const firstNameInput = document.getElementById('f_name');
+            //const lastNameInput = document.getElementById('l_name');
+            const fullName = document.getElementById('full_name');
+            const emailInput = document.getElementById('r_email');
+            const phoneInput = document.getElementById('r_phone');
+
+            const birthdayInput = document.getElementById('birthday');
+
+            //if (!isFieldValid(firstNameInput)) {
+            //    isValid = false;
+            //}
+
+            //if (!isFieldValid(lastNameInput)) {
+            //    isValid = false;
+            //}
+
+            if (!isFieldValid(fullName)) {
+                isValid = false;
+            }
+
+            if (!isEmailValid(emailInput)) {
+                isValid = false;
+            }
+
+            if (!isPhoneNumberValid(phoneInput)) {
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function validateFormAddress() {
+            let isValid = true;
+
+            const addressInput = document.getElementById('address1');
+            const cityInput = document.getElementById('city');
+            const stateInput = document.getElementById('state');
+            const postcodeInput = document.getElementById('postcode');
+            const countryInput = document.getElementById('country');
+
+            if (!isFieldValid(addressInput)) {
+                isValid = false;
+            }
+
+            if (!isPostcode(postcodeInput)) {
+                isValid = false;
+                console.log("failed")
+            }
+
+            if (!isFieldValid(countryInput)) {
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function validateFormPayment() {
+            let isValid = true;
+
+            const cardnumberInput = document.getElementById('cardnumber');
+            const expirationDateMonthInput = document.getElementById('expirationDateMonth');
+            const expirationDateYearInput = document.getElementById('expirationDateYear');
+            const CCVInput = document.getElementById('CCV');
+
+            if (!isCardNumberValid(cardnumberInput)) {
+                isValid = false;
+            }
+
+            if (!isExDateValid(expirationDateMonthInput)) {
+                isValid = false;
+            }
+
+            if (!isCardCodeValid(CCVInput)) {
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function isFieldValid(field) {
+            let value = field.value.trim();
+            let validate = field.nextElementSibling;
+
+            field.addEventListener("input", function () {
+                value = field.value.trim();
+                if (value) {
+                    validate.style.display = "none";
+                }
+                else {
+                    validate.textContent = "Please enter a value";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (!value) {
+                validate.textContent = "Please enter a value";
+                validate.style.display = "block";
+                return false;
+            } else {
+                validate.style.display = "none";
+                return true;
+            }
+        }
+
+        function isEmailValid(emailInput) {
+            let email = emailInput.value.trim();
+            let validate = emailInput.nextElementSibling;
+            let emailRegex = /\S+@@\S+\.\S+/;
+
+            emailInput.addEventListener("input", function () {
+                email = emailInput.value.trim();
+                if (email) {
+                    if (!emailRegex.test(email)) {
+                        validate.textContent = "Please Enter a valid Email";
+                        validate.style.display = "block";
+                    } else {
+                        validate.style.display = "none";
+                    }
+                }
+                else {
+                    validate.textContent = "Please Enter your Email";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (email) {
+                if (!emailRegex.test(email)) {
+                    validate.textContent = "Please Enter a valid Email";
+                    validate.style.display = "block";
+                    return false;
+                } else {
+                    validate.style.display = "none";
+                    return true;
+                }
+            } else {
+                validate.textContent = "Please Enter your Email";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function isPhoneNumberValid(phoneInput) {
+            let phoneNumber = phoneInput.value.trim();
+            let validate = phoneInput.nextElementSibling;
+            let phoneRegex = /^\d{10}$/;
+
+            phoneInput.addEventListener("input", function () {
+                phoneNumber = phoneInput.value.trim();
+                if (phoneNumber) {
+                    if (phoneRegex.test(phoneNumber)) {
+                        validate.style.display = "none";
+                    } else {
+                        validate.textContent = "Please enter a 10-digit phone number";
+                        validate.style.display = "block";
+                    }
+                }
+                else {
+                    validate.textContent = "Please Enter your Phone";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (phoneNumber) {
+                if (phoneRegex.test(phoneNumber)) {
+                    validate.style.display = "none";
+                    return true;
+                } else {
+                    validate.textContent = "Please enter a 10-digit phone number";
+                    validate.style.display = "block";
+                    return false;
+                }
+
+            } else {
+                validate.textContent = "Please Enter your Phone";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function isCityValid(cityInput) {
+
+            let city = cityInput.value.trim();
+            let validate = cityInput.nextElementSibling;
+            let cityRegex = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/;
+
+            cityInput.addEventListener("input", function () {
+                city = cityInput.value.trim();
+                if (city) {
+                    if (cityRegex.test(city)) {
+                        validate.style.display = "none";
+                    } else {
+                        validate.textContent = "Please enter the correct format city";
+                        validate.style.display = "block";
+                    }
+                }
+                else {
+                    validate.textContent = "Please enter a value";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (city) {
+                if (!cityRegex.test(city)) {
+                    validate.textContent = "Please enter the correct format city";
+                    validate.style.display = "block";
+                    return false;
+                } else {
+                    validate.style.display = "none";
+                    return true;
+                }
+            } else {
+                validate.textContent = "Please enter a value";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function isStateValid(stateInput) {
+
+            let state = stateInput.value.trim();
+            let validate = stateInput.nextElementSibling;
+            let stateRegex = /^[A-Z]{2}$/;
+
+            stateInput.addEventListener("input", function () {
+                state = stateInput.value.trim();
+                if (state) {
+                    if (stateRegex.test(state)) {
+                        validate.style.display = "none";
+                    } else {
+                        validate.textContent = "Please enter the correct format state";
+                        validate.style.display = "block";
+                    }
+                }
+                else {
+                    validate.textContent = "Please enter a value";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (state) {
+                if (!stateRegex.test(state)) {
+                    validate.textContent = "Please enter the correct format state";
+                    validate.style.display = "block";
+                    return false;
+                } else {
+                    validate.style.display = "none";
+                    return true;
+                }
+            } else {
+                validate.textContent = "Please enter a value";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function isPostcode(postCodeInput) {
+            let postcode = postCodeInput.value.trim();
+            let validate = postCodeInput.nextElementSibling;
+            let postcodeRegex = /^\d{5}$/;
+            let postcodeCanRegex = /[a-zA-Z0-9]{3}\s[a-zA-Z0-9]{3}$/;
+
+            postCodeInput.addEventListener("input", function () {
+                postcode = postCodeInput.value.trim();
+                if (postcode) {
+                    const countryInput = document.getElementById('country');
+                    const selectedCountry = countryInput.value;
+                    if (selectedCountry === "United States") {
+                        if (postcodeRegex.test(postcode)) {
+                            validate.style.display = "none";
+                        } else {
+                            validate.textContent = "Please enter the correct format postcode in US";
+                            validate.style.display = "block";
+                        }
+                    }
+                    else {
+                        if (postcodeCanRegex.test(postcode)) {
+                            validate.style.display = "none";
+                        } else {
+                            validate.textContent = "Please enter the correct format postcode in CANADA";
+                            validate.style.display = "block";
+                        }
+                    }
+                }
+                else {
+                    validate.textContent = "Please enter a value";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (postcode) {
+                const countryInput = document.getElementById('country');
+                const selectedCountry = countryInput.value;
+                if (selectedCountry === "United States") {
+                    if (!postcodeRegex.test(postcode)) {
+                        validate.textContent = "Please enter the correct format postcode in US";
+                        validate.style.display = "block";
+                        return false;
+                    } else {
+                        validate.style.display = "none";
+                        return true;
+                    }
+                }
+                else {
+                    if (postcodeCanRegex.test(postcode)) {
+                        validate.style.display = "none";
+                        return true;
+                    } else {
+                        validate.textContent = "Please enter the correct format postcode in CANADA";
+                        validate.style.display = "block";
+                    }
+                }
+
+            } else {
+                validate.textContent = "Please enter a value";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function isCardNumberValid(cardnumberInput) {
+            let cardnumberNumber = cardnumberInput.value.trim();
+            let validate = cardnumberInput.nextElementSibling;
+            let numberRegex = /^\d{16}$/;
+
+            cardnumberInput.addEventListener("input", function () {
+                var messageCardNumberDiv = document.getElementById("messageCardNumber");
+                messageCardNumberDiv.style.display = "none";
+
+                cardnumberNumber = cardnumberInput.value.trim();
+                if (cardnumberNumber) {
+                    if (numberRegex.test(cardnumberNumber)) {
+                        validate.style.display = "none";
+                    } else {
+                        validate.textContent = "Please enter a 16-digit card number";
+                        validate.style.display = "block";
+                    }
+                }
+                else {
+                    validate.textContent = "Please Enter your Card number";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (cardnumberNumber) {
+                if (numberRegex.test(cardnumberNumber)) {
+                    validate.style.display = "none";
+                    return true;
+                } else {
+                    validate.textContent = "Please enter a 16-digit card number";
+                    validate.style.display = "block";
+                    return false;
+                }
+
+            } else {
+                validate.textContent = "Please Enter your Card number";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function isExDateValid(exDateInput) {
+            let exdateNumber = exDateInput.value.trim();
+            const expirationDateRow = document.getElementById('expirationDateRow');
+            let validate = expirationDateRow.nextElementSibling
+            let exdateRegex = /^\d{2}$/;
+
+            exDateInput.addEventListener("input", function () {
+                var messageExpiredDateDiv = document.getElementById("messageExpiredDate");
+                messageExpiredDateDiv.style.display = "none";
+
+                exdateNumber = exDateInput.value.trim();
+                if (exdateNumber) {
+                    if (exdateRegex.test(exdateNumber)) {
+                        validate.style.display = "none";
+                    } else {
+                        validate.textContent = "Please enter a 2-digit Month or Year";
+                        validate.style.display = "block";
+                    }
+                }
+                else {
+                    validate.textContent = "Please Enter your Expiration Date";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (exdateNumber) {
+                if (exdateRegex.test(exdateNumber)) {
+                    validate.style.display = "none";
+                    return true;
+                } else {
+                    validate.textContent = "Please enter a 2-digit Month or Year";
+                    validate.style.display = "block";
+                    return false;
+                }
+
+            } else {
+                validate.textContent = "Please Enter your Expiration Date";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        function isCardCodeValid(cardCodeInput) {
+            let cardCodeNumber = cardCodeInput.value.trim();
+            let validate = cardCodeInput.nextElementSibling;
+            let cardCodeRegex = /^\d{3,4}$/;
+
+            cardCodeInput.addEventListener("input", function () {
+                cardCodeNumber = cardCodeInput.value.trim();
+                if (cardCodeNumber) {
+                    if (cardCodeRegex.test(cardCodeNumber)) {
+                        validate.style.display = "none";
+                    } else {
+                        validate.textContent = "Please enter a 3,4-digit CVV";
+                        validate.style.display = "block";
+                    }
+                }
+                else {
+                    validate.textContent = "Please Enter your CVV";
+                    validate.style.display = "block";
+                }
+            });
+
+            if (cardCodeNumber) {
+                if (cardCodeRegex.test(cardCodeNumber)) {
+                    validate.style.display = "none";
+                    return true;
+                } else {
+                    validate.textContent = "Please enter a 3,4-digit CVV";
+                    validate.style.display = "block";
+                    return false;
+                }
+
+            } else {
+                validate.textContent = "Please Enter your CVV";
+                validate.style.display = "block";
+                return false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var paymentMethodRadios = document.querySelectorAll('input[name="OrderInformation.PaymentMethod"]');
+            paymentMethodRadios[0].checked = true;
+            for (var i = 0; i < paymentMethodRadios.length; i++) {
+                paymentMethodRadios[i].addEventListener('change', function () {
+                    var selectedValue = this.value;
+                    document.getElementById('PaymentMethod').value = selectedValue;
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var countrySelect = document.getElementById('country');
+            var postcodeInput = document.getElementById('postcode');
+
+            countrySelect.addEventListener('change', function () {
+                var selectedCountry = countrySelect.value;
+
+                if (postcodeInput.value !== '') {
+                    if (selectedCountry === 'United States' && countrySelect.getAttribute('data-last-value') === 'Canada') {
+                        postcodeInput.value = '';
+                    }
+                }
+
+                countrySelect.setAttribute('data-last-value', selectedCountry);
+            });
+        });
+
+
+    </script>
+}

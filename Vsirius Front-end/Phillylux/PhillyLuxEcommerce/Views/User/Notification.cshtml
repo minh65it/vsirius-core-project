@@ -1,0 +1,287 @@
+﻿@model PhillyLuxEcommerce.Helpers.Utilities.PaginationUtility<PhillyLuxEcommerce.Dtos.NotificationDto>
+@* @inject IConfiguration Configuration *@
+@{
+    var lastPage = Model.Pagination.TotalPage;
+    //var hubUrl = Configuration["SignalR:NotificationHub"];
+}
+<section class="section-content padding-y mt-5">
+    <div class="container">
+        <div class="row bg-white">
+            <div class="col-12 ">
+                <ul class="p-md-3 p-2">
+                    <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-action="Index" asp-controller="Home">home</a></li>
+                    <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                    <li class="d-inline-block hr_ font-weight-bolder">notification</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <aside class="col-md-3 mt-2">
+                <nav class="list-group">
+                    <nav class="list-group">
+                        <a class="list-group-item " asp-controller="User" asp-action="Index"> Account </a>
+                        <a class="list-group-item" asp-controller="Payment" asp-action="OrderHistory"> My Orders </a>
+                        <a class="list-group-item " asp-controller="User" asp-action="Wishlist"> My wishlist </a>
+                        <a class="list-group-item active" asp-controller="User" asp-action="Notification"> Notification </a>
+                    </nav>
+                </nav>
+            </aside> <!-- col.// -->
+            <main class="col-md-9 mt-2">
+                
+                @if (Model != null)
+                {
+                    <div id="wishlist_page" class="wishlist-page animate__animated animate__fadeInUp">
+                        <div class="card">
+                            <div class="card-body">
+                                <div>
+                                    <div class="row sh_page border-bottom">
+                                        <div class="col-6">
+                                            <span class="font-weight-bold" style="font-size: 18px;">notification</span>
+                                        </div>
+                                        @if (Model.Result.Count > 0)
+                                        {
+                                            <div class="col-6">
+                                                <span id="totalNotification" class="font-weight-bold" style="font-size: 16px; float:right">Total Notification: @Model.Pagination.TotalCount</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-6">
+                                                <span id="totalNotification" class="font-weight-bold" style="font-size: 16px; float:right; display:none"></span>
+                                            </div>
+                                        }
+                                    </div>
+                                    @if (Model.Result.Count > 0)
+                                    {
+                                        <div id="notificationList">
+                                            @foreach (var item in Model.Result)
+                                            {
+                                                <div class="row sh_page border-bottom">
+                                                    @*<div class="col-md-12 col-sm-12 col-12 text-right wishlist-p-dlt" style="margin-bottom:-10px">
+                                        <a href="#"><i class="fas fa-trash-alt "></i></a>
+                                        </div>*@
+                                                    <div class="col-12">
+                                                        <div class="d-flex">
+                                                            <div class="col-md-4 col-sm-4 col-4">
+                                                                <span class="font-weight-bolder">@item.Name</span>
+                                                            </div>
+                                                            <div class="col-md-8 col-sm-8 col-8 text-right">
+                                                                <span class="font-weight-bolderer">@item.Content</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        @if (Model.Pagination.TotalPage > 0)
+                                        {
+                                            <div class="mt-3">
+                                                <ul><li><span class="font-weight-bolder">Total pages: <span id="totalPage">@Model.Pagination.TotalPage</span></span></li></ul>
+                                                <ul class="pagination">
+                                                    @{
+                                                        if (Model.Pagination.PageNumber == 1)
+                                                        {
+                                                            <li class="page-item disabled" id="btnPrev">
+                                                                <a class="page-link" href="#">
+                                                                    <span aria-hidden="true">&laquo;</span>
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li class="page-item" id="btnPrev">
+                                                                <a class="page-link" asp-action="Notification" asp-controller="User" asp-route-pageNumber="@(Model.Pagination.PageNumber - 1)">
+                                                                    <span aria-hidden="true">&laquo;</span>
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                    }
+
+                                                    @{
+
+                                                        int middlePageSelect = Model.Pagination.PageNumber < 3 ? 3 : Model.Pagination.PageNumber;
+                                                        if (lastPage == 0)
+                                                        {
+                                                            <li class="page-item active disabled"><a class="page-link" href="#">1</a></li>
+                                                        }
+                                                        else
+                                                        {
+                                                            for (int i = 1; i <= lastPage; i++)
+                                                            {
+
+                                                                if (lastPage > 5)
+                                                                {
+                                                                    if ((i >= middlePageSelect - 2 && i <= middlePageSelect + 2))
+                                                                    {
+                                                                        if (i == Model.Pagination.PageNumber)
+                                                                        {
+                                                                            <li class="page-item active disabled"><a class="page-link" href="#">@i</a></li>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <li class="page-item"><a class="page-link" asp-action="Notification" asp-controller="User" asp-route-pageNumber="@i">@i</a></li>
+                                                                        }
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    if (i == Model.Pagination.PageNumber)
+                                                                    {
+                                                                        <li class="page-item active disabled"><a class="page-link" href="#">@i</a></li>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <li class="page-item"><a class="page-link" asp-action="Notification" asp-controller="User" asp-route-pageNumber="@i">@i</a></li>
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    @{
+                                                        if (Model.Pagination.PageNumber == lastPage)
+                                                        {
+                                                            <li class="page-item disabled" id="btnNext">
+                                                                <a class="page-link" href="#">
+                                                                    <span aria-hidden="true">&raquo;</span>
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li class="page-item" id="btnNext">
+                                                                <a class="page-link" asp-action="Notification" asp-controller="User" asp-route-pageNumber="@(Model.Pagination.PageNumber + 1)">
+                                                                    <span aria-hidden="true">&raquo;</span>
+                                                                </a>
+                                                            </li>
+                                                        }
+                                                    }
+
+                                                </ul>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div id="notificationList">
+                                        </div>
+                                        <div id="noNotification" class="row sh_page mt-5">
+                                            <div class="col-12">
+                                                <h5 style="text-align:center; font-size: 30px;">No Notification</h5>                                               
+                                            </div>
+                                        </div>
+                                    }
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </main>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts{
+   <script type="text/javascript">
+        // document.addEventListener("DOMContentLoaded", function () {
+        //     var connection = new signalR.HubConnectionBuilder()
+        //         .withUrl("hubUrl", {
+        //             withCredentials: true, 
+        //             skipNegotiation: true, 
+        //             transport: signalR.HttpTransportType.WebSockets 
+        //         })
+        //         .withHubProtocol(new signalR.JsonHubProtocol())
+        //         .withAutomaticReconnect()
+        //         .build();
+
+        //     connection.on("SendNotification", function (data) {
+        //          getNotification()
+        //     });
+
+            
+        //     connection.start().then(function () {
+        //         //console.log("SignalR connected.");
+
+        //     }).catch(function (err) {
+        //         console.error(err.toString());
+        //     });
+        // });
+
+        async function getNotification() {
+            try {
+                let url = `/User/Notification?callSignalr=true`;
+
+                let response = await fetch(url, {
+                    method: 'GET'
+                });
+
+                if (response.ok) {
+                    let data = await response.json();
+                    updateNotificationUI(data);
+                    return { success: true};
+                }
+                else {
+                    return { success: false };
+                }
+            } catch (error) {
+                console.log(error)
+                return { success: false };
+            }
+        }
+
+        function updateNotificationUI(data) {
+            let notificationData = JSON.parse(data);
+            let totalCount = notificationData.Pagination.TotalCount;
+
+            // Total Count
+            let totalNotificationSpan = document.getElementById('totalNotification');
+            totalNotificationSpan.textContent = 'Total Notification: ' + totalCount;
+            totalNotificationSpan.style.display = 'inline-block';
+
+            // Add List notification
+            let notificationList = document.getElementById("notificationList");
+
+            while (notificationList.firstChild) {
+                notificationList.removeChild(notificationList.firstChild);
+            }
+
+            notificationData.Result.forEach(function (item) {
+                let row = document.createElement("div");
+                row.className = "row sh_page border-bottom";
+
+                let col1 = document.createElement("div");
+                col1.className = "col-12";
+
+                let innerDiv = document.createElement("div");
+                innerDiv.className = "d-flex";
+
+                let col2 = document.createElement("div");
+                col2.className = "col-md-4 col-sm-4 col-4";
+                col2.innerHTML = '<span class="font-weight-bolder">' + item.Name + '</span>';
+
+                let col3 = document.createElement("div");
+                col3.className = "col-md-8 col-sm-8 col-8";
+                col3.innerHTML = '<span class="font-weight-bold">' + item.Content + '</span>';
+
+                innerDiv.appendChild(col2);
+                innerDiv.appendChild(col3);
+                col1.appendChild(innerDiv);
+                row.appendChild(col1);
+                notificationList.appendChild(row);
+            });
+
+
+            //Block No Notification
+            let noNotificationDiv = document.getElementById("noNotification");
+
+            if (notificationData.Result.length > 0) {
+                noNotificationDiv.style.display = "none";
+            } else {
+                noNotificationDiv.style.display = "block";
+            }
+        }
+   </script>
+}

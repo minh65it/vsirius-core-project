@@ -1,0 +1,56 @@
+﻿@model OrderSuccessVM
+
+
+@if (Model.ResSuccess)
+{
+    <div id="orderhistory_page" class="checkout-page animate__animated animate__fadeInUp">
+        <div class="sp_header bg-white">
+            <div class="container custom_container bg-white">
+                <div class="row ">
+                    <div class="col-12 ">
+                        <ul class="p-md-3 p-2">
+                            <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                            <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                            <li class="d-inline-block hr_ font-weight-bolder">Order Success</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container custom_container  mt-2">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-lg-6">
+                    <div class="container custom_container">
+                        <div class="card card-stepper text-black d-flex justify-content-center align-items-center">
+                            <div class="card-body p-5">
+                                <div class="row sh_page">
+                                    <div class="col-12">
+                                        <h4 class="font-weight-bolder" style="text-align: center;">Your order has been received !</h4>
+                                        <hr />
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <p class="checked" style="text-align: center;"></p>
+                                        </div>
+                                        <h5 style="text-align: center;">Thank you for your purchase!</h5>
+                                        <p class="text-muted font-weight-bolder" style="text-align: center;">
+                                            Your order Code: #@Model.OrderId
+                                        </p>
+                                        <div class="text-danger font-weight-bolder">
+                                            <a asp-controller="SearchProduct" asp-action="Index" asp-route-productType="ring" class="btn btn-warning" style="float: left;">Continue Shopping</a>
+                                            <a asp-controller="Payment" asp-action="OrderDetail" asp-route-orderId="@Model.OrderId" asp-route-productType="ring"
+                                               class="btn btn-warning" style="float: right;">Go to your Order</a>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+}
+

@@ -1,0 +1,285 @@
+﻿@model UserVM
+@using Newtonsoft.Json;
+@using PhillyLuxEcommerce.Helpers.Utilities;
+
+@{
+    var lstState = Common.lstStateUSA;
+    if (Model.Country == "Canada")
+    {
+        lstState = Common.lstStateCanada;
+    }
+    var stateListCanadaJson = JsonConvert.SerializeObject(Common.lstStateCanada);
+    var stateListUSAJson = JsonConvert.SerializeObject(Common.lstStateUSA);
+
+}
+
+<div class="modal fade" id="email_model" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-left">
+                <p class="text-muted font-weight-bolder">
+                    We have received your submission and an email has been sent to confirm your request.
+                    <br />
+                    Please check your email (including your Spam/Junk folder) for an email from us with the subject
+                    "Confirm your Email". Click the confirmation link in that email to complete your request.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="section-content padding-y mt-5">
+    <div class="container">
+        <div class="row bg-white">
+            <div class="col-12 ">
+                <ul class="p-md-3 p-2">
+                    <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                    <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                    <li class="d-inline-block hr_ font-weight-bolder">Account</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <aside class="col-md-3 mt-2">
+                <nav class="list-group">
+                    <a class="list-group-item active" asp-controller="User" asp-action="Index"> Account </a>
+                    <a class="list-group-item" asp-controller="Payment" asp-action="OrderHistory"> My Orders </a>
+                    <a class="list-group-item " asp-controller="User" asp-action="Wishlist"> My wishlist </a>
+                    <a class="list-group-item" asp-controller="User" asp-action="Notification"> Notification </a>
+                </nav>
+            </aside> <!-- col.// -->
+            <main class="col-md-9 mt-2">
+                <div class="card">
+                    <div class="card-body">
+                        <form class="row" asp-action="UpdateUser" asp-controller="User" method="post" enctype="multipart/form-data">
+                            <div class="col-md-9">
+                                @if (ViewBag.ResultUpdateUser != null)
+                                {
+                                    @Html.Raw(ViewBag.ResultUpdateUser)
+                                }
+                                <div class="form-row mt-2">
+                                    <input hidden asp-for="Id">
+                                    <input hidden asp-for="PasswordHash">
+                                    <input hidden asp-for="EmailConfirmed">
+                                    <input hidden asp-for="PhoneNumberConfirmed">
+                                    <input hidden asp-for="IsActive">
+                                    <div class="col form-group">
+                                        <label for="FullName">Full Name</label>
+                                        <input asp-for="FullName" class="setting form-control" placeholder="Please enter your name">
+                                    </div> <!-- form-group end.// -->
+                                    <div class="form-group col-md-6">
+                                        <label for="Country">Country</label>
+                                        <select asp-for="Country" class="setting form-control" autocomplete="off">
+                                            @foreach (var item in Common.lstCountry)
+                                            {
+                                                <option value="@item.Key">@item.Title</option>
+                                            }
+                                        </select>
+                                    </div> <!-- form-group end.// -->
+                                </div> <!-- form-row.// -->
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="Address2">Building</label>
+                                        <input id="Address2" name="Address2" type="text" class="setting form-control" value="@Model.Address2" placeholder="Please enter your building">
+                                    </div> <!-- form-group end.// -->
+                                    <div class="form-group col-md-6">
+                                        <label for="Address1">Address </label>
+                                        <input id="Address1" name="Address1" type="text" class="setting form-control" value="@Model.Address1" placeholder="Please enter your address">
+                                    </div> <!-- form-group end.// -->
+                                </div> <!-- form-row.// -->
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="State">State </label>
+                                        @* <input id="State" type="text" class="setting form-control" placeholder="Please enter your state">*@
+                                        <select class="setting form-control" asp-for="State">
+                                            @foreach (var item in lstState)
+                                            {
+                                                <option value="@item.Key">@item.Title</option>
+                                            }
+                                        </select>
+                                    </div> <!-- form-group end.// -->
+                                    <div class="form-group col-md-6">
+                                        <label for="PostCode">Post Code </label>
+                                        <input id="PostCode" name="PostCode" type="text" class="setting form-control" value="@Model.PostCode" oninput="formatPostCodeNumber(this)" placeholder="Please enter your state">
+                                    </div> <!-- form-group end.// -->
+                                </div> <!-- form-row.// -->
+
+                                <div class="form-row">
+                                    <div class="col form-group">
+                                        <label for="Email">
+                                            Email
+                                            @if (Model.EmailConfirmed == true)
+                                            {
+                                                <span class="text-success">
+                                                    <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">
+                                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                                </span>
+                                            }
+                                        </label>
+                                        <div class="row mx-0">
+                                            @if (Model.EmailConfirmed == true)
+                                            {
+                                                <input asp-for="Email" readonly class="setting form-control" autocomplete="off">
+                                            }
+                                            else
+                                            {
+                                                <input asp-for="Email" readonly class="setting form-control col-8 mr-1" autocomplete="off">
+                                                <span id="btnVerifyEmail" class="btn btn-primary col"
+                                                      data-toggle="modal" data-target="#email_model">verify</span>
+                                            }
+                                        </div>
+                                    </div> <!-- form-group end.// -->
+                                    <div class="form-group col-md-6">
+                                        <label for="PhoneNumber">
+                                            Phone
+                                            @if (Model.PhoneNumberConfirmed == true)
+                                            {
+                                                <span class="text-success">
+                                                    <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">
+                                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                                </span>
+                                            }
+                                        </label>
+                                        <div class="row mx-0">
+
+                                            @if (Model.PhoneNumberConfirmed == true)
+                                            {
+                                                <input placeholder="(+1)..." maxlength="10" type="text" class="setting form-control" asp-for="PhoneNumber" />
+                                            }
+                                            else
+                                            {
+                                                <input placeholder="(+1)..." maxlength="10" type="text" class="setting form-control col-8 mr-1" asp-for="PhoneNumber" />
+                                                <a class="btn btn-primary col" asp-action="OTP" asp-controller="User">verify</a>
+                                            }
+                                        </div>
+
+                                    </div> <!-- form-group end.// -->
+                                </div> <!-- form-row.// -->
+                                @* <button class="btn btn-light">Change password</button> *@
+
+                                <br><br><br><br><br><br>
+
+                            </div> <!-- col.// -->
+                            <div class="col-md-3 p-4">
+                                <div class="row justify-content-center">
+                                    <input hidden asp-for="Avatar" />
+                                    @if (!string.IsNullOrWhiteSpace(Model.Avatar))
+                                    {
+                                        <img src="@Model.Avatar" class="img-thumbnail rounded-circle border col-9" id="avatar">
+                                    }
+                                    else
+                                    {
+                                        <img src="~/img/blog-user.svg" class="img-thumbnail rounded-circle border col-9" id="avatar">
+                                    }
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" name="UploadImg" id="UploadImg" accept="image/*">
+                                        <label class="custom-file-label" for="UploadImg">Choose file</label>
+                                    </div>
+                                </div>
+                                <div class="row mt-4 d-flex">
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </div>
+                            </div>  <!-- col.// -->
+                        </form>
+                    </div> <!-- card-body.// -->
+                </div> <!-- card .// -->
+
+            </main> <!-- col.// -->
+        </div>
+
+    </div> <!-- container .//  -->
+</section>
+
+@section Scripts{
+    <script type="text/javascript">
+        // Lấy thẻ input file và thẻ ảnh
+        const input = document.getElementById('UploadImg');
+        const img = document.getElementById('avatar');
+
+        // Gắn sự kiện onchange cho input file
+        input.addEventListener('change', function () {
+            if (input.files && input.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    img.setAttribute('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
+        $(document).ready(function () {
+            $(document).on('click', '#btnVerifyEmail', function () {
+                let email = $('#Email').val();
+
+                $.ajax({
+                    url: '@Url.Action("SendEmailVerify","User")',
+                    data: { email: email },
+                    async: true,
+                    type: 'POST',
+                    success: function (result) {
+
+                    }
+                });
+            });
+
+            $(document).on('change', '#Country', function (e) {
+                $('#State').empty();
+
+                let country = $(this).val();
+                if (country === 'Canada') {
+                    let stateList = @Html.Raw(stateListCanadaJson);
+                    stateList.forEach(function (state) {
+                        $('#State').append('<option value="' + state.Key + '">' + state.Title + '</option>');
+                    });
+                } else {
+                    let stateList = @Html.Raw(stateListUSAJson);
+                    stateList.forEach(function (state) {
+                        $('#State').append('<option value="' + state.Key + '">' + state.Title + '</option>');
+                    });
+                }
+            });
+        });
+
+        function formatPostCodeNumber(input) {
+            const countryInput = document.getElementById('Country');
+
+            const selectedCountry = countryInput.value;
+            if (selectedCountry === "United States") {
+                let formattedValue = input.value.replace(/\D/g, '');
+                formattedValue = formattedValue.slice(0, 5);
+                input.value = formattedValue;
+            } else if (selectedCountry === "Canada") {
+                const formattedValue = input.value.replace(/\W/g, '');
+                if (formattedValue.length > 6) {
+                    input.value = formattedValue.slice(0, 6).replace(/(\w{3})(\w{3})/, '$1 $2');
+                } else {
+                    input.value = formattedValue;
+                }
+            }
+        }
+
+
+    </script>
+}

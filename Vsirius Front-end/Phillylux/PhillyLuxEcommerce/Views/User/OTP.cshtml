@@ -1,0 +1,32 @@
+﻿<div id="forgot_page" class="forgot-page animate__animated animate__fadeInUp">
+    <div class="sp_header bg-white p-3">
+        <div class="container custom_container">
+            <div class="row ">
+                <div class="col-12 ">
+                    <ul class="p-md-3 p-2 bg-light">
+                        <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-controller="Home" asp-action="Index">home</a></li>
+                        <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                        <li class="d-inline-block hr_ font-weight-bolder">Verify Phone</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container custom_container  mt-2">
+        <h3 class="text-center">Confirm your phone </h3>
+        <div id="forgot" class="page-content card card-block p-3 p-sm-4">
+            <form class="needs-validation" method="post" asp-action="VerifyPhoneByOTP" asp-controller="User">
+                <div class="form-group">
+                    <p class="renew_pass text-muted">Enter the code we sent to your mobile phone. @(ViewBag.PhoneNumber as string)</p>
+                    <label for="OTP" class="font-weight-bolder">OTP Code</label>
+                    <input id="OTP" name="OTP" type="text" class="form-control" required>
+                    @if (ViewBag.ResultVerifyPhone != null)
+                    {
+                        @Html.Raw(ViewBag.ResultVerifyPhone)                        
+                    }
+                </div>
+                <input type="submit" name="submit" class="btn btn-primary mt-3" value="send">
+            </form>
+        </div>
+    </div>
+</div>

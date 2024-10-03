@@ -1,0 +1,87 @@
+﻿@model UserVM
+
+<div id="orderhistory_page" class="checkout-page animate__animated animate__fadeInUp">
+    <div class="sp_header bg-white p-3 mt-2">
+        <div class="container custom_container ">
+            <div class="row ">
+                <div class="col-12 ">
+                    <ul class="p-md-3 p-2 bg-light">
+                        <li class="d-inline-block font-weight-bolder"><a class="home-link" asp-action="Index" asp-controller="Home">home</a></li>
+                        <li class="d-inline-block hr_ font-weight-bolder">/</li>
+                        <li class="d-inline-block hr_ font-weight-bolder">Order Verify</li>
+                    </ul>
+                </div>
+            </div>        
+        </div>
+    </div>
+    <div class="container custom_container  mt-2">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-6">
+                <div class="container custom_container">
+                    <div class="card card-stepper text-black d-flex justify-content-center align-items-center">
+                        <div class="card-body p-5">
+                            <div class="row sh_page">
+                                <div class="col-12">
+                                    <h4 class="font-weight-bolder" style="text-align: center;">You need to verify your email and phone to make payment !</h4>
+                                    <hr />
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <p class="checked" style="text-align: center;"></p>
+                                    </div>
+                                    <h5 style="text-align: center;">Verify here!</h5>
+                                    <div class="row row d-flex justify-content-center align-items-center">
+                                        <p class="text-muted font-weight-bolder" style="text-align: center;">
+                                            email: <span>@Model.Email</span>
+                                            @if (Model.EmailConfirmed == true)
+                                            {
+                                                <span class="text-success">
+                                                    <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">
+                                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                                </span>
+                                            }
+                                        </p>
+                                    </div>
+                                    <div class="row row d-flex justify-content-center align-items-center">
+                                        <p class="text-muted font-weight-bolder" style="text-align: center;">
+                                            phone: @if (Model.PhoneNumber != null)
+                                            {
+                                                <span>@Model.PhoneNumber</span>
+                                            }
+                                            else
+                                            {
+                                                <span>No phone number yet</span>
+                                            }
+
+                                            @if (Model.TwoFactorEnabled == true)
+                                            {
+                                                <span class="text-success">
+                                                    <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">
+                                                    <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                                </span>
+                                            }
+                                        </p>
+                                    </div>
+                                    <hr />
+                                    <div class="text-danger font-weight-bolder " style="display: flex; justify-content: center;">
+                                        <a asp-controller="User" asp-action="Index" class="btn btn-warning">Your Information</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

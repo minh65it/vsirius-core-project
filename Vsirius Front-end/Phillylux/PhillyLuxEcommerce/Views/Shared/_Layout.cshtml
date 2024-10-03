@@ -1,0 +1,507 @@
+﻿@using PhillyLuxEcommerce.Dtos
+@using System.Security.Claims
+@using PhillyLuxEcommerce.Helpers.Utilities
+@using PhillyLuxEcommerce.ViewModels;
+@inject PhillyLuxEcommerce.Services.Interfaces.IHomeService _homeService;
+@{
+    string productType = "";
+    Common.categoryMenus = (List<HomeVMFilter>)(await _homeService.GetFilterByProductType()).Data ?? new();
+    var lstCategoryMenu = Common.categoryMenus;
+    var lstPage = (List<PageInfoDto>)(await _homeService.GetAllPages()).Data ?? new();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-signin-client_id" content="581248246291-h0pego43p47hmaovdu738ldhgral3mq0.apps.googleusercontent.com">
+    <title>PhillyLux</title>
+
+    <!-- googleapis -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400&display=swap" rel="stylesheet" />
+    <link rel="shortcut icon"
+          type="image/x-icon"
+          href="~/img/favicon.ico" />
+    <!-- bootstrap min-->
+    <link rel="stylesheet"
+          type="text/css"
+          href="~/css/bootstrap.min.css" />
+    <!-- fontawesome -->
+    <link rel="stylesheet" type="text/css" href="~/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/fontawesome.css" />
+    <link rel="stylesheet"
+          type="text/css"
+          href="~/css/fontawesome.min.css" />
+    <!-- OwlCarousel2 -->
+    <link rel="stylesheet" type="text/css" href="~/css/slick.css" />
+    <!-- slick-theme -->
+    <link rel="stylesheet" type="text/css" href="~/css/slick-theme.css" />
+    <!-- slick -->
+    <link rel="stylesheet" type="text/css" href="~/css/owl.carousel.css" />
+    <!-- fancybox -->
+    <link rel="stylesheet"
+          type="text/css"
+          href="~/css/jquery.fancybox.css" />
+    <!-- animate -->
+    <link rel="stylesheet" type="text/css" href="~/css/animate.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/media.css" />
+    <!-- custom style -->
+    <link rel="stylesheet" type="text/css" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <!-- responsive -->
+    <link rel="stylesheet" type="text/css" href="~/css/responsive.css" />
+</head>
+
+<body>
+    <partial name="_Popup" />
+    <div class="preloader"></div>
+    <!-- header area -->
+    <header>
+        <partial name="_TopBar" />
+
+        <!-- topbar-outer py-2 border-bottom<-->
+        <!-- second row -->
+        <div class="header-top sticky-md-top">
+            <div class="header-top-container">
+                <div class="container">
+                    <div class="row header_row">
+                        <div class="col-xl-2 col-lg-2 col-5 col-md-2 col-xs-3 head-logo">
+                            <div class="text-left header-top-left">
+                                <a asp-controller="Home" asp-action="Index">
+                                    <img src="~/img/main-banner/VSIRIUS_Logo_Final.png"
+                                         class="img-responsive img"
+                                         alt="logo" />
+                                </a>
+                            </div>
+                        </div>
+                        <!-- col-xl-2 col-lg-2 col-md-2 col-sm-3 head-logo -->
+                        <div class="col-xl-8 col-lg-8 col col-md-8 col-xs-6 head-search">
+                            <ul class="main-menu navbar">
+                                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                                <li><a asp-controller="TopProduct" asp-action="Index">top products</a></li>
+                                <li class="dropdown mega_menu m1 level-1 font-weight-bolderer">
+                                    <a class="dropdown-toggle"
+                                       href="#"
+                                       role="button"
+                                       data-toggle="dropdown"
+                                       aria-expanded="false">
+                                        category&nbsp;<span class="float-right"><i class="fas fa-angle-down"></i></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <div class="row mx-0">
+                                                @{
+                                                    foreach (var item in lstCategoryMenu)
+                                                    {
+                                                        <ul class="sub-category col-12 col-md-6 col-lg-4">
+                                                            <li class="d-block">
+                                                                <a class="dropdown-item font-weight-bolderer"
+                                                                   asp-controller="SearchProduct" asp-action="Index" asp-route-productType="@item.Value">@item.Title</a>
+                                                            </li>
+                                                        </ul>
+                                                    }
+                                                }
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a class="dropdown-toggle"
+                                       href="#"
+                                       role="button"
+                                       data-toggle="dropdown"
+                                       aria-expanded="false">
+                                        pages <i class="fas fa-angle-down"></i>
+                                    </a>
+                                    <ul class="dropdown-menu all-page-drop">
+                                        @foreach (var item in lstPage)
+                                        {
+                                            <li class="d-block">
+                                                <a asp-controller="Page" asp-action="Page"
+                                                   asp-route-id="@item.Id" asp-route-slug="@item.Url"
+                                                   class="dropdown-item font-weight-bolderer">
+                                                    @item.Title
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                                <li><a asp-controller="Page" asp-action="Contact">contact us</a></li>
+                            </ul>
+                            <!-- row -->
+                        </div>
+                        <!-- col-xl-10 col-lg-10 col-md-10 col-sm-12 col-12 head-search -->
+                        <div class="col-xl-2 col-lg-2 col-5 col-md-2 col-xs-3 head-right">
+                            <ul class="top_cart">
+
+                                @if (Context?.User?.Identity?.IsAuthenticated ?? false)
+                                {
+                                    <li style="margin-top:12px">
+                                        <a asp-controller="User" asp-action="Wishlist">
+                                            <span class="material-symbols-outlined">
+                                                favorite
+                                            </span>
+                                            @* <span class="heart-icon" style="font-size: 31px; padding: 1px" aria-haspopup="true" aria-expanded="false">
+                                                <i class="far fa-heart"></i>
+                                            </span> *@
+                                        </a>
+                                        <a href="#" id="heart-qty" style="margin-right: -5px;">
+                                            <span class="d-lg-inline-block d-md-none d-sm-none d-none align-middle font-weight-bolderer"></span>
+                                            <span id="count_wishlist" class="price_cart d-md-inline-block align-middle font-weight-bolderer"></span>
+                                        </a>
+                                    </li>
+                                }
+
+                                <li class="dropdown right1 md_acco search">
+                                    <div class="search-icon"></div>
+                                    <div class="search-overlay">
+                                        <form asp-controller="SearchProduct" asp-action="Index" method="Get" class="search-bar">
+                                            <select asp-for="@productType" class="search-select form-select">
+                                                @foreach (var item in lstCategoryMenu)
+                                                {
+                                                    if (item.Value == "ring")
+                                                    {
+                                                        <option selected value="ring">Ring</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.Value">@item.Title</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <input type="text"
+                                                   name="keySearch"
+                                                   placeholder="Search here..."
+                                                   class="search-field" />
+                                            <input type="submit" name="search" class="search-btn" />
+                                        </form>
+                                    </div>
+                                </li>
+
+                                <li class="dropdown right1 md_acco md_acc">
+                                    <partial name="_Account" />
+                                </li>
+
+                                <li id="cart" class="dropdown right1 md_acco my-cart">
+                                    <partial name="_Cart" />
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- col-sm-4 head-right text-right -->
+                    </div>
+                    <!-- row -->
+                </div>
+            </div>
+            <!--  container  -->
+        </div>
+        <!-- header-top py-4 border-bottom-->
+        <!-- header area end -->
+        <!-- vertical -->
+        <div id="home_vertical_menu" class="menu_slider">
+            <div class="row">
+                <div class="col-lg-3 vertical_menu">
+                    <div class="v_menu bg-white rounded">
+                        <div class="cat_menu bg-warning rounded-top">
+                            <a href="#"
+                               class="pe-auto text-uppercase d-md-none d-sm-none d-none d-lg-block font-weight-bolder"><i class="fas fa-bars"></i>all categories</a>
+                        </div>
+                        <div class="navbar-header d-xl-none d-lg-none">
+                            <button type="button"
+                                    class="btn-navbar navbar-toggle"
+                                    onclick="openNav()"
+                                    data-toggle="collapse"
+                                    data-target=".navbar-ex1-collapse">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                        </div>
+                        <div id="mySidenav" class="sidenav">
+                            <div class="close-nav d-xl-none d-lg-none">
+                                <span class="categories">Menu</span>
+                                <a href="javascript:void(0)"
+                                   class="closebtn pull-right"
+                                   onclick="closeNav()">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            </div>
+                            <ul class="vertical_main_menu h_menu navbar navbar-nav">
+                                <li><a asp-action="Index" asp-controller="Home">Home</a></li>
+                                <li class="">
+                                    <a class="dropdown-toggle" asp-action="Index" asp-controller="TopProduct">top products&nbsp;</a>
+                                </li>
+                                <li class="dropdown mega_menu level-1 font-weight-bolderer">
+                                    <a class="dropdown-toggle"
+                                       href="#"
+                                       role="button"
+                                       data-toggle="dropdown"
+                                       aria-expanded="false">
+                                        Category&nbsp;<span class="float-right mt-1"><i class="fas fa-angle-down"></i></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <ul class="row mx-0">
+                                                <li class="mg_menu col-lg-3 col-md-12">
+                                                    <ul class="sub-category">
+                                                        @foreach (var item in lstCategoryMenu)
+                                                        {
+                                                            <li class="d-block">
+                                                                <a class="dropdown-item font-weight-bolderer"
+                                                                   asp-controller="SearchProduct" asp-action="Index" asp-route-productType="@item.Value">@item.Title</a>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                </li>
+
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown level-1 font-weight-bolderer">
+                                    <a class="dropdown-toggle home-link"
+                                       href="#"
+                                       role="button"
+                                       data-toggle="dropdown"
+                                       aria-expanded="false">
+                                        pages&nbsp;<span class="float-right mt-1"><i class="fas fa-angle-down"></i></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        @foreach (var item in lstPage)
+                                        {
+                                            <li>
+                                                <a class="dropdown-item font-weight-bolderer" asp-controller="Page" asp-action="Page"
+                                                   asp-route-id="@item.Id" asp-route-slug="@item.Url">@item.Title</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                                <li class="level-1 font-weight-bolderer">
+                                    <a class="home-link" asp-controller="Page" asp-action="Contact">contact-us</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- v_menu bg-white rounded -->
+                </div>
+                <!-- col-md-3 vertical_menu -->
+            </div>
+            <!-- row -->
+        </div>
+        <!-- vertical menu-->
+    </header>
+
+    @RenderBody()
+
+    <!-- footer -->
+    <div class="footer animate__animated animate__fadeInUp">
+        <div class="first_footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-12 d-none d-sm-none d-md-block news-letter">
+                        <div class="newsletter d-inline-block align-middle">
+                            <h4 class="">Sign up to Newsletter</h4>
+                            <p class="mb-0">
+                                Make sure that you never miss our interesting news and
+                                exclusive promotion. No spam, Ever!
+                            </p>
+                        </div>
+                        <div class="input-group">
+                            <input id="subscribe" type="text"
+                                   class="form-control border-white"
+                                   placeholder="Subscribe newsletter..."
+                                   aria-label="Subscribe newsletter..."
+                                   aria-describedby="button-addon2" />
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary text-uppercase"
+                                        type="button"
+                                        id="button-addon2" onclick="btnSubscribe()">
+                                    Subscribe
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- row first_footer -->
+        <div class="third_footer">
+            <div class="container ">
+                <div class="th_foo">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-12 f_col">
+                            <div class="first_col">
+                                <div class="footer_title">
+                                    <h5 class="text-uppercase">About us<button class="toggle collapsed" data-toggle="collapse" data-target="#f_product"></button></h5>
+                                </div>
+                                <div class="categorie collapse" id="f_product">
+                                    <p>
+                                        Discover exquisite jewelry at Vsirius Store. We offer curated collections, exceptional craftsmanship, and personalized service...
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="footer_bottom text-center">
+                                <div class="footer_title">
+                                    <h5 class="text-uppercase text-left pt-2 pt-xs-0">Socials<button class="toggle collapsed" data-toggle="collapse" data-target="#social"></button></h5>
+                                </div>
+                                <div class="collapse" id="social">
+                                    <div class="d-flex justify-content-start">
+                                        <div class="social_links">
+                                            <a href="#">
+                                                <i class="fab fa-facebook-f"></i>
+                                            </a>
+                                        </div>
+                                        <div class="social_links">
+                                            <a href="#">
+                                                <i class="fab fa-youtube"></i>
+                                            </a>
+                                        </div>
+                                        <div class="social_links">
+                                            <a href="#">
+                                                <i class="fab fa-skype"></i>
+                                            </a>
+                                        </div>
+                                        <div class="social_links">
+                                            <a href="#">
+                                                <i class="fab fa-twitter"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-12">
+                            <div class="fth_col">
+                                <div class="footer_title">
+                                    <h5 class="text-uppercase">information<button class="toggle collapsed" data-toggle="collapse" data-target="#fh_product"></button></h5>
+                                </div>
+                                <div class="categorie collapse" id="fh_product">
+                                    <ul>
+                                        @foreach (var item in lstPage)
+                                        {
+                                            <li>
+                                                <a asp-controller="Page" asp-action="Page"
+                                                   asp-route-id="@item.Id" asp-route-slug="@item.Url">@item.Title</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-12">
+                            <div class="th_col">
+                                <div class="footer_title">
+                                    <h5 class="text-uppercase">categories<button class="toggle collapsed" data-toggle="collapse" data-target="#tproduct"></button></h5>
+                                </div>
+                                <div class="categorie collapse" id="tproduct">
+                                    <ul>
+                                        @for (int i = 0; i < lstCategoryMenu.Take(5).ToList().Count; i++)
+                                        {
+                                            <li>
+                                                <a asp-controller="SearchProduct" asp-action="Index" asp-route-productType="@lstCategoryMenu[i].Value">@lstCategoryMenu[i].Title</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-12">
+                            <div class="fst_col">
+                                <div class="footer_title">
+                                    <h5 class="text-uppercase">contact us<button class="toggle collapsed" data-toggle="collapse" data-target="#fproduct"></button></h5>
+                                </div>
+                                <div class="categorie collapse " id="fproduct">
+                                    <ul class="add_row">
+                                        <li>
+                                            <div class="data1 add contact-ic">
+                                                <a href="#">Address 630 Church ln,<br> Yeadon, PA 19050</a>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="contact-ic call_ic">215-500-2667</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="mail_f contact-ic mail_ic">admin@vsirius.com</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="snd_col">
+                                <div class="footer_title">
+                                    <h5 class="text-uppercase">
+                                        payment
+                                        <button class="toggle collapsed" data-toggle="collapse" data-target="#payment">
+                                        </button>
+                                    </h5>
+                                </div>
+                                <div class="categorie collapse " id="payment">
+                                    <ul class="foo_pay">
+                                        <li>
+                                            <a href="#"><i class="fab fa-cc-mastercard"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><i class="fab fa-cc-visa"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><i class="fas fa-credit-card"></i></a>
+                                        </li>
+                                        <li>
+                                            <a href="#"><i class="fab fa-cc-paypal"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- row first_footer -->
+        <div class="fifth_footer">
+            <div class="container">
+                <div class="">
+                    <div class="text-center demo_link d-block">
+                        2023 @@ All rights reserved Powered by <a href="#">VSirius Inc</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- row first_footer -->
+    </div>
+    <!-- footer -->
+    <!-- footer end -->
+    <!-- scroll -->
+    <a href="#" id="scroll"></a>
+
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!-- jquery-3.4.1 -->
+    <script src="~/js/jquery-3.4.1.min.js"></script>
+    <!-- owl.carousel -->
+    <script src="~/js/owl.carousel.js"></script>
+    <!-- bootstrap.min -->
+    <script src="~/js/bootstrap.min.js"></script>
+    <!-- popper.min -->
+    <script src="~/js/popper.min.js"></script>
+    <!-- slick -->
+    <script src="~/js/slick.js"></script>
+    <!-- wow.js - v1.2.1 -->
+    <script src="~/js/wow.min.js"></script>
+    <!-- Font Awesome Free 5.15.1 -->
+    <script src="~/js/all.min.js"></script>
+    <!--   fancybox -->
+    <script src="~/js/jquery.fancybox.min.js"></script>
+    <!-- custom js -->
+    <script src="~/js/custom.js" asp-append-version="true"></script>
+
+    <!-- input mask js -->
+    @* <script src="~/js/microsoft/signalr/dist/browser/signalr.js"> </script> *@
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

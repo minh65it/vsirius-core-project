@@ -1,0 +1,84 @@
+﻿@inject PhillyLuxEcommerce.Services.Interfaces.ICartService cartService
+@using Microsoft.AspNetCore.Http
+@{
+    const string userIdKey = "CartUserVsirius";
+    var userIdCookie = Context.Request.Cookies[userIdKey];
+
+    if (string.IsNullOrWhiteSpace(userIdCookie))
+    {
+        userIdCookie = Guid.NewGuid().ToString();
+        var cookieOptions = new CookieOptions
+                {
+                    // HttpOnly = false,
+                    // SameSite = SameSiteMode.None,
+                    // Secure = false,
+                    Expires = DateTime.Now.AddDays(7),
+                };
+        Context.Response.Cookies.Append(userIdKey, userIdCookie, cookieOptions);
+    }
+
+    var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+    var cart = await cartService.GetCart(email, userIdCookie);
+
+}
+
+<a href="#" class="cart-qty">
+    <span class="d-lg-inline-block d-md-none d-sm-none d-none align-middle font-weight-bolderer"></span>
+    @if (cart != null && cart.ListCartDetailsDtos != null)
+    {
+        <span class="price_cart d-md-inline-block align-middle font-weight-bolderer">@cart.ListCartDetailsDtos.Count</span>
+    }
+</a>
+<span class="dropdown-toggle Price-amount"
+      role="menu"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false">
+</span>
+<div class="dropdown-menu s_cart dropdown-menu-right">
+
+    @{
+        if (cart != null && cart.ListCartDetailsDtos != null && cart.ListCartDetailsDtos.Count > 0)
+        {
+
+            <ul class="shopping-cart pr-2" style="max-height: 40vh;
+            overflow-y: auto;">
+                @foreach (var item in cart.ListCartDetailsDtos)
+                {
+                    <li class="pb-2 d-block cart-remove cart_cross">
+                        <div class="media">
+                            <div>
+                                <a asp-action="Index" asp-controller="ProductDetail" asp-route-productId="@item.ProductId">
+                                    <img src="@item.Image"
+                                         class="fst-image img-fluid align-self-center"
+                                         alt="placeholder" />
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <h6 class="mt-0 f_15"><a asp-action="Index" asp-controller="ProductDetail" asp-route-productId="@item.ProductId">@item.ProductName</a></h6>
+                                <p><span class="f_13">@item.Quantity x $ @(item.PriceSale ?? item.Price)</span></p>
+                            </div>
+                        </div>
+                    </li>
+                }
+
+            </ul>
+            <ul class ="shopping-cart pr-2">
+                <li class="d-block text-muted font-weight-bolderer p-2 border-bottom">
+                    <span class="text-left">subtotal:</span>
+                    <span class="float-right">$@cart.TotalPrice</span>
+                </li>
+                <li class="d-block font-weight-bolderer pt-2">
+                    <span class="text-left"><a class="btn-primary" asp-controller="Cart" asp-action="Index">view cart</a></span>
+                    <span class="float-right"><a class="btn-primary" asp-controller="Payment" asp-action="Index">check out</a></span>
+                </li>
+            </ul>
+        }
+        else
+        {
+            <p class="text-center cartempty">
+                Your Shopping cart is empty!
+            </p>
+        }
+    }
+</div>
