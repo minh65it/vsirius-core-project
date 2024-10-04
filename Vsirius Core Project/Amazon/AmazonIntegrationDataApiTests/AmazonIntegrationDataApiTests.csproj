@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="wwwroot\file\Amazon_Full_Jewelry_Watch_Template.xlsm" />
+    <None Remove="wwwroot\file\Amazon_Jewelry_Data_Export.xlsx" />
+    <None Remove="wwwroot\file\Amazon_Jewelry_Data_Export_V3.xlsx" />
+    <None Remove="wwwroot\file\DataStullerToAmazon_5.csv" />
+    <None Remove="wwwroot\file\Prayer&amp;MeditationBeads_JewelrySets_Charms_Necklaces_Stud.xlsm" />
+    <None Remove="wwwroot\file\submitedProductFeed_54318018908.xls" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="wwwroot\file\Amazon_Full_Jewelry_Watch_Template.xlsm">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="wwwroot\file\Amazon_Jewelry_Data_Export.xlsx">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="wwwroot\file\Amazon_Jewelry_Data_Export_V3.xlsx">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="wwwroot\file\DataStullerToAmazon_5.csv">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="wwwroot\file\Prayer&amp;MeditationBeads_JewelrySets_Charms_Necklaces_Stud.xlsm">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="wwwroot\file\submitedProductFeed_54318018908.xls">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="Moq" Version="4.18.4" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AmazonIntegrationDataApi\AmazonIntegrationDataApi.csproj" />
+  </ItemGroup>
+
+</Project>
