@@ -78,5 +78,19 @@ namespace OrdersAPI.Controllers
             return Ok(await _service.Delete(id));
         }
 
+
+        /// <summary>
+        /// Seed data status: 
+        /// </summary>
+        /// <remarks>
+        /// Pending, Approved, Shipping, OrderDelivered, Cancel
+        /// </remarks>
+        /// <returns></returns>
+        [Authorize(Roles = "Admin")]
+        [HttpPost("SeedDataStatus")]
+        public async Task<IActionResult> SeedDataStatus()
+        {
+            return Ok(await _service.SeedDataStatus());
+        }
     }
 }

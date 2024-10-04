@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace OrdersAPI.Helpers.Utilities
 {
-    public class Ultilities
+    public class Utilities
     {
         public static bool IsValidGCID(string gcid)
         {

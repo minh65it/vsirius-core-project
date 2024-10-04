@@ -29,6 +29,7 @@ namespace OrdersAPI._Services.Services
 
         public async Task<OperationResult> Create(OrderStatusDto dto)
         {
+            dto.IdGuild = Guid.NewGuid().ToString();
             var data = _mapper.Map<OrderStatus>(dto);
             _repository.Add(data);
             try
@@ -65,6 +66,8 @@ namespace OrdersAPI._Services.Services
         public async Task<PaginationUtility<OrderStatusDto>> GetData(PaginationParam pagination, string keyword)
         {
             var predicate = PredicateBuilder.New<OrderStatus>(true);
+            keyword = keyword.ToLower();
+            predicate.And(x => x.Name.ToLower().Contains(keyword) || x.Description.ToLower().Contains(keyword));
             if (!string.IsNullOrWhiteSpace(keyword))
             {
                 keyword = keyword.ToLower();
@@ -72,7 +75,7 @@ namespace OrdersAPI._Services.Services
             }
             try
             {
-                var data = _repository.FindAll().ProjectTo<OrderStatusDto>(_mapperConfiguration).AsNoTracking();
+                var data = _repository.FindAll().ProjectTo<OrderStatusDto>(_mapperConfiguration).OrderBy(x => x.Id).AsNoTracking();
                 return await PaginationUtility<OrderStatusDto>.CreateAsync(data, pagination.PageNumber, pagination.PageSize, true);
             }
             catch(Exception ex)
@@ -87,12 +90,40 @@ namespace OrdersAPI._Services.Services
         {
             try
             {
-                return await _repository.FindAll(x => x.IsActive == true).Select(x => new KeyValuePair<int, string>(x.Id, x.Name)).ToListAsync();
+                return await _repository.FindAll(x => x.IsActive == true).OrderBy(o => o.Id).Select(x => new KeyValuePair<int, string>(x.Id, x.Name)).ToListAsync();
             }
             catch (Exception ex)
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new List<KeyValuePair<int, string>>();
+            }
+        }
+
+        public async Task<OperationResult> SeedDataStatus()
+        {
+            var listStatus = Enum.GetValues(typeof(OrderStatusSeedData)).Cast<OrderStatusSeedData>().ToList();
+            List<OrderStatus> listAdd = new List<OrderStatus>();
+            for (int i = 0; i < listStatus.Count; i++)
+            {
+                listAdd.Add(new OrderStatus
+                {
+                    IdGuild = Guid.NewGuid().ToString(),
+                    Id = i + 1,
+                    Name = listStatus[i].ToString(),
+                    Description = listStatus[i].ToString(),
+                    IsActive = true
+                }) ;
+            }
+            _repository.AddMultiple(listAdd);
+            try
+            {
+                await _repository.SaveChangesAsync();
+                return new OperationResult { Success = true, Message = "Seed Order Status Successfully" };
+            }
+            catch (System.Exception ex)
+            {
+                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                return new OperationResult { Success = false, Message = ex.Message };
             }
         }
 

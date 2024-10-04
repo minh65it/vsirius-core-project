@@ -6,7 +6,7 @@ using OrdersAPI.Helpers.Utilities;
 using Microsoft.EntityFrameworkCore;
 using VsiriusDataModel.DataModel;
 using Korzh.EasyQuery.Linq;
-using OrdersAPI.Data;
+using VsiriusDataModel.DataContext;
 
 namespace OrdersAPI._Services.Services
 {
@@ -18,9 +18,9 @@ namespace OrdersAPI._Services.Services
         private readonly IMapper _mapper;
         private readonly ILogService _logService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly DataContext _context;
+        private readonly VsiriusContext _context;
         public VsiriusCartService(IVsiriusCartRepository vsiriusCartRepository, IVsiriusCartDetailsRepository vsiriusCartDetailsRepository,
-            IVsiriusProductRepository vsiriusProductRepository, IMapper mapper, ILogService logService, IHttpContextAccessor httpContextAccessor, DataContext context)
+            IVsiriusProductRepository vsiriusProductRepository, IMapper mapper, ILogService logService, IHttpContextAccessor httpContextAccessor, VsiriusContext context)
         {
             _vsiriusCartRepository = vsiriusCartRepository;
             _vsiriusCartDetailsRepository = vsiriusCartDetailsRepository;
@@ -51,7 +51,7 @@ namespace OrdersAPI._Services.Services
 
                 return await PaginationUtility<VsiriusListCartDto>.CreateAsync(data, pagination.PageNumber, pagination.PageSize, isPaging);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return null;
@@ -89,12 +89,12 @@ namespace OrdersAPI._Services.Services
 
                 return listCartDetail;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new List<VsiriusListCartDetailsDto>();
             }
-            
+
         }
 
         public async Task<VsiriusListCartDto> ListCartByUser(Guid userId, string? email)
@@ -106,7 +106,7 @@ namespace OrdersAPI._Services.Services
 
             try
             {
-                VsiriusCart dataCart = new VsiriusCart();
+                VsiriusCart dataCart = new ();
                 if (string.IsNullOrWhiteSpace(email))
                 {
                     dataCart = await _vsiriusCartRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.Status == false,
@@ -119,6 +119,20 @@ namespace OrdersAPI._Services.Services
                 }
 
                 if (dataCart == null) return null;
+
+                var totalPrice = 0m;
+                foreach (var cart in dataCart.VsiriusCartDetails)
+                {
+                    var price = await _vsiriusProductRepository
+                        .FindAll(x => x.item_sku == cart.ProductId)
+                        .AsNoTracking()
+                        .Select(x=> x.standard_price)
+                        .FirstOrDefaultAsync();
+                    cart.Price = price;
+                    totalPrice += (decimal)(price * cart.Quantity);
+                }
+                dataCart.TotalPrice = totalPrice;
+                await _vsiriusCartRepository.SaveChangesAsync();
 
                 var dataCartDetails = dataCart.VsiriusCartDetails
                                    .Select(x => new VsiriusListCartDto
@@ -133,15 +147,18 @@ namespace OrdersAPI._Services.Services
                                        Tax = x.VsiriusCart.Tax,
                                    }).FirstOrDefault();
 
-                if (dataCartDetails == null) return null;
+                if (dataCartDetails == null)
+                { 
+                    return null; 
+                }
 
-                List<VsiriusListCartDetailsDto> listCartDetail = new List<VsiriusListCartDetailsDto>();
+                List<VsiriusListCartDetailsDto> listCartDetail = new();
 
                 foreach (var item in dataCart.VsiriusCartDetails)
                 {
                     var product = _vsiriusProductRepository.FirstOrDefault(x => x.item_sku == item.ProductId);
 
-                    var product1 = _vsiriusProductRepository.FirstOrDefault(x => x.item_sku == item.ProductId);
+                    if (product == null) continue;
                     VsiriusListCartDetailsDto cartDetail = new VsiriusListCartDetailsDto
                     {
                         PriceSale = item.PriceSale,
@@ -163,12 +180,12 @@ namespace OrdersAPI._Services.Services
 
                 return dataCartDetails;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new VsiriusListCartDto();
             }
-            
+
         }
 
         public async Task<OperationResult> AddCartOrDelete(VsiriusCartDetailsDto dtoCartDetail, HttpHeaderDto httpHeader)
@@ -179,11 +196,11 @@ namespace OrdersAPI._Services.Services
                 if (!string.IsNullOrWhiteSpace(dtoCartDetail.Email))
                 {
                     resultCart = await _vsiriusCartRepository.FirstOrDefaultAsync(x => x.Email == dtoCartDetail.Email && x.Status == false);
-                    if (resultCart == null) 
+                    if (resultCart == null)
                     {
-                        VsiriusCartDto cartDto = new VsiriusCartDto();
-                        resultCart = _mapper.Map<VsiriusCart>(cartDto);
+                        VsiriusCartDto cartDto = new();
 
+                        resultCart = _mapper.Map<VsiriusCart>(cartDto);
                         resultCart.CartId = Guid.NewGuid();
                         resultCart.TotalPrice = 0;
                         resultCart.UserName = dtoCartDetail.UserName;
@@ -196,13 +213,13 @@ namespace OrdersAPI._Services.Services
                 }
                 else
                 {
-                     resultCart = await _vsiriusCartRepository.FirstOrDefaultAsync(x => x.UserId == dtoCartDetail.UserId && x.Status == false);
+                    resultCart = await _vsiriusCartRepository.FirstOrDefaultAsync(x => x.UserId == dtoCartDetail.UserId && x.Status == false);
 
                     if (resultCart == null)
                     {
-                        VsiriusCartDto cartDto = new VsiriusCartDto();
-                        resultCart = _mapper.Map<VsiriusCart>(cartDto);
+                        VsiriusCartDto cartDto = new();
 
+                        resultCart = _mapper.Map<VsiriusCart>(cartDto);
                         resultCart.CartId = Guid.NewGuid();
                         resultCart.TotalPrice = 0;
                         resultCart.UserId = dtoCartDetail.UserId;
@@ -214,23 +231,20 @@ namespace OrdersAPI._Services.Services
                     }
                 }
 
-
                 // Add cart detail
-                var resultProduct = await  _vsiriusProductRepository.FirstOrDefaultAsync(x => x.item_sku == dtoCartDetail.ProductId);
+                var resultProduct = await _vsiriusProductRepository.FirstOrDefaultAsync(x => x.item_sku == dtoCartDetail.ProductId);
                 if (resultProduct == null) return new OperationResult { Success = false, Message = "No data Product" };
-
-                //if(dtoCartDetail.Quantity > int.Parse(resultProduct.quantity)) return new OperationResult { Success = false, Message = "Insufficient quantity in stock" };
 
                 var resultCartDetail = _mapper.Map<VsiriusCartDetails>(dtoCartDetail);
                 resultCartDetail.CartId = resultCart.CartId;
-                resultCartDetail.Price = decimal.Parse(resultProduct.standard_price);
+                resultCartDetail.Price = resultProduct.standard_price;
                 resultCartDetail.PriceSale = resultProduct.sale_price == null ? null : decimal.Parse(resultProduct.sale_price);
                 resultCartDetail.InfoBrowser = httpHeader.UserAgent;
                 resultCartDetail.CreateDate = httpHeader.Date;
                 resultCartDetail.IsDelete = false;
 
                 var resultCheckProductOnCart = await _vsiriusCartDetailsRepository
-                    .FirstOrDefaultAsync(x => x.CartId == resultCart.CartId 
+                    .FirstOrDefaultAsync(x => x.CartId == resultCart.CartId
                     && x.ProductId == resultProduct.item_sku && x.IsDelete == false);
 
                 if (resultCheckProductOnCart == null)
@@ -240,7 +254,7 @@ namespace OrdersAPI._Services.Services
                 else
                 {
                     resultCheckProductOnCart.Quantity = resultCheckProductOnCart.Quantity + resultCartDetail.Quantity;
-                    if(resultCheckProductOnCart.Quantity <= 0)
+                    if (resultCheckProductOnCart.Quantity <= 0)
                     {
                         resultCheckProductOnCart.IsDelete = true;
                         resultCheckProductOnCart.Quantity = 0;
@@ -248,7 +262,6 @@ namespace OrdersAPI._Services.Services
                     _vsiriusCartDetailsRepository.Update(resultCheckProductOnCart);
                 }
                 await _vsiriusCartDetailsRepository.SaveChangesAsync();
-
 
                 //update total price
                 bool saveTotal = await UpdateTotalPriceCart(resultCartDetail);
@@ -273,12 +286,18 @@ namespace OrdersAPI._Services.Services
             if (string.IsNullOrWhiteSpace(email)) return false;
             try
             {
-                var resultCartUserId = await _vsiriusCartRepository.FirstOrDefaultAsync(x => x.UserId == userId && x.Status == false,
-                                                                              y => y.VsiriusCartDetails.Where(y => y.IsDelete == false));
+                var resultCartUserId = await _vsiriusCartRepository
+                    .FirstOrDefaultAsync(x => x.UserId == userId
+                    && x.Status == false,
+                    y => y.VsiriusCartDetails
+                    .Where(y => y.IsDelete == false));
                 if (resultCartUserId == null) return false;
 
-                var resultCartEmail = await _vsiriusCartRepository.FirstOrDefaultAsync(x => x.Email == email && x.Status == false,
-                                                                              y => y.VsiriusCartDetails.Where(y => y.IsDelete == false));
+                var resultCartEmail = await _vsiriusCartRepository
+                    .FirstOrDefaultAsync(x => x.Email == email
+                    && x.Status == false,
+                    y => y.VsiriusCartDetails
+                    .Where(y => y.IsDelete == false));
                 //if (resultCartEmail == null) return false;
 
                 if (resultCartEmail == null)
@@ -308,8 +327,8 @@ namespace OrdersAPI._Services.Services
                         _vsiriusCartDetailsRepository.Update(item);
                     }
 
-                    if(string.IsNullOrEmpty(resultCartUserId.Email))
-                    _vsiriusCartRepository.Remove(resultCartUserId);
+                    if (string.IsNullOrEmpty(resultCartUserId.Email))
+                        _vsiriusCartRepository.Remove(resultCartUserId);
 
                     await _vsiriusCartDetailsRepository.SaveChangesAsync();
 
@@ -317,7 +336,6 @@ namespace OrdersAPI._Services.Services
                     {
                         await UpdateTotalPriceCart(item);
                     }
-
                 }
                 return true;
 
@@ -333,9 +351,12 @@ namespace OrdersAPI._Services.Services
         {
             try
             {
-                var resultProductTotalPrice = await _vsiriusCartRepository.FirstOrDefaultAsync(x => x.CartId == cartDetail.CartId);
+                var resultProductTotalPrice = await _vsiriusCartRepository
+                    .FirstOrDefaultAsync(x => x.CartId == cartDetail.CartId);
                 //var resultProductPrice = await _vsiriusCartDetailsRepository.FindAll(x => x.CartId == cartDetail.CartId && x.IsDelete == false).ToListAsync();
-                var resultProductPrice = await _context.VsiriusCartDetails.Where(x => x.CartId == cartDetail.CartId && x.IsDelete == false).ToListAsync();
+                var resultProductPrice = await _context.VsiriusCartDetails
+                    .Where(x => x.CartId == cartDetail.CartId && x.IsDelete == false)
+                    .ToListAsync();
 
                 if (resultProductTotalPrice == null) return false;
 
@@ -362,7 +383,7 @@ namespace OrdersAPI._Services.Services
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return false;

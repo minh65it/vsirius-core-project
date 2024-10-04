@@ -1,13 +1,13 @@
 ﻿
 using OrdersAPI._Repositories.Interfaces;
-using OrdersAPI.Data;
+using VsiriusDataModel.DataContext;
 using VsiriusDataModel.DataModel;
 
 namespace OrdersAPI._Repositories.Repositories
 {
     public class VsiriusCartDetailsRepository : Repository<VsiriusCartDetails>, IVsiriusCartDetailsRepository
     {
-        public VsiriusCartDetailsRepository(DataContext context) : base(context)
+        public VsiriusCartDetailsRepository(VsiriusContext context) : base(context)
         {
         }
     }

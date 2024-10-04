@@ -11,6 +11,7 @@ using OrdersAPI.Dtos;
 using OrdersAPI.Helpers.Params;
 using OrdersAPI.Helpers.Utilities;
 using VsiriusDataModel.DataModel;
+using Newtonsoft.Json;
 
 namespace OrdersAPI._Services.Services
 {
@@ -26,22 +27,15 @@ namespace OrdersAPI._Services.Services
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogService _logService;
-        private IConfigurationRoot _configuration;
+        private readonly IConfigJsonRepository _configJsonRepository;
+        private readonly IConfiguration _configuration;
 
-        private readonly string ApiLoginID;
-        private readonly string ApiTransactionKey;
+        private string ApiLoginID;
+        private string ApiTransactionKey;
 
-        public VsiriusOrderService()
-        {
-            _configuration = new ConfigurationBuilder()
-           .SetBasePath(Directory.GetCurrentDirectory())
-           .AddJsonFile("appsettings.json")
-           .Build();
-            ApiLoginID = _configuration.GetSection("ApiLoginID").Value;
-            ApiTransactionKey = _configuration.GetSection("ApiTransactionKey").Value;
-        }
-
-        public VsiriusOrderService(IVsiriusOrderRepository orderRepository
+        public VsiriusOrderService(
+            IConfigJsonRepository configJsonRepository,
+            IVsiriusOrderRepository orderRepository
             , IMapper mapper, IVsiriusCartRepository cartRepository
             , IVsiriusCartDetailsRepository cartDetailsRepository
             , IVsiriusOrderDetailRepository orderDetailRepository
@@ -49,8 +43,9 @@ namespace OrdersAPI._Services.Services
             , IOrderStatusRepository orderStatusRepository
             , IUserRepository userRepository
             , IHttpContextAccessor httpContextAccessor
-            , ILogService logService)
+            , ILogService logService, IConfiguration configuration)
         {
+            _configJsonRepository = configJsonRepository;
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
             _mapper = mapper;
@@ -61,58 +56,55 @@ namespace OrdersAPI._Services.Services
             _userRepository = userRepository;
             _httpContextAccessor = httpContextAccessor;
             _logService = logService;
-            _configuration = new ConfigurationBuilder()
-           .SetBasePath(Directory.GetCurrentDirectory())
-           .AddJsonFile("appsettings.json")
-           .Build();
-            ApiLoginID = _configuration.GetSection("ApiLoginID").Value;
-            ApiTransactionKey = _configuration.GetSection("ApiTransactionKey").Value;
+            _configuration = configuration;
         }
 
         public async Task<OperationResult> Create(VsiriusOrderDto dto)
         {
             Random random = new Random();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            string randomString = new string(Enumerable.Repeat(chars, 8).Select(s => s[random.Next(s.Length)]).ToArray());
-
+            string randomString = new(Enumerable.Repeat(chars, 8).Select(s => s[random.Next(s.Length)]).ToArray());
             dto.OrderId = randomString;
-            var resultChargeCard = ChargeCreditCard(dto);
+            var listCartByOrder = await (_cartRepository
+                                        .FindAll(x => x.CartId == dto.CartId)
+                                        .Join(_cartDetailsRepository.FindAll(x => x.IsDelete == false), x => x.CartId,y => y.CartId, (x, y) => new { Cart = x, CartDetail = y })
+                                        .Select(x => new
+                                        {
+                                            CartId = x.Cart.CartId,
+                                            ProductId = x.CartDetail.ProductId,
+                                            Quantity = x.CartDetail.Quantity,
+                                            Price = x.CartDetail.Price
+                                        }))
+                                .ToListAsync();
+            dto.TotalPrice = listCartByOrder.Sum(item => item.Quantity * item.Price) + 7.75m;
+
+            var resultChargeCard = await ChargeCreditCard(dto);
             if (!resultChargeCard.Success)
             {
                 return resultChargeCard;
             }
+            else
+            {
+                dto.TransactionId = resultChargeCard.Message;
+            }
 
-            var data = _mapper.Map<VsiriusOrders>(dto);
-
-            // Xử dụng RollBack để trả dữ liệu về trạng thái trước khi lưu vào Database trong trường hợp lỗi
             var transaction = await _orderRepository.BeginTransactionAsync();
-
             try
             {
+                var data = _mapper.Map<VsiriusOrders>(dto);
+                data.TotalPrice -= 7.75m;
+                //add order
                 _orderRepository.Add(data);
-                await _orderRepository.SaveChangesAsync();
 
                 var cartStatus = await _cartRepository.FirstOrDefaultAsync(x => x.CartId == data.CartId);
-
+                //update cart
                 if (cartStatus != null)
                 {
                     cartStatus.Status = true;
                     _cartRepository.Update(cartStatus);
-                    await _cartRepository.SaveChangesAsync();
                 }
 
-                var listCartByOrder = _cartRepository.FindAll(x => x.CartId == data.CartId).Join(_cartDetailsRepository.FindAll(x => x.IsDelete == false),
-                                  x => x.CartId,
-                                  y => y.CartId,
-                                  (x, y) => new { Cart = x, CartDetail = y })
-                                  .Select(x => new
-                                  {
-                                      CartId = x.Cart.CartId,
-                                      ProductId = x.CartDetail.ProductId,
-                                      Quantity = x.CartDetail.Quantity,
-                                      Price = x.CartDetail.Price
-                                  }).ToList();
-
+                //add detail order
                 foreach (var item in listCartByOrder)
                 {
                     VsiriusOrderDetails orderDetails = new()
@@ -124,15 +116,13 @@ namespace OrdersAPI._Services.Services
                     };
                     _orderDetailRepository.Add(orderDetails);
                 }
-                await _orderDetailRepository.SaveChangesAsync();
+                await _orderRepository.SaveChangesAsync();
 
-                // Commit nếu thêm dữ liệu thành công
                 await transaction.CommitAsync();
                 return new OperationResult { Success = true, Data = data };
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                // Trả lại trạng thái trước khi lưu
                 await transaction.RollbackAsync();
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new OperationResult { Success = false, Message = ex.Message };
@@ -140,24 +130,29 @@ namespace OrdersAPI._Services.Services
         }
 
         #region method to process Payment
-        public OperationResult ChargeCreditCard(VsiriusOrderDto dto)
+        public async Task<OperationResult> ChargeCreditCard(VsiriusOrderDto dto)
         {
             try
             {
-                if(_configuration.GetSection("AuthorizeNet").Value == "SANDBOX")
+                List<ConfigJson> lstConfig = await _configJsonRepository.FindAll(x => x.ServiceName.Equals("Order")).AsNoTracking().ToListAsync();
+                var runEnviroment = lstConfig.FirstOrDefault(x => x.Key.Equals("AuthorizeNetEnviroment")).Value;
+                ApiLoginID = lstConfig.FirstOrDefault(x => x.Key.Equals("ApiLoginID")).Value;
+                ApiTransactionKey = lstConfig.FirstOrDefault(x => x.Key.Equals("ApiTransactionKey")).Value;
+
+                if (runEnviroment == "SANDBOX")
                     ApiOperationBase<ANetApiRequest, ANetApiResponse>.RunEnvironment = AuthorizeNet.Environment.SANDBOX;
                 else
                     ApiOperationBase<ANetApiRequest, ANetApiResponse>.RunEnvironment = AuthorizeNet.Environment.PRODUCTION;
-                // define the merchant information (authentication / transaction id)
+
                 ApiOperationBase<ANetApiRequest, ANetApiResponse>.MerchantAuthentication = new merchantAuthenticationType()
-                {                   
+                {
                     name = ApiLoginID,
                     ItemElementName = ItemChoiceType.transactionKey,
-                    Item = ApiTransactionKey,                  
+                    Item = ApiTransactionKey,
                 };
 
                 var creditCard = new creditCardType
-                {                  
+                {
                     cardNumber = dto.CardNumber,
                     expirationDate = dto.ExpirationDate,
                     cardCode = dto.CardCode
@@ -165,39 +160,61 @@ namespace OrdersAPI._Services.Services
 
                 var billingAddress = new customerAddressType
                 {
-                   
-                    firstName = dto.FirstName,
-                    lastName = dto.LastName,
-                    address = dto.Address1,
+                    firstName = dto.FullName,
+                    state = dto.State,
+                    address = $"{dto.Address1}, {(string.IsNullOrWhiteSpace(dto.Address2) ? "" : dto.Address2)}",
                     city = dto.City,
-                    zip = dto.PostCode.ToString()
+                    country = dto.Country,
+                    email = dto.Email,
+                    zip = dto.PostCode.ToString(),
+                    phoneNumber = dto.Phone,
                 };
 
                 //standard api call to retrieve response
                 var paymentType = new paymentType { Item = creditCard };
 
                 // Add line Items
-                //var lineItems = new lineItemType[2];
-                //lineItems[0] = new lineItemType { itemId = "1", name = "t-shirt", quantity = 2, unitPrice = new Decimal(15.00) };
-                //lineItems[1] = new lineItemType { itemId = "2", name = "snowboard", quantity = 1, unitPrice = new Decimal(450.00) };
+                //var lineItems = new lineItemType[dto.ListProducts.Count];
+                //try
+                //{
+                //    for (int i = 0; i < dto.ListProducts.Count; i++)
+                //    {
+                //        var item = dto.ListProducts[i];
+                //        var price = item.standard_price;
+                //        lineItems[i] = new lineItemType
+                //        {
+                //            itemId = item.item_sku,
+                //            name = item.item_name,
+                //            quantity = decimal.Parse(item.quantity),
+                //            unitPrice = price
+                //        };
+                //    }
+                //}
+                //catch (Exception)
+                //{
+
+                //}
 
                 var order = new orderType
                 {
                     invoiceNumber = dto.OrderId,
                     purchaseOrderDateUTC = DateTime.UtcNow,
+                    description = "Order From VsiriusWeb"
                 };
 
                 var transactionRequest = new transactionRequestType
                 {
                     transactionType = transactionTypeEnum.authCaptureTransaction.ToString(),    // charge the card
-
                     amount = (decimal)dto.TotalPrice,
                     payment = paymentType,
                     billTo = billingAddress,
                     shipTo = billingAddress,
-                    order = order,
-                    //lineItems = lineItems
+                    order = order
                 };
+                //if(lineItems.Any())
+                //{
+                //    transactionRequest.lineItems = lineItems;
+                //}
 
                 var request = new createTransactionRequest { transactionRequest = transactionRequest };
 
@@ -215,12 +232,13 @@ namespace OrdersAPI._Services.Services
                     {
                         if (response.transactionResponse.messages != null)
                         {
+                            var rsCharge = JsonConvert.SerializeObject(response);
                             //Console.WriteLine("Successfully created transaction with Transaction ID: " + response.transactionResponse.transId);
                             //Console.WriteLine("Response Code: " + response.transactionResponse.responseCode);
                             //Console.WriteLine("Message Code: " + response.transactionResponse.messages[0].code);
                             //Console.WriteLine("Description: " + response.transactionResponse.messages[0].description);
                             //Console.WriteLine("Success, Auth Code : " + response.transactionResponse.authCode);
-                            return new OperationResult(true);
+                            return new OperationResult(true, rsCharge);
                         }
                         else
                         {
@@ -351,7 +369,7 @@ namespace OrdersAPI._Services.Services
                 {
                     Console.WriteLine("Null Response.");
                 }
-                
+
             }
             catch
             {
@@ -359,7 +377,6 @@ namespace OrdersAPI._Services.Services
             }
             return result;
         }
-
 
         #endregion
 
@@ -376,12 +393,12 @@ namespace OrdersAPI._Services.Services
 
             try
             {
-                var data = await _orderRepository.FindAll(predicate)
-                              .Join(_orderStatusRepository.FindAll(),
+                var data = await _orderRepository.FindAll(predicate).FullTextSearchQuery(param.Keyword)
+                              .GroupJoin(_orderStatusRepository.FindAll(),
                               x => x.StatusId,
                               y => y.Id,
                               (x, y) => new { Order = x, OrderStatus = y })
-                              .FullTextSearchQuery(param.Keyword)
+                             .SelectMany(x => x.OrderStatus.DefaultIfEmpty(), (x, y) => new { x.Order, OrderStatus = y })
                              .Select(x => new VsiriusOrderDto()
                              {
 
@@ -397,6 +414,7 @@ namespace OrdersAPI._Services.Services
                                  FirstName = x.Order.FirstName,
                                  Gender = x.Order.Gender,
                                  LastName = x.Order.LastName,
+                                 FullName = x.Order.FullName,
                                  Note = x.Order.Note,
                                  PostCode = x.Order.PostCode,
                                  Shipping = x.Order.Shipping,
@@ -406,16 +424,16 @@ namespace OrdersAPI._Services.Services
                                  StatusName = x.OrderStatus.Name,
                                  TotalPrice = (decimal)x.Order.TotalPrice,
                                  TotalQuantityItem = x.Order.TotalQuantityItem
-                             }).ToListAsync();
+                             }).OrderByDescending(x => x.CreateOrderDate).ToListAsync();
 
                 return PaginationUtility<VsiriusOrderDto>.Create(data, pagination.PageNumber, pagination.PageSize, true);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return null;
             }
-            
+
         }
 
         public async Task<VsiriusOrderDto> GetDetail(string orderId)
@@ -441,7 +459,7 @@ namespace OrdersAPI._Services.Services
                     if (product != null)
                     {
                         product.quantity = item.Quantity.ToString();
-                        product.standard_price = item.Price.ToString();
+                        product.standard_price = (decimal)item.Price;
                         listProduct.Add(product);
                     }
                     if (order != null)
@@ -452,24 +470,25 @@ namespace OrdersAPI._Services.Services
                 vsiriusOrder.ListProducts = listProduct;
                 return vsiriusOrder;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new VsiriusOrderDto();
             }
         }
 
-        public async Task<PaginationUtility<OrderHistory>> GetListOrderHistory(PaginationParam pagination,string email)
+        public async Task<PaginationUtility<OrderHistory>> GetListOrderHistory(PaginationParam pagination, string email)
         {
             List<OrderHistory> orderHistories = new();
 
             try
             {
                 var listOrders = await _orderRepository.FindAll(x => x.Email == email)
-                                    .Join(_orderStatusRepository.FindAll(),
+                                    .GroupJoin(_orderStatusRepository.FindAll(),
                                     x => x.StatusId,
                                     y => y.Id,
                                     (x, y) => new { Order = x, OrderStatus = y })
+                                    .SelectMany(x => x.OrderStatus.DefaultIfEmpty(), (x, y) => new { x.Order, OrderStatus = y })
                                     .Select(x => new VsiriusOrderDto()
                                     {
                                         OrderId = x.Order.OrderId,
@@ -484,6 +503,7 @@ namespace OrdersAPI._Services.Services
                                         Email = x.Order.Email,
                                         FirstName = x.Order.FirstName,
                                         LastName = x.Order.LastName,
+                                        FullName = x.Order.FullName,
                                         Gender = x.Order.Gender,
                                         Note = x.Order.Note,
                                         PaymentMethod = x.Order.PaymentMethod,
@@ -494,7 +514,7 @@ namespace OrdersAPI._Services.Services
                                         TotalPrice = (decimal)x.Order.TotalPrice,
                                         TotalQuantityItem = x.Order.TotalQuantityItem,
                                         StatusName = x.OrderStatus.Name
-                                    }).ToListAsync();
+                                    }).OrderByDescending(x => x.CreateOrderDate).ToListAsync();
 
                 if (listOrders.Count == 0)
                 {
@@ -509,8 +529,9 @@ namespace OrdersAPI._Services.Services
                     foreach (var item in orderDetails)
                     {
                         var product = await _productRepository.FirstOrDefaultAsync(x => x.item_sku == item.ProductId);
+                        if (product == null) continue;
                         product.quantity = item.QuantityItem.ToString();
-                        product.standard_price = item.Price.ToString();
+                        product.standard_price = (decimal)item.Price;
                         if (product != null)
                         {
                             orderHistory.Product = product;
@@ -521,7 +542,7 @@ namespace OrdersAPI._Services.Services
 
                 return PaginationUtility<OrderHistory>.Create(orderHistories, pagination.PageNumber, pagination.PageSize, true);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return null;
@@ -554,12 +575,12 @@ namespace OrdersAPI._Services.Services
                           })
                          .OrderByDescending(x => x.CreateOrderDate).Take(20).ToListAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new List<VsiriusOrderDto>();
             }
-            
+
         }
 
         public async Task<OperationResult> Update(VsiriusOrderDto dto)
@@ -575,6 +596,24 @@ namespace OrdersAPI._Services.Services
             {
                 await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
                 return new OperationResult { Success = false, Message = ex.Message };
+            }
+        }
+
+        public async Task<OperationResult> UpdateStatusOrder(UpdateStatusOrderDto dto)
+        {
+            var entity = await _orderRepository.FirstOrDefaultAsync(x => x.OrderId == dto.OrderId);
+            if (entity == null)
+            {
+                return new OperationResult(false, "Not exists order");
+            }
+            else
+            {
+                entity.StatusId = dto.OrderStatus;
+                entity.Note = dto.Note;
+                entity.Shipping = true;
+                _orderRepository.Update(entity);
+                
+                return new OperationResult(await _orderRepository.SaveChangesAsync());
             }
         }
     }

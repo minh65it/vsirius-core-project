@@ -12,5 +12,6 @@ namespace OrdersAPI._Services.Interfaces
         Task<PaginationUtility<OrderHistory>> GetListOrderHistory(PaginationParam pagination, string email);
         Task<OperationResult> Create(VsiriusOrderDto dto);
         Task<OperationResult> Update(VsiriusOrderDto dto);
+        Task<OperationResult> UpdateStatusOrder(UpdateStatusOrderDto dto);
     }
 }

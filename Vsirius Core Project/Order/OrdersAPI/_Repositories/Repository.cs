@@ -1,15 +1,15 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using OrdersAPI.Data;
+using VsiriusDataModel.DataContext;
 
 namespace OrdersAPI._Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly DataContext _context;
+        private readonly VsiriusContext _context;
 
-        public Repository(DataContext context)
+        public Repository(VsiriusContext context)
         {
             _context = context;
         }
