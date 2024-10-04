@@ -18,7 +18,7 @@ namespace ProductAiApi.Models
         [StringLength(1000)] public string? BulletPoint7 { get; set; }
         [StringLength(1000)] public string? BulletPoint8 { get; set; }
         [StringLength(1000)] public string? BulletPoint9 { get; set; }
-        [StringLength(1000)] public string? Note { get; set; }
+        public string? Note { get; set; }
         public bool IsReview { get; set; }
         public DateTime TimeStamp { get; set; }
     }

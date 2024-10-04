@@ -24,6 +24,7 @@
         public required string SKU { get; set; }
         public required string Description { get; set; }
         public required string Brand { get; set; }
+        public string? ImgUrl {  get; set; }
     }
 
 }

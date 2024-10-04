@@ -77,8 +77,7 @@ namespace ProductAiApi.Migrations
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Note")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProductName")
                         .IsRequired()

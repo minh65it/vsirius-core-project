@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Azure.CognitiveServices.Vision.ComputerVision;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+using Microsoft.EntityFrameworkCore;
 using ProductAiApi._Repositories.Interfaces;
 using ProductAiApi._Services.Interfaces;
 using ProductAiApi.Common;
@@ -55,6 +57,7 @@ namespace ProductAiApi._Services.Services
 
         public async Task<OperationResult<ProductAiDto?>> CreateProduct(CreateUpdateProductAiDto dto)
         {
+            dto.ImgUrl = null;
             var entity = await _productAIRepository.FindById(dto.SKU);
             if (entity != null)
             {
@@ -74,15 +77,29 @@ namespace ProductAiApi._Services.Services
                 string content =
                     $"This is my product information: {dto.Description}" +
                     $"\nPlease create the product name (maximum 200 characters and without special characters), " +
-                    $"\nkeyword product, bulletpoints (maximum 9 points and maximum 1000 characters every point)" +
-                    $"\n to make the product suitable for SEO on amazon, ebay, google... . " +
-                    $"\nReply me with the following format: " +
+                    $"\nkeyword product, bulletpoints (5-9 points and 500-1000 characters every point)" +
+                    $"\nto make the product suitable for SEO on amazon, ebay, google... . " +
+                    $"\nReply me with format: " +
                     $"\n|title: ..." +
                     $"\n|brand: ...(if exist)" +
                     $"\n|keywords: abc, xyz, ..." +
                     $"\n|bulletpoint1: ..." +
-                    $"\n|bulletpoint2: ..." +
-                    $"\n|...";
+                    $"\n|bulletpoint2: ...";
+
+                if (!string.IsNullOrWhiteSpace(dto.ImgUrl))
+                {
+                    content = await CreateContentWithImg(dto.ImgUrl, dto.Description);
+                }
+
+                if (string.IsNullOrEmpty(content))
+                {
+                    return new OperationResult<ProductAiDto?>
+                    {
+                        Success = false,
+                        Message = "Limitted Azure request of month",
+                        Data = null
+                    };
+                }
 
                 var encodedContent = Uri.EscapeDataString(content);
 
@@ -132,7 +149,18 @@ namespace ProductAiApi._Services.Services
                             entity.Brand = brandAI;
                         }
 
+                        if (string.IsNullOrEmpty(entity.Brand))
+                        {
+                            return new OperationResult<ProductAiDto?>
+                            {
+                                Success = true,
+                                Message = "error when generate product",
+                                Data = null
+                            };
+                        }
+
                         _productAIRepository.Add(entity);
+
                         await _productAIRepository.SaveChangesAsync();
 
                         return new OperationResult<ProductAiDto?>
@@ -164,6 +192,112 @@ namespace ProductAiApi._Services.Services
 
 
             }
+        }
+
+        private async Task<string> CreateContentWithImg(string imgUrl, string description)
+        {
+            string key = _configuration.GetValue<string>("Azure:VISION_KEY")!;
+            string endpoint = _configuration.GetValue<string>("Azure:VISION_ENDPOINT")!;
+
+            ComputerVisionClient client = new(new ApiKeyServiceClientCredentials(key))
+            { Endpoint = endpoint };
+
+            var imgInfo = await AnalyzeImageUrl(client, imgUrl);
+
+            if(string.IsNullOrEmpty(imgInfo))
+            {
+                return "";
+            }
+            else
+            {
+                var content = 
+                    $"This is my product information: {description} and {imgInfo}." +
+                    $"\nPlease create the product name (maximum 180-200 characters and without special characters), " +
+                    $"\nkeyword product, bulletpoints (5-9 points and 500-1000 characters every point)" +
+                    $"\nto make the product suitable for SEO on amazon, ebay, google... . " +
+                    $"\nReply me with the following format: " +
+                    $"\n|title: ..." +
+                    $"\n|brand: ...(if exist)" +
+                    $"\n|keywords: abc, xyz, ..." +
+                    $"\n|bulletpoint1: ..." +
+                    $"\n|bulletpoint2: ...";
+                return content;
+            }
+        }
+        private async Task<string> AnalyzeImageUrl(ComputerVisionClient client, string imageUrl, int retry = 0)
+        {
+            var txtInfo = string.Empty;
+            var isFailed = false;
+            try
+            {
+                List<VisualFeatureTypes?> features = new()
+                {
+                    VisualFeatureTypes.Tags,
+                    VisualFeatureTypes.Color,
+                    VisualFeatureTypes.Description,
+                };
+
+                ImageAnalysis results = await client.AnalyzeImageAsync(imageUrl, visualFeatures: features);
+
+                if (results != null)
+                {
+                    if (!results.Tags.Any())
+                    {
+                        isFailed = true;
+                    }
+                    else
+                    {
+
+                        var tag = string.Empty;
+                        foreach (var feature in results.Tags)
+                        {
+                            tag += (feature.Name + ",");
+                        }
+                        tag = tag.TrimEnd(',');
+
+                        var caption = string.Empty;
+                        foreach (var feature in results.Description.Captions)
+                        {
+                            caption += (feature.Text + ",");
+                        }
+                        caption = caption.TrimEnd(',');
+
+                        var color = string.Empty;
+                        foreach (var feature in results.Color.DominantColors)
+                        {
+                            color += (feature + ",");
+                        }
+                        color = color.TrimEnd(',');
+
+                        txtInfo = $"Main Image Product Info: Tag({tag}), Caption({caption}), " +
+                            $"Color(code accentcolor:{results.Color.AccentColor},Code dominantcolors:{color})";
+                    }
+                }
+                else
+                {
+                    isFailed = true;
+                }
+            }
+            catch
+            {
+                isFailed = true;
+            }
+
+            if (isFailed)
+            {
+                if (retry == 3)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(65));
+                    retry += 1;
+                    txtInfo = await AnalyzeImageUrl(client, imageUrl, retry);
+                }
+            }
+
+            return txtInfo;
         }
 
         private string GetValueFromContent(string keyword, string content)
@@ -232,16 +366,30 @@ namespace ProductAiApi._Services.Services
 
                 string content =
                     $"This is my product information: {dto.Description}" +
-                    $"\nPlease create the product name (maximum 200 characters and without special characters), " +
-                    $"\nkeyword product, bulletpoints (maximum 9 points and maximum 1000 characters every point)" +
-                    $"\n to make the product suitable for SEO on amazon, ebay, google... . " +
+                    $"\nPlease create the product name (maximum 180-200 characters and without special characters), " +
+                    $"\nkeyword product, bulletpoints (5-9 points and 500-1000 characters every point)" +
+                    $"\nto make the product suitable for SEO on amazon, ebay, google... . " +
                     $"\nReply me with the following format: " +
                     $"\n|title: ..." +
                     $"\n|brand: ...(if exist)" +
                     $"\n|keywords: abc, xyz, ..." +
                     $"\n|bulletpoint1: ..." +
-                    $"\n|bulletpoint2: ..." +
-                    $"\n|...";
+                    $"\n|bulletpoint2: ...";
+
+                if (!string.IsNullOrWhiteSpace(dto.ImgUrl))
+                {
+                    content = await CreateContentWithImg(dto.ImgUrl, dto.Description);
+                }
+
+                if (string.IsNullOrEmpty(content))
+                {
+                    return new OperationResult<ProductAiDto?>
+                    {
+                        Success = false,
+                        Message = "Limitted Azure request of month",
+                        Data = null
+                    };
+                }
 
                 var encodedContent = Uri.EscapeDataString(content);
 
@@ -289,6 +437,16 @@ namespace ProductAiApi._Services.Services
                         else
                         {
                             entity.Brand = brandAI;
+                        }
+
+                        if (string.IsNullOrEmpty(entity.Brand))
+                        {
+                            return new OperationResult<ProductAiDto?>
+                            {
+                                Success = true,
+                                Message = "error when generate product",
+                                Data = null
+                            };
                         }
 
                         _productAIRepository.Update(entity);
@@ -366,8 +524,8 @@ namespace ProductAiApi._Services.Services
         public async Task<PaginationUtil<string>?> GetAllSku(PaginationParam pagination)
         {
             var result = await PaginationUtil<string>.CreateAsync(
-                _productAIRepository.FindAll().AsNoTracking().Select(x => x.SKU), 
-                pagination.PageNumber, 
+                _productAIRepository.FindAll().AsNoTracking().Select(x => x.SKU),
+                pagination.PageNumber,
                 pagination.PageSize);
             return result;
         }

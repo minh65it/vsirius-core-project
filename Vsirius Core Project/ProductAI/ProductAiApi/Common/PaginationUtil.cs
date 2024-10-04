@@ -60,7 +60,7 @@ namespace ProductAiApi.Common
 
     public class PaginationParam
     {
-        private const int MaxPageSize = 200;
+        private const int MaxPageSize = 3000;
         public int PageNumber { get; set; } = 1;
         private int pageSize = 20;
         public int PageSize

@@ -1,23 +1,25 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using ProductAiApi._JobServices.Interfaces;
+using ProductAiApi._JobServices.JobServices;
 using ProductAiApi._Repositories.Interfaces;
 using ProductAiApi._Repositories.Repositories;
 using ProductAiApi._Services.Interfaces;
 using ProductAiApi._Services.Services;
 using ProductAiApi.Common;
+using ProductAiApi.Controllers;
 using ProductAiApi.DataContext;
+using ProductAiApi.Jobs;
+using QuartzInfrastructure;
 using System.Reflection;
+using VSiriusSystemLog.CorrelationId;
+using VSiriusSystemLog.WriteLog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddCors();
 builder.Services.AddControllers();
-
-builder.Services.AddDbContext<ModifiedProductContext>(
-        options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -49,10 +51,20 @@ builder.Services.AddSwaggerGen(c =>
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+builder.Services.AddDbContext<ModifiedProductContext>(
+        options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<TriggerController>();
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 builder.Services.AddTransient<IProductAIRepository, ProductAIRepository>();
+builder.Services.AddScoped<ICreateProductAiFromPimService, CreateProductAiFromPimService>();
 builder.Services.AddScoped<IProductAIService, ProductAIService>();
+builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
 
+builder.Services.AddCorrelationIdGeneratorService();
+DependencyInjection.AddJob<ProductAI_CreateProductAiFromPim>(builder.Services);
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
