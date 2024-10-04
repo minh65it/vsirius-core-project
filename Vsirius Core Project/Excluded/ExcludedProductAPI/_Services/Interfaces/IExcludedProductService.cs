@@ -11,6 +11,6 @@ namespace ExcludedProductAPI._Services.Interfaces
         Task<ExcludedProductDTO?> GetDetail(string id);
         Task<OperationResult<ExcludedProductDTO?>> Update(ExcludedProductDTO dto);
         Task<OperationResult<ExcludedProductDTO?>> Create(ExcludedProductDTO dto);
-
+        Task<OperationResult<object?>> BulkCreateUpdate(List<ExcludedProductDTO> dto);
     }
 }

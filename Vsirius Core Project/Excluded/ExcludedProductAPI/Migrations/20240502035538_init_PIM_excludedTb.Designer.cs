@@ -4,16 +4,19 @@ using ExcludedProductAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace ExcludedProductAPI.Migrations
 {
-    [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(ModifiedProductContext))]
+    [Migration("20240502035538_init_PIM_excludedTb")]
+    partial class init_PIM_excludedTb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,16 +30,15 @@ namespace ExcludedProductAPI.Migrations
                     b.Property<string>("MarketplaceSKU")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Marketplace")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ExclusionNote")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ExclusionType")
                         .HasColumnType("int");
-
-                    b.Property<string>("Marketplace")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SupplierSKU")
                         .IsRequired()
@@ -45,7 +47,7 @@ namespace ExcludedProductAPI.Migrations
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("MarketplaceSKU");
+                    b.HasKey("MarketplaceSKU", "Marketplace");
 
                     b.ToTable("ExcludedProducts");
                 });

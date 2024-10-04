@@ -6,7 +6,7 @@ namespace ExcludedProductAPI._Repositories.Repositories
 {
     public class ExcludedProductRepository : Repository<ExcludedProduct>, IExcludedProductRepository
     {
-        public ExcludedProductRepository(DataContext context) : base(context)
+        public ExcludedProductRepository(ModifiedProductContext context) : base(context)
         {
         }
     }

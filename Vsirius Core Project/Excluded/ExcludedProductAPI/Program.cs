@@ -15,7 +15,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddConfigurationIdentity(builder.Configuration);
 
-builder.Services.AddDbContext<DataContext>(
+builder.Services.AddDbContext<ModifiedProductContext>(
         options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddConfigurationAddSwaggerGen();
@@ -52,7 +52,7 @@ void ApplyMigration()
 {
     using (var scope = app.Services.CreateScope())
     {
-        var _db = scope.ServiceProvider.GetRequiredService<DataContext>();
+        var _db = scope.ServiceProvider.GetRequiredService<ModifiedProductContext>();
 
         if (_db.Database.GetPendingMigrations().Count() > 0)
         {

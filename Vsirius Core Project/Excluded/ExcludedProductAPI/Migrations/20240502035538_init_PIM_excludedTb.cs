@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ExcludedProductAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class initDB : Migration
+    public partial class init_PIM_excludedTb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace ExcludedProductAPI.Migrations
                 columns: table => new
                 {
                     MarketplaceSKU = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Marketplace = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Marketplace = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     SupplierSKU = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExclusionType = table.Column<int>(type: "int", nullable: false),
                     ExclusionNote = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -24,7 +24,7 @@ namespace ExcludedProductAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExcludedProducts", x => x.MarketplaceSKU);
+                    table.PrimaryKey("PK_ExcludedProducts", x => new { x.MarketplaceSKU, x.Marketplace });
                 });
         }
 

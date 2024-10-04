@@ -6,9 +6,9 @@ namespace ExcludedProductAPI._Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly DataContext _context;
+        private readonly ModifiedProductContext _context;
 
-        public Repository(DataContext context)
+        public Repository(ModifiedProductContext context)
         {
             _context = context;
         }

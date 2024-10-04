@@ -36,6 +36,12 @@ namespace ExcludedProductAPI.Controllers
             return await _excludedProductService.Delete(MarketplaceSKU);
         }
 
+        [HttpPost("BulkCreateUpdate")]
+        public async Task<OperationResult<object?>> BulkCreateUpdate(List<ExcludedProductDTO> dto)
+        {
+            return await _excludedProductService.BulkCreateUpdate(dto);
+        }
+
         [HttpPost]
         public async Task<OperationResult<ExcludedProductDTO?>> Create(ExcludedProductDTO dto)
         {

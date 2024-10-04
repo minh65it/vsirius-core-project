@@ -1,5 +1,7 @@
-﻿using ExcludedProductAPI._Repositories.Interfaces;
+﻿using EFCore.BulkExtensions;
+using ExcludedProductAPI._Repositories.Interfaces;
 using ExcludedProductAPI._Services.Interfaces;
+using ExcludedProductAPI.Data;
 using ExcludedProductAPI.DTOs;
 using ExcludedProductAPI.Helpers;
 using ExcludedProductAPI.Models;
@@ -10,20 +12,40 @@ namespace ExcludedProductAPI._Services.Repositories
     public class ExcludedProductService : IExcludedProductService
     {
         private readonly IExcludedProductRepository _repository;
-
-        public ExcludedProductService(IExcludedProductRepository repository)
+        private readonly ModifiedProductContext _context;
+        public ExcludedProductService(IExcludedProductRepository repository, ModifiedProductContext context)
         {
             _repository = repository;
+            _context = context;
+        }
+
+        public async Task<OperationResult<object?>> BulkCreateUpdate(List<ExcludedProductDTO> dto)
+        {
+            var entity = dto.Select(CustomMapper.ChangeExcludedDtoToEntity).ToList();
+            try
+            {
+                var batchs = Utils.SplitListIntoBatches(entity, 5000);
+                foreach (var batch in batchs)
+                {
+                    await _context.BulkInsertOrUpdateAsync(batch);
+                }              
+                return new OperationResult<object?>(true);
+            }
+            catch (Exception ex)
+            {
+                return new OperationResult<object?>(false, ex.Message);
+            }
         }
 
         public async Task<OperationResult<ExcludedProductDTO?>> Create(ExcludedProductDTO dto)
         {
-            if(await _repository.AnyAsync(x => x.MarketplaceSKU.Equals(dto.MarketplaceSKU)))
+            if (await _repository.AnyAsync(x => x.MarketplaceSKU.Equals(dto.MarketplaceSKU)))
             {
-                return new OperationResult<ExcludedProductDTO?>() {
-                Success = false,
-                Data = null,
-                Message = "Product already existed"
+                return new OperationResult<ExcludedProductDTO?>()
+                {
+                    Success = false,
+                    Data = null,
+                    Message = "Product already existed"
                 };
             }
             else
@@ -67,7 +89,7 @@ namespace ExcludedProductAPI._Services.Repositories
         public async Task<PaginationUtil<ExcludedProductDTO>> GetAll(PaginationParam pagination, ExcludedProductParam search)
         {
             IQueryable<ExcludedProduct> query = _repository.FindAll();
-            if(search != null)
+            if (search != null)
             {
                 if (!string.IsNullOrEmpty(search.MarketplaceSKU))
                 {
