@@ -163,7 +163,7 @@ namespace VsiriusSystem._Services.Services
             {
                 APIUrl = $"{_configuration.GetSection("ApiUpdateJobs:IP").Value}{_configuration.GetSection("ApiUpdateJobs:Ebay").Value}";
             }
-            else if (checkAPI.Contains("Esty"))
+            else if (checkAPI.Contains("Etsy"))
             {
                 APIUrl = $"{_configuration.GetSection("ApiUpdateJobs:IP").Value}{_configuration.GetSection("ApiUpdateJobs:Esty").Value}";
             }
