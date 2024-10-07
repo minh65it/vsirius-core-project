@@ -80,6 +80,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StullerDataApiTests", "Stul
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StullerApiClientDomain", "Stuller\StullerApiClientDomain\StullerApiClientDomain.csproj", "{C6D11BCD-8B19-40D5-9524-D2EC43538167}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "package", "package", "{0704D36D-50E7-4000-9D01-E66B354DDAA4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackageApi", "Package\PackageApi\PackageApi.csproj", "{A433076C-01E5-4527-93F3-CFBD75A0EAB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -186,6 +190,10 @@ Global
 		{C6D11BCD-8B19-40D5-9524-D2EC43538167}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6D11BCD-8B19-40D5-9524-D2EC43538167}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6D11BCD-8B19-40D5-9524-D2EC43538167}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A433076C-01E5-4527-93F3-CFBD75A0EAB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A433076C-01E5-4527-93F3-CFBD75A0EAB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A433076C-01E5-4527-93F3-CFBD75A0EAB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A433076C-01E5-4527-93F3-CFBD75A0EAB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -216,6 +224,7 @@ Global
 		{E2D4E7E9-CA9C-4974-A541-5A3E04BAC09B} = {3E7E49A6-01A8-4A95-A4BF-7CDCF290C715}
 		{6B646585-D68C-4130-874B-72460B2CBA9D} = {3E7E49A6-01A8-4A95-A4BF-7CDCF290C715}
 		{C6D11BCD-8B19-40D5-9524-D2EC43538167} = {3E7E49A6-01A8-4A95-A4BF-7CDCF290C715}
+		{A433076C-01E5-4527-93F3-CFBD75A0EAB7} = {0704D36D-50E7-4000-9D01-E66B354DDAA4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {37FD6387-A1B8-4A66-AD2B-95A9FBF06BEE}
