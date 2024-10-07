@@ -1,0 +1,74 @@
+﻿namespace Domain
+{
+    public interface IQgoldCsvData
+    {
+        string AttributesText { get; set; }
+        string Book { get; set; }
+        string CategoriesText { get; set; }
+        string Country_Of_Origin { get; set; }
+        string CT_Weight { get; set; }
+        string Customer_Item { get; set; }
+        string DateAdded { get; set; }
+        string Description { get; set; }
+        string Gem_Weight { get; set; }
+        string Image { get; set; }
+        string Image1Link { get; set; }
+        string Image1MaxHeight { get; set; }
+        string Image1MaxWidth { get; set; }
+        string Image1Name { get; set; }
+        string Image2Link { get; set; }
+        string Image2MaxHeight { get; set; }
+        string Image2MaxWidth { get; set; }
+        string Image2Name { get; set; }
+        string Image3Link { get; set; }
+        string Image3MaxHeight { get; set; }
+        string Image3MaxWidth { get; set; }
+        string Image3Name { get; set; }
+        string Image4Link { get; set; }
+        string Image4MaxHeight { get; set; }
+        string Image4MaxWidth { get; set; }
+        string Image4Name { get; set; }
+        string Image5Link { get; set; }
+        string Image5MaxHeight { get; set; }
+        string Image5MaxWidth { get; set; }
+        string Image5Name { get; set; }
+        string Image6Link { get; set; }
+        string Image6MaxHeight { get; set; }
+        string Image6MaxWidth { get; set; }
+        string Image6Name { get; set; }
+        string Image7Link { get; set; }
+        string Image7MaxHeight { get; set; }
+        string Image7MaxWidth { get; set; }
+        string Image7Name { get; set; }
+        string Image8Link { get; set; }
+        string Image8MaxHeight { get; set; }
+        string Image8MaxWidth { get; set; }
+        string Image8Name { get; set; }
+        string Image9Link { get; set; }
+        string Image9MaxHeight { get; set; }
+        string Image9MaxWidth { get; set; }
+        string Image9Name { get; set; }
+        string ImageLink_100 { get; set; }
+        string ImageLink_1000 { get; set; }
+        string ImageLink_275 { get; set; }
+        string ImageLink_500 { get; set; }
+        string Item { get; set; }
+        string Item_Type { get; set; }
+        string Length { get; set; }
+        string ListOfSpecsText { get; set; }
+        string Metal_Desc { get; set; }
+        string Metal_Price { get; set; }
+        string MSRP { get; set; }
+        string Page { get; set; }
+        string Price { get; set; }
+        string ProductLine { get; set; }
+        string Qty_Avail { get; set; }
+        string Size { get; set; }
+        string Sizeable { get; set; }
+        string Status { get; set; }
+        string UM_Sales { get; set; }
+        string UPC { get; set; }
+        string Weight { get; set; }
+        string Width { get; set; }
+    }
+}

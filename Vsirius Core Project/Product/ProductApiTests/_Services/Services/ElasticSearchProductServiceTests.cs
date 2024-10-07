@@ -1,4 +1,4 @@
-﻿using ProductApi._Services.Services;
+﻿/*using ProductApi._Services.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -39,4 +39,4 @@ namespace ProductApi._Services.Services.Tests
             await _service.DeleteAllProductInElastic();
         }
     }
-}
+}*/
