@@ -9,7 +9,7 @@ using static IdentityApi.Dtos.Auth.AuthDto;
 
 namespace IdentityApi.Controllers.Auth
 {
-    [Route("api/[controller]")]
+    [Route("api/identity/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -47,7 +47,7 @@ namespace IdentityApi.Controllers.Auth
             {
                 var roles = await _repo.userRolesEmployee.FindAll(x => x.Email == isLogin.Email).Join(
                     _repo.rolesEmployee.FindAll(),
-                    x => x.Id, y => y.Id,
+                    x => x.RoleId, y => y.Id,
                     (x, y) => new {
                         y.Name,
                     }).Select(x => x.Name).ToListAsync();

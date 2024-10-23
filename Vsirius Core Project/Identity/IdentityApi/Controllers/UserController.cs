@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/identity/[controller]")]
     [ApiController]
     
     public class UserController : ControllerBase
@@ -46,25 +46,39 @@ namespace IdentityApi.Controllers
         /// <summary>
         /// Register user information, with correct email and phone number format, no image is null
         /// </summary>
+        /// <remarks>
+        /// cần có thông tin HttpContext.Request.Headers["OriginUrl"] để quay về trang frontend
+        /// </remarks>
         /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost("CreateUser")]
         public async Task<IActionResult> CreateUser([FromBody] UserDto dto)
         {
-            var result = await _userService.CreateUser(dto, _urlHelper);
+            // Lấy giá trị của một header cụ thể
+            string originUrl = HttpContext.Request.Headers["OriginUrl"];
+
+            // Xử lý logic dựa trên thông tin header
+            var result = await _userService.CreateUser(dto, _urlHelper, originUrl);
             return Ok(result);
         }
 
         /// <summary>
         /// Email verification, email is the registered email account
         /// </summary>
+        /// <remarks>
+        /// cần có thông tin HttpContext.Request.Headers["OriginUrl"] để quay về trang frontend
+        /// </remarks>
         /// <param name="email"></param>
         /// <returns></returns>
         [HttpPost("ConfirmEmail")]
         [Authorize(Roles = "Customer, Admin")]
         public async Task<IActionResult> ConfirmEmail([FromBody] string email)
         {
-            await _userService.ConfirmEmail(email, _urlHelper);
+            // Lấy giá trị của một header cụ thể
+            string originUrl = HttpContext.Request.Headers["OriginUrl"];
+
+            // Xử lý logic dựa trên thông tin header
+            await _userService.ConfirmEmail(email, _urlHelper, originUrl);
             return Ok();
         }
 
@@ -93,11 +107,47 @@ namespace IdentityApi.Controllers
             var result = await _userService.VerifySMS(dto);
             return Ok(result);
         }
+        /// <summary>
+        /// Need information: id, phone, passwordhash
+        /// </summary>
+        /// <remarks>
+        /// "id": "dad8445a-507e-4ac2-ab5d-9438232747d4",  "email": "abc@gmail.com", "phoneNumber": "+10975567777","passwordHash": "AQAAAAIAAYagAAAAEEyF6nmmP/w7yRQyuLbfCwdB7X+uLSNVDoVHqWcPUZ26TG6eHkXsPpdfkol5MN7DbQ==","avatar": null,...
+        /// </remarks>
+        /// <param name="userUpdate"></param>
+        /// <returns></returns>
         [HttpPut("UpdateUser")]
         [Authorize(Roles = "Customer, Admin")]
         public async Task<IActionResult> UpdateUser([FromBody] UserDto userUpdate)
         {
             var result = await _userService.UpdateUser(userUpdate);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Update password: id user, new password, old password
+        /// </summary>
+        /// <param name="userUpdate"></param>
+        /// <returns></returns>
+        [HttpPut("UpdatePassword")]
+        [Authorize(Roles = "Customer, Admin")]
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordDto userUpdate)
+        {
+            var result = await _userService.UpdatePassword(userUpdate);
+            return Ok(result);
+        }
+        /// <summary>
+        /// Update password: id user, new password
+        /// </summary>
+        /// <remarks>
+        /// if new password is null then default password is "welcome123";
+        /// </remarks>
+        /// <param name="userUpdate"></param>
+        /// <returns></returns>
+        [HttpPut("UpdatePasswordByAdmin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdatePasswordByAdmin([FromBody] UpdatePasswordDto userUpdate)
+        {
+            var result = await _userService.UpdatePasswordByAdmin(userUpdate);
             return Ok(result);
         }
 

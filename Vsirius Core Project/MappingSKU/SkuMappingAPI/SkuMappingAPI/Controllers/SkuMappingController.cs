@@ -7,7 +7,7 @@ using SkuMappingAPI.Services.Interfaces;
 namespace SkuMappingAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("sku/[controller]")]
     public class SkuMappingController : ControllerBase
     {
         private readonly IMappingSkuService _service;

@@ -39,18 +39,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="VsiriusDataModel">
-	    <HintPath>VsiriusDataModel.dll</HintPath>
-	  </Reference>
-	  <Reference Include="VSiriusSystemLog">
-	    <HintPath>VSiriusSystemLog.dll</HintPath>
-	  </Reference>
+	  <ProjectReference Include="..\..\VsiriusDataModel\VsiriusDataModel.csproj" />
+	  <ProjectReference Include="..\..\VsiriusSystem\VSiriusSystemLog\VSiriusSystemLog.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="VSiriusSystemLog.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
+	  <Content Update="appsettingsCSR.Development.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="appsettingsCSR.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="appsettingsCSR.Production.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="appsettingsCSR.QA.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 </Project>

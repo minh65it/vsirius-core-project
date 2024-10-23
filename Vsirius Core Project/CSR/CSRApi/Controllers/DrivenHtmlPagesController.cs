@@ -7,7 +7,7 @@ using VsiriusDataModel.DataModel;
 
 namespace CSRApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/csr/[controller]")]
     [ApiController]
     public class DrivenHtmlPagesController : ControllerBase
     {

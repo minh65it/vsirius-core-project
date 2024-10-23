@@ -1,4 +1,6 @@
 ﻿using IdentityApi._Repositoties;
+using IdentityApi._Repositoties.Interfaces;
+using IdentityApi._Repositoties.Repositories;
 using IdentityApi._Services.Interfaces;
 using IdentityApi._Services.Services;
 using IdentityApi.Helpers.Utilities;
@@ -16,6 +18,7 @@ namespace IdentityApi.Configurations
 
             //User
             services.AddScoped<IFunctionUtilities, FunctionUtilities>();
+            services.AddScoped<IValidUser, ValidUser>();
             //Mail
             services.AddScoped<IEmailSender, EmailSender>();
             //Http
@@ -31,6 +34,7 @@ namespace IdentityApi.Configurations
             services.AddScoped<ILogService, LogService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAzureStorage, AzureStorage>();
 
             //Employee
             services.AddScoped<IEmployeeService, EmployeeService>();

@@ -1,5 +1,8 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Azure;
+using Azure.Communication.Sms;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,6 +17,8 @@ namespace IdentityApi.Helpers.Utilities
         public string HashPasswordUser(string password);
         public bool IsValidEmail(string email);
         public bool IsValidPhone(string phoneNumber);
+        public bool IsValidPassword(string password);
+        public Task<bool> SendSMSWithAzure(string ToPhoneNumber, string Message);
     }
     public class FunctionUtilities : IFunctionUtilities
     {
@@ -103,6 +108,7 @@ namespace IdentityApi.Helpers.Utilities
                 return null;
             }
             string folderPath = Path.Combine(_path, subFolder);
+            //string folderPath = Path.Combine("C:\\Users\\247tq\\OneDrive\\Máy tính", subFolder);
             string extension = $".{file.Split(';')[0].Split('/')[1]}";
             if (string.IsNullOrEmpty(extension))
             {
@@ -159,8 +165,37 @@ namespace IdentityApi.Helpers.Utilities
 
         public bool IsValidPhone(string phoneNumber)
         {
-            Regex regex = new Regex(@"^\+1\s?\d{3}[- ]?\d{3}[- ]?\d{4}$|^\(\d{3}\)\s?\d{3}[- ]?\d{4}$");
+            Regex regex = new Regex(@"^\+1\s?\d{3}\s?\d{3}\s?\d{4}$");
             return regex.IsMatch(phoneNumber);
+        }
+
+        public async Task<bool> SendSMSWithAzure(string ToPhoneNumber, string Message)
+        {
+            string connectionString = _configuration["AzureSMS:Connectionstring"];
+
+            SmsClient smsClient = new SmsClient(connectionString);
+            Response<IReadOnlyList<SmsSendResult>> response = await smsClient.SendAsync(
+                from: _configuration["AzureSMS:FromPhoneNumber"],
+                to: new string[] { ToPhoneNumber },
+                message: Message,
+                options: new SmsSendOptions(enableDeliveryReport: true) // OPTIONAL
+                {
+                    // custom tags
+                });
+
+            IEnumerable<SmsSendResult> results = response.Value;
+            foreach (SmsSendResult result in results)
+            {
+                if (!result.Successful)
+                    return false;
+            }
+            return true;
+        }
+
+        public bool IsValidPassword(string password)
+        {
+            const string pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{6,}$";
+            return Regex.IsMatch(password, pattern);
         }
     }
 }

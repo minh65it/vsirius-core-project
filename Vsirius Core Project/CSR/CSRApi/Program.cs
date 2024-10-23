@@ -26,7 +26,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddConfigurationAddSwaggerGen();
 
 //Identity
-builder.Services.AddConfigurationIdentity(builder.Configuration);
+builder.Services.AddConfigurationIdentityCSR(builder.Configuration);
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 builder.Services.AddDbContext<VsiriusContext>(
