@@ -12,6 +12,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="appsettingsIdentity.Development.json" />
+    <Content Remove="appsettingsIdentity.json" />
+    <Content Remove="appsettingsIdentity.Production.json" />
+    <Content Remove="appsettingsIdentity.QA.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Abp" Version="9.1.2" />
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
@@ -45,23 +52,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\VsiriusDataModel\VsiriusDataModel.csproj" />
-    <ProjectReference Include="..\..\VsiriusSystem\VSiriusSystemLog\VSiriusSystemLog.csproj" />
+    <None Include="appsettingsIdentity.Development.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="appsettingsIdentity.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="appsettingsIdentity.Production.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="appsettingsIdentity.QA.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettingsIdentity.Development.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettingsIdentity.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettingsIdentity.Production.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettingsIdentity.QA.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
+    <ProjectReference Include="..\..\VsiriusDataModel\VsiriusDataModel.csproj" />
+    <ProjectReference Include="..\..\VsiriusSystem\VSiriusSystemLog\VSiriusSystemLog.csproj" />
   </ItemGroup>
 
 </Project>

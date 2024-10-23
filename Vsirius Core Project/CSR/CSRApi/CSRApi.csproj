@@ -18,7 +18,29 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Remove="appsettingsCSR.Development.json" />
+	  <Content Remove="appsettingsCSR.json" />
+	  <Content Remove="appsettingsCSR.Production.json" />
+	  <Content Remove="appsettingsCSR.QA.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<_ContentIncludedByDefault Remove="appsettings.Production.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="appsettingsCSR.Development.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </None>
+	  <None Include="appsettingsCSR.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </None>
+	  <None Include="appsettingsCSR.Production.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </None>
+	  <None Include="appsettingsCSR.QA.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -41,21 +63,6 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\VsiriusDataModel\VsiriusDataModel.csproj" />
 	  <ProjectReference Include="..\..\VsiriusSystem\VSiriusSystemLog\VSiriusSystemLog.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Update="appsettingsCSR.Development.json">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="appsettingsCSR.json">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="appsettingsCSR.Production.json">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="appsettingsCSR.QA.json">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </Content>
 	</ItemGroup>
 
 </Project>
