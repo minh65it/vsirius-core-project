@@ -19,28 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="appsettingsSystem.Development.json" />
-    <Content Remove="appsettingsSystem.json" />
-    <Content Remove="appsettingsSystem.Production.json" />
-    <Content Remove="appsettingsSystem.QA.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="appsettingsSystem.Development.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Include="appsettingsSystem.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Include="appsettingsSystem.Production.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Include="appsettingsSystem.QA.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
 	  <PackageReference Include="Korzh.EasyQuery.Linq" Version="7.2.3" />
 	  <PackageReference Include="LinqKit" Version="1.2.4" />
 	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.2" />
