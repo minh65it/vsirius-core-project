@@ -1,8 +1,8 @@
 
 
 using AutoMapper;
-using CSRApi.Configurations;
 using CSRApi.Helpers.ConfigSignalR;
+using System.Reflection;
 using VsiriusApi.Configurations;
 using VsiriusApi.DependencyInjection;
 using VsiriusApi.Helper.AutoMapper;
@@ -35,6 +35,11 @@ builder.Services.AddCSRServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 //Add DI SKU
 builder.Services.AddSKUServices(builder.Configuration);
+//Add DI Product
+builder.Services.AddProductServices(builder.Configuration);
+
+builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
+
 
 //Mapper
 builder.Services.AddScoped<IMapper>(sp =>
@@ -50,6 +55,11 @@ builder.Services.AddWriteLog();
 builder.Services.AddRouting();
 builder.Services.AddMvc(options => options.EnableEndpointRouting = false);
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
 
 var app = builder.Build();
 

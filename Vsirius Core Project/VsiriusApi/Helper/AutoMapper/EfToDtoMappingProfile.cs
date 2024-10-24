@@ -3,7 +3,7 @@ using CSRApi.Dtos;
 using IdentityApi.Dtos.Auth;
 using IdentityApi.Dtos.User;
 using Microsoft.AspNetCore.Identity;
-
+using ProductApi.Dtos;
 using VsiriusDataModel.DataModel;
 
 namespace VsiriusApi.Helper.AutoMapper
@@ -26,6 +26,14 @@ namespace VsiriusApi.Helper.AutoMapper
                 dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone)); ;
             CreateMap<RolesEmployee, RolesEmployeeDto>();
 
+            // Product
+            CreateMap<VsiriusProduct, VsiriusProductDto>()
+                .ForMember(dest => dest.standard_price, opt => opt.MapFrom(src => src.standard_price.ToString("0.00")))
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<VsiriusFilter, VsiriusFilterParamDto>();
+            CreateMap<VsiriusFilter, VsiriusFilterDto>();
+            CreateMap<VsiriusHomeProduct, VsiriusHomeProductDto>();
+            CreateMap<VsiriusValidProduct, VsiriusFilterDto>();
         }
     }
 }

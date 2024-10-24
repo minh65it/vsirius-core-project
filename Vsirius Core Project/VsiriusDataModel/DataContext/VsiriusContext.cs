@@ -6,7 +6,7 @@ namespace VsiriusDataModel.DataContext
 {
     public class VsiriusContext : IdentityDbContext<VsiriusUser>
     {
-        public VsiriusContext(DbContextOptions options) : base(options)
+        public VsiriusContext(DbContextOptions<VsiriusContext> options) : base(options)
         {
         }
 

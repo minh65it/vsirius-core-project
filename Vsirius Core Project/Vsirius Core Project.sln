@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkuMappingAPI", "MappingSKU
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "product", "product", "{4B8ADB6F-5897-44DA-8D23-EAD340E14B19}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductApi", "Product\ProductApi\ProductApi.csproj", "{5565938E-9AC4-4689-80C8-299C742BEBE0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{F00709BD-7077-49E2-BFAD-172AE6BFA6EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F00709BD-7077-49E2-BFAD-172AE6BFA6EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F00709BD-7077-49E2-BFAD-172AE6BFA6EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5565938E-9AC4-4689-80C8-299C742BEBE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5565938E-9AC4-4689-80C8-299C742BEBE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5565938E-9AC4-4689-80C8-299C742BEBE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5565938E-9AC4-4689-80C8-299C742BEBE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{626E8296-9E74-42D5-A67F-20C933646E31} = {D589FF6B-20F2-405F-A2AA-91DDB934E54F}
 		{B1B5FE89-B8F8-4894-A365-554D61A1A241} = {13AF3D3B-479B-4B25-A0AB-47C713B831B7}
 		{F00709BD-7077-49E2-BFAD-172AE6BFA6EA} = {3C1313D8-7FED-4EAE-805F-BE2C6BF95760}
+		{5565938E-9AC4-4689-80C8-299C742BEBE0} = {4B8ADB6F-5897-44DA-8D23-EAD340E14B19}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {37FD6387-A1B8-4A66-AD2B-95A9FBF06BEE}
