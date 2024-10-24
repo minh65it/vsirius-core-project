@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "skuMapping", "skuMapping", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkuMappingAPI", "MappingSKU\SkuMappingAPI\SkuMappingAPI.csproj", "{F00709BD-7077-49E2-BFAD-172AE6BFA6EA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "product", "product", "{4B8ADB6F-5897-44DA-8D23-EAD340E14B19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
