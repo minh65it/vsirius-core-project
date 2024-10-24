@@ -1,14 +1,14 @@
 ﻿using System.Linq.Expressions;
-using IdentityApi.Data;
 using Microsoft.EntityFrameworkCore;
+using VsiriusDataModel.DataContext;
 
 namespace IdentityApi._Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly IdentityContext _context;
+        private readonly VsiriusContext _context;
 
-        public Repository(IdentityContext context)
+        public Repository(VsiriusContext context)
         {
             _context = context;
         }

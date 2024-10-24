@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSRApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/csr/[controller]")]
     [ApiController]
     public class FavoritesController : ControllerBase
     {

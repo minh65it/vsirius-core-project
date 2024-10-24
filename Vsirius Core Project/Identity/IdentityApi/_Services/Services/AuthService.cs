@@ -3,6 +3,7 @@ using IdentityApi._Repositoties;
 using IdentityApi._Services.Interfaces;
 using IdentityApi.Dtos.Auth;
 using IdentityApi.Helpers.Utilities;
+using VSiriusSystemLog.WriteLog;
 using static IdentityApi.Dtos.Auth.AuthDto;
 
 namespace IdentityApi._Services.Services
@@ -12,16 +13,16 @@ namespace IdentityApi._Services.Services
         private readonly IRepositoryAccessor _repo;
         private readonly IFunctionUtilities _functionUtilities;
         private readonly IMapper _mapper;
-        private ILogService _logService;
+        private ILoggerCustom _logService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public AuthService(IRepositoryAccessor repo,
-            IFunctionUtilities functionUtilities, IMapper mapper, ILogService logService, IHttpContextAccessor httpContextAccessor)
+            IFunctionUtilities functionUtilities, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILoggerCustom logService)
         {
             _repo = repo;
             _functionUtilities = functionUtilities;
             _mapper = mapper;
-            _logService = logService;
             _httpContextAccessor = httpContextAccessor;
+            _logService = logService;
         }
 
         public async Task<EmployeeDto> Login(AuthForLoginParam paramAuth)
@@ -45,7 +46,7 @@ namespace IdentityApi._Services.Services
             }
             catch(Exception ex)
             {
-                await _logService.CreateLog(url: _httpContextAccessor.HttpContext.Request.Path, exception: ex.Message, level: LogLevel.Error);
+                await _logService.CreateLogError(exception: ex.Message);
                 return new EmployeeDto();
             }
         }

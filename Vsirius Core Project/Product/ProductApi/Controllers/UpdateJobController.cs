@@ -5,7 +5,7 @@ using QuartzInfrastructure;
 
 namespace ProductApi.Controllers
 {
-    [Route("[controller]")]
+    [Route("product/[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
     {

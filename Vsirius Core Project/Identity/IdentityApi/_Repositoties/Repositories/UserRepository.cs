@@ -1,13 +1,12 @@
 ﻿using IdentityApi._Repositories.Interfaces;
-using IdentityApi.Data;
-using IdentityApi.Models;
-using IdentityApi.Models.User;
+using VsiriusDataModel.DataContext;
+using VsiriusDataModel.DataModel;
 
 namespace IdentityApi._Repositories.Repositories
 {
     public class UserRepository : Repository<VsiriusUser>, IUserRepository
     {
-        public UserRepository(IdentityContext context) : base(context)
+        public UserRepository(VsiriusContext context) : base(context)
         {
         }
     }

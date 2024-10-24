@@ -5,7 +5,7 @@ using ProductApi.Dtos;
 
 namespace ProductApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/product/[controller]")]
     [ApiController]
     public class VsiriusHomeProductController : ControllerBase
     {

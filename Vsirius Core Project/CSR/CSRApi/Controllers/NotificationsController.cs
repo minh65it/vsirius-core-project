@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace CSRApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/csr/[controller]")]
     [ApiController]
     public class NotificationsController : ControllerBase
     {

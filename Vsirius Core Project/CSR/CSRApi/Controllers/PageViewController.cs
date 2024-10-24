@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CSRApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/csr/[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin")]
     public class PageViewController : ControllerBase

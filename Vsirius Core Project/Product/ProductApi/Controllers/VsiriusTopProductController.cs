@@ -5,7 +5,7 @@ using ProductApi.Helpers.Utilities;
 
 namespace ProductApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/product/[controller]")]
     [ApiController]
     public class VsiriusTopProductController : ControllerBase
     {
