@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -9,19 +9,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.18" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Amazon\AmazonIntegrationDataApi\AmazonIntegrationDataApi.csproj" />
     <ProjectReference Include="..\CSR\CSRApi\CSRApi.csproj" />
+    <ProjectReference Include="..\Excluded\ExcludedProductAPI\ExcludedProductAPI.csproj" />
     <ProjectReference Include="..\Identity\IdentityApi\IdentityApi.csproj" />
     <ProjectReference Include="..\MappingSKU\SkuMappingAPI\SkuMappingAPI.csproj" />
     <ProjectReference Include="..\MappingSKU\SkuMappingAPI\SkuMappingAPI\SkuMappingAPI.csproj" />
+    <ProjectReference Include="..\Order\OrdersAPI\OrdersAPI.csproj" />
     <ProjectReference Include="..\Product\ProductApi\ProductApi.csproj" />
     <ProjectReference Include="..\VsiriusDataModel\VsiriusDataModel.csproj" />
     <ProjectReference Include="..\VsiriusSystem\JobClient\QuartzInfrastructure.csproj" />
     <ProjectReference Include="..\VsiriusSystem\VSiriusSystemLog\VSiriusSystemLog.csproj" />
+    <ProjectReference Include="..\VsiriusSystem\VsiriusSystem\VsiriusSystem.csproj" />
   </ItemGroup>
 
   <ItemGroup>

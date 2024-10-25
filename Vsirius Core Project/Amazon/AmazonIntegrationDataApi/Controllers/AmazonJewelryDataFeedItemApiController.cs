@@ -10,7 +10,7 @@ using System.Data;
 namespace AmazonIntegrationDataApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/amazon/[controller]")]
     public class AmazonJewelryDataFeedItemApiController : ControllerBase
     {
         private readonly IAmazonJewelryDataFeedItemService _service;

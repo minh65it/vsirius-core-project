@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AmazonIntegrationDataApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/amazon/[controller]")]
     [ApiController]
     public class OrderAmazonProcessorController : ControllerBase
     {

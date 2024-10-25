@@ -1,12 +1,11 @@
 ﻿using AmazonIntegrationDataApi._Services.Interfaces;
-using AmazonIntegrationDataApi._Services.Services;
 using AmazonIntegrationDataApi.Dtos.MongoDB;
 using AmazonIntegrationDataApi.Helpers.MongoDB;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AmazonIntegrationDataApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/amazon/[controller]")]
     [ApiController]
     public class ReturnOrderController : ControllerBase
     {

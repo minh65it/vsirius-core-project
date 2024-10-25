@@ -5,7 +5,7 @@ using OrdersAPI.Helpers.Utilities;
 
 namespace OrdersAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/order/[controller]")]
     [ApiController]
     public class VsiriusCartController : ControllerBase
     {

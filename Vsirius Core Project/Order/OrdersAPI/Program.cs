@@ -24,7 +24,7 @@ builder.Services.AddDbContext<VsiriusContext>(
         options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //Identity
-builder.Services.AddConfigurationIdentity(builder.Configuration);
+builder.Services.AddConfigurationIdentityOrder(builder.Configuration);
 
 //Repository and Service
 builder.Services.AddTransient<IVsiriusOrderRepository, VsiriusOrderRepository>();

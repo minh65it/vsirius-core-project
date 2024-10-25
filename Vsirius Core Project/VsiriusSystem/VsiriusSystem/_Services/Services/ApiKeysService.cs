@@ -10,7 +10,7 @@ namespace VsiriusSystem._Services.Services
 
         public ApiKeysService(IConfiguration configuration)
         {
-            _credentialsDictionary = configuration.GetSection("ApiVsiriusCredentials").Get<Dictionary<string, string>>();
+            _credentialsDictionary = configuration.GetSection("ApiVsiriusCredentialsSystem").Get<Dictionary<string, string>>();
         }
 
         public bool ValidateCredentials(string clientId, string clientSecret)

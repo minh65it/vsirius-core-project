@@ -6,7 +6,7 @@ namespace OrdersAPI.Configurations
 {
     public static class ConfigurationIdentity
     {
-        public static void AddConfigurationIdentity(this IServiceCollection services, IConfiguration configuration)
+        public static void AddConfigurationIdentityOrder(this IServiceCollection services, IConfiguration configuration)
         {
             if (services == null) throw new ArgumentNullException();
 

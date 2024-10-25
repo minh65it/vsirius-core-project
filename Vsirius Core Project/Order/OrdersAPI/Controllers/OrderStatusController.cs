@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OrdersAPI._Services.Interfaces;
 using OrdersAPI.Dtos;
-using OrdersAPI.Helpers.Params;
 using OrdersAPI.Helpers.Utilities;
 
 namespace OrdersAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/order/[controller]")]
     [ApiController]
     public class OrderStatusController : ControllerBase
     {

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ExcludedProductAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("exclude/[controller]")]
     //[Authorize(Roles = "Admin")]
     public class ExcludedProductController : ControllerBase
     {

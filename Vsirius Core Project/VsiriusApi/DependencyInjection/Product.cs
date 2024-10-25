@@ -39,36 +39,16 @@ namespace VsiriusApi.DependencyInjection
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             services.AddScoped<ValidationVsirius>();
-            /*
-                        //Update Jobs
-                        services.AddUpdateJobs();
-                        //Job PullQgold
-                        services.AddTransient<TriggerController>();
-                        services.AddJob<VSiriusWeb_MapPIMToVSiriusWebDB>();
-                        services.AddJob<VSiriusWeb_UpdateFilter>();
-            */
+/*
+            //Update Jobs
+            services.AddUpdateJobs();
+            //Job PullQgold
+            services.AddTransient<TriggerController>();
+            services.AddJob<VSiriusWeb_MapPIMToVSiriusWebDB>();
+            services.AddJob<VSiriusWeb_UpdateFilter>();
+*/
             //Excel
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
-            services.Configure<FormOptions>(x =>
-            {
-                x.ValueLengthLimit = int.MaxValue;
-                x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
-            });
-            ApplyMigration(services.BuildServiceProvider());
-        }
-
-        static void ApplyMigration(IServiceProvider serviceProvider)
-        {
-            using (var scope = serviceProvider.CreateScope())
-            {
-                var _db = scope.ServiceProvider.GetRequiredService<VsiriusContext>();
-
-                if (_db.Database.GetPendingMigrations().Count() > 0)
-                {
-                    _db.Database.Migrate();
-                }
-            }
         }
     }
 }

@@ -2,12 +2,20 @@
 
 using AutoMapper;
 using CSRApi.Helpers.ConfigSignalR;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
+using OrdersAPI.Configurations;
+using OrdersAPI.Helpers.ConfigSignalR;
+using Serilog;
+using SkuMappingAPI.Data;
 using System.Reflection;
 using VsiriusApi.Configurations;
 using VsiriusApi.DependencyInjection;
 using VsiriusApi.Helper.AutoMapper;
 using VsiriusApi.Helpers.Utilities;
 using VsiriusApi.SwaggerConfiguration;
+using VsiriusDataModel.DataContext;
+using VsiriusSystem.Data;
 using VSiriusSystemLog.CorrelationId;
 using VSiriusSystemLog.WriteLog;
 
@@ -37,8 +45,17 @@ builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddSKUServices(builder.Configuration);
 //Add DI Product
 builder.Services.AddProductServices(builder.Configuration);
+//Add DI Order
+builder.Services.AddOrderServices(builder.Configuration);
+//Add DI System
+builder.Services.AddSystemServices(builder.Configuration);
+//Add DI Excluded
+builder.Services.AddExcludedServices(builder.Configuration);
+//Add DI Amazon
+builder.Services.AddAmazonServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
+
 
 
 //Mapper
@@ -60,6 +77,21 @@ builder.Services.AddSwaggerGen(options =>
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+builder.Services.AddSignalR();
+builder.Host.UseSerilog((context, configuration) =>
+        configuration.ReadFrom.Configuration(context.Configuration));
+
+builder.Services.ApplyMigrationVsiriusContext();
+builder.Services.ApplyMigrationSKU();
+builder.Services.ApplyMigrationDataContext();
+builder.Services.ApplyMigrationModifiedProductContext();
+builder.Services.ApplyMigrationAmazon();
+
+builder.Services.Configure<FormOptions>(x =>
+{
+    x.ValueLengthLimit = int.MaxValue;
+    x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
+});
 
 var app = builder.Build();
 
@@ -68,11 +100,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseCustomSwagger();
 }
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Swaager for Production
 app.UseCustomSwagger();
-
-
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
@@ -80,8 +112,17 @@ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExpose
 {
     endpoints.MapControllers();
     endpoints.MapHub<NotificationHub>("/notificationHub");
+    endpoints.MapHub<OrderHub>("/orderHub");
 });
+app.UseSerilogRequestLogging();
 // Identity Seed data
 await SeedDataConfig.Run(app);
+// Order Seed data
+await SeedData.Run(app, builder.Configuration);
 app.AddCorrelationIdMiddleware();
 app.Run();
+
+
+
+
+
