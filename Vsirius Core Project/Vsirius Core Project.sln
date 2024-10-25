@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "order", "order", "{F39EF760
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrdersAPI", "Order\OrdersAPI\OrdersAPI.csproj", "{22CDB685-3BB6-497F-A223-21FE1E67F8DE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "excluded", "excluded", "{DF1B7FDE-680D-41C8-9949-8CAD8F943B16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

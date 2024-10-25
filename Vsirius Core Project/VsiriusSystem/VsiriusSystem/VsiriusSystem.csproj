@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>05e2e8a0-3c2a-4e23-bcc4-86bd8364a1fd</UserSecretsId>
@@ -29,9 +29,9 @@
 	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 	  <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.3.0" />
 	  <PackageReference Include="AutoMapper" Version="13.0.1" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.19" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.18" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.19">
+	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>

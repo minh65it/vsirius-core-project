@@ -5,7 +5,7 @@ using VsiriusSystem.Helpers.Utilities;
 
 namespace VsiriusSystem.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/system/[controller]")]
     [ApiController]
     public class JobSchedulerController : ControllerBase
     {

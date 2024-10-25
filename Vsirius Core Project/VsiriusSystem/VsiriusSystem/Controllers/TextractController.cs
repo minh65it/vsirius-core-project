@@ -4,7 +4,7 @@ using VsiriusSystem._Services.Interfaces;
 
 namespace VsiriusSystem.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/system/[controller]")]
     [ApiController]
     public class TextractController : ControllerBase
     {

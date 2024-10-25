@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using OrdersAPI.Dtos;
 using ProductApi.Dtos;
 using VsiriusDataModel.DataModel;
+using VsiriusSystem.Dtos;
+using VsiriusSystem.Models;
 
 
 namespace VsiriusApi.Helper.AutoMapper
@@ -45,6 +47,11 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<VsiriusCartDto, VsiriusCart>();
             CreateMap<VsiriusCartDetailsDto, VsiriusCartDetails>()
                 .ForMember(cartDetail => cartDetail.CartDetailId, opt => opt.MapFrom(src => Guid.NewGuid()));
+
+            // System
+            CreateMap<VsiriusSystem.Dtos.LogDto, Log>();
+            CreateMap<JobInfoDto, JobInfo>();
+            CreateMap<CreateJobInfoDto, JobInfo>();
 
         }
     }

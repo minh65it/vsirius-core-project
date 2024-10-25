@@ -18,11 +18,11 @@ namespace VsiriusApi.SwaggerConfiguration
                 c.SwaggerDoc("OrderProcess", new OpenApiInfo { Title = "OrderProcess API", Version = "v1" });
                 c.SwaggerDoc("Excluded", new OpenApiInfo { Title = "Excluded API", Version = "v1" });
                 c.SwaggerDoc("Pim", new OpenApiInfo { Title = "Pim API", Version = "v1" });
-                c.SwaggerDoc("System", new OpenApiInfo { Title = "System API", Version = "v1" });
                 c.SwaggerDoc("EbayCore", new OpenApiInfo { Title = "EbayCore API", Version = "v1" });
                 c.SwaggerDoc("Etsy", new OpenApiInfo { Title = "Etsy API", Version = "v1" });
                 c.SwaggerDoc("Walmart", new OpenApiInfo { Title = "Walmart API", Version = "v1" });
                 c.SwaggerDoc("Amazon", new OpenApiInfo { Title = "Amazon API", Version = "v1" });
+                c.SwaggerDoc("System", new OpenApiInfo { Title = "System API", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
@@ -103,11 +103,11 @@ namespace VsiriusApi.SwaggerConfiguration
                 c.SwaggerEndpoint("/swagger/OrderProcess/swagger.json", "OrderProcess API");
                 c.SwaggerEndpoint("/swagger/Excluded/swagger.json", "Excluded API");
                 c.SwaggerEndpoint("/swagger/Pim/swagger.json", "Pim API");
-                c.SwaggerEndpoint("/swagger/System/swagger.json", "System API");
                 c.SwaggerEndpoint("/swagger/Ebay/swagger.json", "Ebay API");
                 c.SwaggerEndpoint("/swagger/Etsy/swagger.json", "Etsy API");
                 c.SwaggerEndpoint("/swagger/Walmart/swagger.json", "Walmart API");
                 c.SwaggerEndpoint("/swagger/Amazon/swagger.json", "Amazon API");
+                c.SwaggerEndpoint("/swagger/System/swagger.json", "System API");
             });
         }
     }

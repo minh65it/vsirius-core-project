@@ -6,7 +6,7 @@ using VsiriusSystem.Dtos;
 
 namespace VsiriusSystem.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/system/[controller]")]
     [ApiController]
     public class ChatGPTController : ControllerBase
     {

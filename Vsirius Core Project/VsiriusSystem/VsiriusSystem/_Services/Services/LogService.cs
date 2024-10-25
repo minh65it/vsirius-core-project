@@ -91,7 +91,7 @@ namespace VsiriusSystem._Services.Services
                   outputTemplate: "[TimeStamp: " + DateTime.Now + "]" + "\n\n" + "Message: " + logViewModel.Message + "\n\n" + "ControllerName: " + logViewModel.URL + "\n\n" +
                                     "ProjectName: " + logViewModel.ProjectName + "\n\n" + "Level: " + logViewModel.Level + "\n\n" + "Exception: " + logViewModel.Exception + "\n\n" + "CorrelationId: " + logViewModel.CorrelationId + "\n\n")
                     .WriteTo.MSSqlServer(
-                        connectionString: _configuration.GetSection("ConnectionStrings")["DefaultConnection"],
+                        connectionString: _configuration.GetSection("ConnectionStrings")["SystemConnection"],
                         sinkOptions: sinkOpts,
                         columnOptions: new ColumnOptions()
                     )

@@ -2,8 +2,6 @@
 using CSRApi._Repositories.Repositories;
 using CSRApi._Services.Interfaces;
 using CSRApi._Services.Services;
-using Microsoft.EntityFrameworkCore;
-using VsiriusDataModel.DataContext;
 
 namespace VsiriusApi.DependencyInjection
 {
@@ -37,7 +35,8 @@ namespace VsiriusApi.DependencyInjection
             {
                 options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
                 options.KeepAliveInterval = TimeSpan.FromSeconds(30);
-            });                     
+            });  
+            
         }
         
     }

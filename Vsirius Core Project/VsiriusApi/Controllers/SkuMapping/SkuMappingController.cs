@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using SkuMappingAPI._Repositories.Interfaces;
 using SkuMappingAPI.Common;
 using SkuMappingAPI.DTOs;
 using SkuMappingAPI.Services.Interfaces;

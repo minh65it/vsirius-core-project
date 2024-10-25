@@ -23,6 +23,7 @@
     <ProjectReference Include="..\VsiriusDataModel\VsiriusDataModel.csproj" />
     <ProjectReference Include="..\VsiriusSystem\JobClient\QuartzInfrastructure.csproj" />
     <ProjectReference Include="..\VsiriusSystem\VSiriusSystemLog\VSiriusSystemLog.csproj" />
+    <ProjectReference Include="..\VsiriusSystem\VsiriusSystem\VsiriusSystem.csproj" />
   </ItemGroup>
 
   <ItemGroup>
