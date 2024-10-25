@@ -14,7 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Amazon\AmazonIntegrationDataApi\AmazonIntegrationDataApi.csproj" />
     <ProjectReference Include="..\CSR\CSRApi\CSRApi.csproj" />
+    <ProjectReference Include="..\Excluded\ExcludedProductAPI\ExcludedProductAPI.csproj" />
     <ProjectReference Include="..\Identity\IdentityApi\IdentityApi.csproj" />
     <ProjectReference Include="..\MappingSKU\SkuMappingAPI\SkuMappingAPI.csproj" />
     <ProjectReference Include="..\MappingSKU\SkuMappingAPI\SkuMappingAPI\SkuMappingAPI.csproj" />

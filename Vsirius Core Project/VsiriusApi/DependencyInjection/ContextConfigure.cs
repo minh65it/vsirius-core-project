@@ -1,4 +1,6 @@
 ﻿
+using AmazonIntegrationDataApi.Data;
+using ExcludedProductAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using SkuMappingAPI.Data;
 using VsiriusDataModel.DataContext;
@@ -19,7 +21,13 @@ namespace VsiriusApi.DependencyInjection
             services.AddDbContext<MappingSkuDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SKUConnection")));
 
-            
+            services.AddDbContext<ModifiedProductContext>(
+                options => options.UseSqlServer(configuration.GetConnectionString("PIMConnection")));
+
+            services.AddDbContext<DBContext>(
+                options => options.UseSqlServer(configuration.GetConnectionString("AmazonConnection")));
+
+
 
         }
     }

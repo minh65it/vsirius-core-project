@@ -2,6 +2,7 @@
 
 using AutoMapper;
 using CSRApi.Helpers.ConfigSignalR;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using OrdersAPI.Configurations;
 using OrdersAPI.Helpers.ConfigSignalR;
@@ -48,6 +49,10 @@ builder.Services.AddProductServices(builder.Configuration);
 builder.Services.AddOrderServices(builder.Configuration);
 //Add DI System
 builder.Services.AddSystemServices(builder.Configuration);
+//Add DI Excluded
+builder.Services.AddExcludedServices(builder.Configuration);
+//Add DI Amazon
+builder.Services.AddAmazonServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
 
@@ -79,6 +84,14 @@ builder.Host.UseSerilog((context, configuration) =>
 builder.Services.ApplyMigrationVsiriusContext();
 builder.Services.ApplyMigrationSKU();
 builder.Services.ApplyMigrationDataContext();
+builder.Services.ApplyMigrationModifiedProductContext();
+builder.Services.ApplyMigrationAmazon();
+
+builder.Services.Configure<FormOptions>(x =>
+{
+    x.ValueLengthLimit = int.MaxValue;
+    x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
+});
 
 var app = builder.Build();
 
