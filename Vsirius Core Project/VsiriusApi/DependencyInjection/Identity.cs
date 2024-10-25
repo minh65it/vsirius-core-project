@@ -6,9 +6,7 @@ using IdentityApi._Services.Services;
 using IdentityApi.Helpers.Utilities;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
-using VsiriusDataModel.DataContext;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace VsiriusApi.DependencyInjection
 {
@@ -22,7 +20,7 @@ namespace VsiriusApi.DependencyInjection
                 options => options.UseSqlServer(configuration.GetConnectionString("VsiriusWebConnection")));*/
 
             //User
-            services.AddScoped<IFunctionUtilities, FunctionUtilities>();
+            
             services.AddScoped<IValidUser, ValidUser>();
             //Mail
             services.AddScoped<IEmailSender, EmailSender>();
@@ -43,28 +41,8 @@ namespace VsiriusApi.DependencyInjection
 
             //Employee
             services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IFunctionUtilities, FunctionUtilities>();
 
-            ApplyMigration(services.BuildServiceProvider());
-        }
-
-        public static void ApplyMigration(IServiceProvider serviceProvider)
-        {
-            try
-            {
-                using (var scope = serviceProvider.CreateScope())
-                {
-                    var _db = scope.ServiceProvider.GetRequiredService<VsiriusContext>();
-
-                    if (_db.Database.GetPendingMigrations().Count() > 0)
-                    {
-                        _db.Database.Migrate();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-        }
+        }       
     }
 }

@@ -3,6 +3,7 @@ using CSRApi.Dtos;
 using IdentityApi.Dtos.Auth;
 using IdentityApi.Dtos.User;
 using Microsoft.AspNetCore.Identity;
+using OrdersAPI.Dtos;
 using ProductApi.Dtos;
 using VsiriusDataModel.DataModel;
 
@@ -34,6 +35,14 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<VsiriusFilter, VsiriusFilterDto>();
             CreateMap<VsiriusHomeProduct, VsiriusHomeProductDto>();
             CreateMap<VsiriusValidProduct, VsiriusFilterDto>();
+
+            // Order
+            CreateMap<VsiriusOrders, VsiriusOrderDto>();
+            CreateMap<OrderStatus, OrderStatusDto>();
+
+            CreateMap<VsiriusCart, VsiriusCartDetailsDto>();
+            CreateMap<VsiriusCartDetails, VsiriusCartDetailsDto>();
+            CreateMap<VsiriusCart, VsiriusListCartDto>();
         }
     }
 }

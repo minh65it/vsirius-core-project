@@ -55,20 +55,6 @@ namespace VsiriusApi.DependencyInjection
                 x.ValueLengthLimit = int.MaxValue;
                 x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
             });
-            ApplyMigration(services.BuildServiceProvider());
-        }
-
-        static void ApplyMigration(IServiceProvider serviceProvider)
-        {
-            using (var scope = serviceProvider.CreateScope())
-            {
-                var _db = scope.ServiceProvider.GetRequiredService<VsiriusContext>();
-
-                if (_db.Database.GetPendingMigrations().Count() > 0)
-                {
-                    _db.Database.Migrate();
-                }
-            }
         }
     }
 }

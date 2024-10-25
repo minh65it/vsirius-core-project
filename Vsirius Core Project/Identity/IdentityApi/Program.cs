@@ -1,10 +1,12 @@
 using IdentityApi.Configurations;
 using IdentityApi.Helpers.Utilities;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Reflection;
 using VsiriusDataModel.DataContext;
 using VSiriusSystemLog.CorrelationId;
 using VSiriusSystemLog.WriteLog;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

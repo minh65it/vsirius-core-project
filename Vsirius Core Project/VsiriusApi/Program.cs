@@ -2,12 +2,15 @@
 
 using AutoMapper;
 using CSRApi.Helpers.ConfigSignalR;
+using Microsoft.EntityFrameworkCore;
+using OrdersAPI.Helpers.ConfigSignalR;
 using System.Reflection;
 using VsiriusApi.Configurations;
 using VsiriusApi.DependencyInjection;
 using VsiriusApi.Helper.AutoMapper;
 using VsiriusApi.Helpers.Utilities;
 using VsiriusApi.SwaggerConfiguration;
+using VsiriusDataModel.DataContext;
 using VSiriusSystemLog.CorrelationId;
 using VSiriusSystemLog.WriteLog;
 
@@ -37,8 +40,11 @@ builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddSKUServices(builder.Configuration);
 //Add DI Product
 builder.Services.AddProductServices(builder.Configuration);
+//Add DI Order
+builder.Services.AddOrderServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
+
 
 
 //Mapper
@@ -60,6 +66,7 @@ builder.Services.AddSwaggerGen(options =>
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -80,8 +87,23 @@ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExpose
 {
     endpoints.MapControllers();
     endpoints.MapHub<NotificationHub>("/notificationHub");
+    endpoints.MapHub<OrderHub>("/orderHub");
 });
 // Identity Seed data
 await SeedDataConfig.Run(app);
 app.AddCorrelationIdMiddleware();
+ApplyMigration();
 app.Run();
+
+void ApplyMigration()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var _db = scope.ServiceProvider.GetRequiredService<VsiriusContext>();
+
+        if (_db.Database.GetPendingMigrations().Count() > 0)
+        {
+            _db.Database.Migrate();
+        }
+    }
+}
