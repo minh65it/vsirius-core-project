@@ -1,5 +1,5 @@
 
-using Domain;
+using DomainQgold;
 
 namespace QgoldIntegrationDataApi.Models
 {

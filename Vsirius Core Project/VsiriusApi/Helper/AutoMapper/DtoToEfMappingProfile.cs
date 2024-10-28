@@ -11,6 +11,8 @@ using ProductApi.Dtos;
 using VsiriusDataModel.DataModel;
 using VsiriusSystem.Dtos;
 using VsiriusSystem.Models;
+using QgoldIntegrationDataApi.Dtos.Qgold;
+using QgoldIntegrationDataApi.Models;
 
 
 namespace VsiriusApi.Helper.AutoMapper
@@ -69,6 +71,10 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<ReturnFBMOrderRowDto, ReturnFBMOrder>();
             #endregion
 
+            #region
+            CreateMap<QgoldCsvData_DTO, QgoldProduct>();
+            CreateMap<QgoldData, QgoldProduct>();
+            #endregion
         }
     }
 }

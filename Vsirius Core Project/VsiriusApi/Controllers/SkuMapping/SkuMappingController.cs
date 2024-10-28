@@ -3,7 +3,7 @@ using SkuMappingAPI.Common;
 using SkuMappingAPI.DTOs;
 using SkuMappingAPI.Services.Interfaces;
 
-namespace SkuMappingAPI.Controllers
+namespace VsiriusApi.Controllers.SkuMapping
 {
     [ApiExplorerSettings(GroupName = "SKUMapping")]
     [ApiController]

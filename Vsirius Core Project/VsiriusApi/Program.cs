@@ -55,6 +55,10 @@ builder.Services.AddExcludedServices(builder.Configuration);
 builder.Services.AddAmazonServices(builder.Configuration);
 //Add DI ProductAI
 builder.Services.AddProductAIServices(builder.Configuration);
+//Add DI Qgold
+builder.Services.AddQgoldServices(builder.Configuration);
+//Add DI StullerOrder
+builder.Services.AddStullerOrderServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
 
@@ -83,10 +87,12 @@ builder.Services.AddSignalR();
 builder.Host.UseSerilog((context, configuration) =>
         configuration.ReadFrom.Configuration(context.Configuration));
 
+builder.Services.ApplyMigrationQgoldApi();
 builder.Services.ApplyMigrationVsiriusContext();
 builder.Services.ApplyMigrationSKU();
-builder.Services.ApplyMigrationDataContext();
-builder.Services.ApplyMigrationModifiedProductContext();
+builder.Services.ApplyMigrationSystem();
+builder.Services.ApplyMigrationExcluded();
+builder.Services.ApplyMigrationProductAI();
 builder.Services.ApplyMigrationAmazon();
 
 builder.Services.Configure<FormOptions>(x =>

@@ -12,10 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Abp" Version="9.1.2" />
+    <PackageReference Include="Abp" Version="9.4.2" />
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Azure.Communication.Sms" Version="1.0.1" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />
     <PackageReference Include="Google.Apis.Auth" Version="1.60.0" />
     <PackageReference Include="LinqKit.Core" Version="1.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.10" />

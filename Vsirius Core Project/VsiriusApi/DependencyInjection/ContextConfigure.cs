@@ -31,6 +31,12 @@ namespace VsiriusApi.DependencyInjection
             services.AddDbContext<DBContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("AmazonConnection")));
 
+            services.AddDbContext<QgoldIntegrationDataApi.Data.DBContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("PIMConnection"), providerOptions =>
+                {
+                    providerOptions.CommandTimeout(6000000);
+                }));
+
         }
     }
 }

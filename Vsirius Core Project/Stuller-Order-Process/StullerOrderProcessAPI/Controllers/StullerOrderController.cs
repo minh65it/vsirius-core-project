@@ -6,7 +6,7 @@ using StullerOrderProcessAPI.Dtos;
 namespace StullerOrderProcessAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("stullerOrder/[controller]")]
     public class StullerOrderController : ControllerBase
     {
         private readonly IOrderStullerService _submitOrder;

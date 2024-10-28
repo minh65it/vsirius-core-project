@@ -6,7 +6,7 @@ using QgoldIntegrationDataApi.Helpers.Ultilities;
 
 namespace QgoldIntegrationDataApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/qgold/[controller]")]
     [ApiController]
     public class QgoldCsvDataController : ControllerBase
     {

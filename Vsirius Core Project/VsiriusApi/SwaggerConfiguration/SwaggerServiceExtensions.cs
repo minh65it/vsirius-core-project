@@ -9,6 +9,8 @@ namespace VsiriusApi.SwaggerConfiguration
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("Identity", new OpenApiInfo { Title = "Identity API", Version = "v1" });
+                c.SwaggerDoc("Stuller", new OpenApiInfo { Title = "Stuller API", Version = "v1" });
+                c.SwaggerDoc("Qgold", new OpenApiInfo { Title = "Qgold API", Version = "v1" });
                 c.SwaggerDoc("SKUMapping", new OpenApiInfo { Title = "SKUMapping API", Version = "v1" });
                 c.SwaggerDoc("Order", new OpenApiInfo { Title = "Order API", Version = "v1" });
                 c.SwaggerDoc("CSR", new OpenApiInfo { Title = "CSR API", Version = "v1" });
@@ -23,6 +25,7 @@ namespace VsiriusApi.SwaggerConfiguration
                 c.SwaggerDoc("Walmart", new OpenApiInfo { Title = "Walmart API", Version = "v1" });
                 c.SwaggerDoc("Amazon", new OpenApiInfo { Title = "Amazon API", Version = "v1" });
                 c.SwaggerDoc("System", new OpenApiInfo { Title = "System API", Version = "v1" });
+                c.SwaggerDoc("StullerOrder", new OpenApiInfo { Title = "StullerOrder API", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
@@ -54,6 +57,10 @@ namespace VsiriusApi.SwaggerConfiguration
                     {
                         case "Identity":
                             return apiDesc.GroupName == "Identity";
+                        case "Stuller":
+                            return apiDesc.GroupName == "Stuller";
+                        case "Qgold":
+                            return apiDesc.GroupName == "Qgold";
                         case "SKUMapping":
                             return apiDesc.GroupName == "SKUMapping";
                         case "Order":
@@ -80,6 +87,8 @@ namespace VsiriusApi.SwaggerConfiguration
                             return apiDesc.GroupName == "Walmart";
                         case "Amazon":
                             return apiDesc.GroupName == "Amazon";
+                        case "StullerOrder":
+                            return apiDesc.GroupName == "StullerOrder";
                         default:
                             return false;
                     }
@@ -94,6 +103,8 @@ namespace VsiriusApi.SwaggerConfiguration
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/Identity/swagger.json", "Identity API");
+                c.SwaggerEndpoint("/swagger/Stuller/swagger.json", "Stuller API");
+                c.SwaggerEndpoint("/swagger/Qgold/swagger.json", "Qgold API");
                 c.SwaggerEndpoint("/swagger/SKUMapping/swagger.json", "SKUMapping API");
                 c.SwaggerEndpoint("/swagger/ProductAI/swagger.json", "ProductAI API");
                 c.SwaggerEndpoint("/swagger/Order/swagger.json", "Order API");
@@ -108,6 +119,7 @@ namespace VsiriusApi.SwaggerConfiguration
                 c.SwaggerEndpoint("/swagger/Walmart/swagger.json", "Walmart API");
                 c.SwaggerEndpoint("/swagger/Amazon/swagger.json", "Amazon API");
                 c.SwaggerEndpoint("/swagger/System/swagger.json", "System API");
+                c.SwaggerEndpoint("/swagger/StullerOrder/swagger.json", "StullerOrder API");
             });
         }
     }

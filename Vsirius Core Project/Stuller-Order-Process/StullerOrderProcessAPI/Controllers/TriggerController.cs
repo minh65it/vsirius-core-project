@@ -3,7 +3,7 @@ using StullerOrderProcessAPI._JobServices.Interfaces;
 
 namespace StullerOrderProcessAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/stullerOrder/[controller]")]
     [ApiController]
     public class TriggerController : ControllerBase
     {

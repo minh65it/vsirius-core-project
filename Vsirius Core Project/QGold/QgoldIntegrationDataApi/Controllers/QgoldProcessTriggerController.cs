@@ -3,7 +3,7 @@ using QgoldIntegrationDataApi._JobServices.Interfaces;
 
 namespace QgoldIntegrationDataApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/qgold/[controller]")]
     [ApiController]
     public class QgoldProcessTriggerController : ControllerBase
     {

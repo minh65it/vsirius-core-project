@@ -9,6 +9,20 @@ namespace VsiriusApi.Configurations
 {
     public static class MigrationsConfigure
     {
+        public static void ApplyMigrationQgoldApi(this IServiceCollection services)
+        {
+            var svProvider = services.BuildServiceProvider();
+            using (var scope = svProvider.CreateScope())
+            {
+                var _db = scope.ServiceProvider.GetRequiredService<QgoldIntegrationDataApi.Data.DBContext>();
+
+                if (_db.Database.GetPendingMigrations().Count() > 0)
+                {
+                    _db.Database.Migrate();
+                }
+            }
+        }
+
         public static void ApplyMigrationVsiriusContext(this IServiceCollection services)
         {
             var svProvider = services.BuildServiceProvider();
@@ -37,7 +51,7 @@ namespace VsiriusApi.Configurations
             }
         }
 
-        public static void ApplyMigrationDataContext(this IServiceCollection services)
+        public static void ApplyMigrationSystem(this IServiceCollection services)
         {
             var svProvider = services.BuildServiceProvider();
             using (var scope = svProvider.CreateScope())
@@ -51,12 +65,26 @@ namespace VsiriusApi.Configurations
             }
         }
 
-        public static void ApplyMigrationModifiedProductContext(this IServiceCollection services)
+        public static void ApplyMigrationExcluded(this IServiceCollection services)
         {
             var svProvider = services.BuildServiceProvider();
             using (var scope = svProvider.CreateScope())
             {
-                var _db = scope.ServiceProvider.GetRequiredService<ModifiedProductContext>();
+                var _db = scope.ServiceProvider.GetRequiredService<ExcludedProductAPI.Data.ModifiedProductContext>();
+
+                if (_db.Database.GetPendingMigrations().Count() > 0)
+                {
+                    _db.Database.Migrate();
+                }
+            }
+        }
+
+        public static void ApplyMigrationProductAI(this IServiceCollection services)
+        {
+            var svProvider = services.BuildServiceProvider();
+            using (var scope = svProvider.CreateScope())
+            {
+                var _db = scope.ServiceProvider.GetRequiredService<ProductAiApi.DataContext.ModifiedProductContext>();
 
                 if (_db.Database.GetPendingMigrations().Count() > 0)
                 {
