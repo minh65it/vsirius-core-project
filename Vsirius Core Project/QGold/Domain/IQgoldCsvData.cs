@@ -1,4 +1,4 @@
-﻿namespace Domain
+﻿namespace DomainQgold
 {
     public interface IQgoldCsvData
     {

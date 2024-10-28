@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using QgoldIntegrationDataApi.Jobs;
 using QuartzInfrastructure;
-using StullerOrderProcessAPI.Jobs;
 
-namespace StullerOrderProcessAPI.Controllers
+namespace VsiriusApi.Controllers.QgoldApi
 {
+    [ApiExplorerSettings(GroupName = "Qgold")]
     [Route("[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
@@ -20,8 +21,11 @@ namespace StullerOrderProcessAPI.Controllers
         {
             switch (job.Tittle)
             {
-                case "Stuller_GetOrder":
-                    await _updateJobsService.UpdateJob<Stuller_GetOrder>(job);
+                case "Qgold_MappingQgoldToPIM":
+                    await _updateJobsService.UpdateJob<Qgold_MappingQgoldToPIM>(job);
+                    break;
+                case "Qgold_PullProduct":
+                    await _updateJobsService.UpdateJob<Qgold_PullProduct>(job);
                     break;
                 default:
                     break;

@@ -1,4 +1,4 @@
-using Domain;
+using DomainAmazon;
 
 namespace AmazonIntegrationDataApi.Models
 {
