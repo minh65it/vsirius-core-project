@@ -55,8 +55,10 @@ builder.Services.AddExcludedServices(builder.Configuration);
 builder.Services.AddAmazonServices(builder.Configuration);
 //Add DI ProductAI
 builder.Services.AddProductAIServices(builder.Configuration);
-//Add DI ProductAI
+//Add DI Qgold
 builder.Services.AddQgoldServices(builder.Configuration);
+//Add DI StullerOrder
+builder.Services.AddStullerOrderServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
 

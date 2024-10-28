@@ -25,6 +25,7 @@ namespace VsiriusApi.SwaggerConfiguration
                 c.SwaggerDoc("Walmart", new OpenApiInfo { Title = "Walmart API", Version = "v1" });
                 c.SwaggerDoc("Amazon", new OpenApiInfo { Title = "Amazon API", Version = "v1" });
                 c.SwaggerDoc("System", new OpenApiInfo { Title = "System API", Version = "v1" });
+                c.SwaggerDoc("StullerOrder", new OpenApiInfo { Title = "StullerOrder API", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
@@ -86,6 +87,8 @@ namespace VsiriusApi.SwaggerConfiguration
                             return apiDesc.GroupName == "Walmart";
                         case "Amazon":
                             return apiDesc.GroupName == "Amazon";
+                        case "StullerOrder":
+                            return apiDesc.GroupName == "StullerOrder";
                         default:
                             return false;
                     }
@@ -116,6 +119,7 @@ namespace VsiriusApi.SwaggerConfiguration
                 c.SwaggerEndpoint("/swagger/Walmart/swagger.json", "Walmart API");
                 c.SwaggerEndpoint("/swagger/Amazon/swagger.json", "Amazon API");
                 c.SwaggerEndpoint("/swagger/System/swagger.json", "System API");
+                c.SwaggerEndpoint("/swagger/StullerOrder/swagger.json", "StullerOrder API");
             });
         }
     }
