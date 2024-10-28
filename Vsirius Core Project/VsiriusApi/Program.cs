@@ -53,6 +53,8 @@ builder.Services.AddSystemServices(builder.Configuration);
 builder.Services.AddExcludedServices(builder.Configuration);
 //Add DI Amazon
 builder.Services.AddAmazonServices(builder.Configuration);
+//Add DI ProductAI
+builder.Services.AddProductAIServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
 

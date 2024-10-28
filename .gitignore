@@ -483,3 +483,4 @@ $RECYCLE.BIN/
 *.swp
 VsiriusAPI/QgoldIntegrationDataApi/wwwroot/file/
 VsiriusAPI/QgoldIntegrationDataApi/ExportExcel/
+Vsirius Core Project/QGold/QgoldIntegrationDataApi/ExportExcel/FileQGold/

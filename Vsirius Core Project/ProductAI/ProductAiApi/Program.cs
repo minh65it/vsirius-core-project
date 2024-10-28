@@ -56,15 +56,15 @@ builder.Services.AddDbContext<ModifiedProductContext>(
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddTransient<TriggerController>();
+//builder.Services.AddTransient<TriggerController>();
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 builder.Services.AddTransient<IProductAIRepository, ProductAIRepository>();
 builder.Services.AddScoped<ICreateProductAiFromPimService, CreateProductAiFromPimService>();
 builder.Services.AddScoped<IProductAIService, ProductAIService>();
-builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
+//builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
 
 builder.Services.AddCorrelationIdGeneratorService();
-DependencyInjection.AddJob<ProductAI_CreateProductAiFromPim>(builder.Services);
+//DependencyInjection.AddJob<ProductAI_CreateProductAiFromPim>(builder.Services);
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

@@ -21,13 +21,15 @@ namespace VsiriusApi.DependencyInjection
             services.AddDbContext<MappingSkuDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SKUConnection")));
 
-            services.AddDbContext<ModifiedProductContext>(
+            // For Excluded
+            services.AddDbContext<ExcludedProductAPI.Data.ModifiedProductContext>(
+                options => options.UseSqlServer(configuration.GetConnectionString("PIMConnection")));
+            // For ProductAI
+            services.AddDbContext<ProductAiApi.DataContext.ModifiedProductContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("PIMConnection")));
 
             services.AddDbContext<DBContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("AmazonConnection")));
-
-
 
         }
     }
