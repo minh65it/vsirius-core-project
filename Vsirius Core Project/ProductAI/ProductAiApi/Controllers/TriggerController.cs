@@ -4,7 +4,7 @@ using ProductAiApi._JobServices.Interfaces;
 
 namespace ProductAiApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/productAI/[controller]")]
     [ApiController]
     public class TriggerController : ControllerBase
     {

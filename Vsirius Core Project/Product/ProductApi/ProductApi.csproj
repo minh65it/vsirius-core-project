@@ -24,7 +24,7 @@
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="EFCore.BulkExtensions" Version="8.1.1" />
-		<PackageReference Include="EPPlus" Version="6.2.4" />
+		<PackageReference Include="EPPlus" Version="7.4.1" />
 		<PackageReference Include="Korzh.EasyQuery.Linq" Version="7.3.3" />
 		<PackageReference Include="LinqKit.Core" Version="1.2.5" />
 		<PackageReference Include="LinqKit" Version="1.2.4" />

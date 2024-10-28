@@ -21,6 +21,7 @@
     <ProjectReference Include="..\MappingSKU\SkuMappingAPI\SkuMappingAPI.csproj" />
     <ProjectReference Include="..\MappingSKU\SkuMappingAPI\SkuMappingAPI\SkuMappingAPI.csproj" />
     <ProjectReference Include="..\Order\OrdersAPI\OrdersAPI.csproj" />
+    <ProjectReference Include="..\ProductAI\ProductAiApi\ProductAiApi.csproj" />
     <ProjectReference Include="..\Product\ProductApi\ProductApi.csproj" />
     <ProjectReference Include="..\VsiriusDataModel\VsiriusDataModel.csproj" />
     <ProjectReference Include="..\VsiriusSystem\JobClient\QuartzInfrastructure.csproj" />

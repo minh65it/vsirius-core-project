@@ -6,7 +6,7 @@ using ProductAiApi.DTOs;
 namespace ProductAiApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("productAI/[controller]")]
     public class ProductAIController : ControllerBase
     {
         private readonly IProductAIService _productAiService;
