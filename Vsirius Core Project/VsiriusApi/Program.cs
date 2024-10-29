@@ -63,6 +63,8 @@ builder.Services.AddStullerOrderServices(builder.Configuration);
 builder.Services.AddStullerServices(builder.Configuration);
 //Add DI Package
 builder.Services.AddPackageServices(builder.Configuration);
+//Add DI Walmart
+builder.Services.AddWalmartServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
 
@@ -98,6 +100,7 @@ builder.Services.ApplyMigrationSystem();
 builder.Services.ApplyMigrationExcluded();
 builder.Services.ApplyMigrationProductAI();
 builder.Services.ApplyMigrationAmazon();
+builder.Services.ApplyMigrationWalmart();
 
 builder.Services.Configure<FormOptions>(x =>
 {

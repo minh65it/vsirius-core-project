@@ -30,6 +30,7 @@
     <ProjectReference Include="..\VsiriusSystem\JobClient\QuartzInfrastructure.csproj" />
     <ProjectReference Include="..\VsiriusSystem\VSiriusSystemLog\VSiriusSystemLog.csproj" />
     <ProjectReference Include="..\VsiriusSystem\VsiriusSystem\VsiriusSystem.csproj" />
+    <ProjectReference Include="..\Walmart\WalmartIntegrationDataApi\WalmartIntegrationDataApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

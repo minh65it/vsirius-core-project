@@ -3,7 +3,7 @@ using WalmartIntegrationDataApi._JobServices.Interfaces;
 
 namespace WalmartIntegrationDataApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/walmart/[controller]")]
     [ApiController]
     public class TriggerController : ControllerBase
     {
