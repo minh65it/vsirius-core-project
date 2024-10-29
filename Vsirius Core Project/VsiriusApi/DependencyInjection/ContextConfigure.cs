@@ -3,6 +3,7 @@ using AmazonIntegrationDataApi.Data;
 using ExcludedProductAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using SkuMappingAPI.Data;
+using StullerDataApi.Data;
 using VsiriusDataModel.DataContext;
 using VsiriusSystem.Data;
 
@@ -36,6 +37,11 @@ namespace VsiriusApi.DependencyInjection
                 {
                     providerOptions.CommandTimeout(6000000);
                 }));
+
+            // For Stuller
+            var mongoDbSettings = configuration.GetSection("ConnectionStrings").Get<MongoDbSettings>();
+            services.Configure<MongoDbSettings>(
+               configuration.GetSection("ConnectionStrings"));
 
         }
     }

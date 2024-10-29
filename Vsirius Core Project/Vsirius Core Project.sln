@@ -65,6 +65,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stuller-order-process", "st
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StullerOrderProcessAPI", "Stuller-Order-Process\StullerOrderProcessAPI\StullerOrderProcessAPI.csproj", "{02F1CE55-546A-4E78-B4CD-1E5F2D8F711F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "stuller", "stuller", "{5A71B4E5-C618-4D34-A109-2E722694DA35}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StullerApiClientDomain", "Stuller\StullerApiClientDomain\StullerApiClientDomain.csproj", "{92C64051-8995-4A9C-8891-28EE09C574DE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StullerDataApi", "Stuller\StullerDataApi\StullerDataApi.csproj", "{044BD861-EC05-436E-9BD8-7A7CA6BD99B1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +153,14 @@ Global
 		{02F1CE55-546A-4E78-B4CD-1E5F2D8F711F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02F1CE55-546A-4E78-B4CD-1E5F2D8F711F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02F1CE55-546A-4E78-B4CD-1E5F2D8F711F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92C64051-8995-4A9C-8891-28EE09C574DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92C64051-8995-4A9C-8891-28EE09C574DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92C64051-8995-4A9C-8891-28EE09C574DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92C64051-8995-4A9C-8891-28EE09C574DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{044BD861-EC05-436E-9BD8-7A7CA6BD99B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{044BD861-EC05-436E-9BD8-7A7CA6BD99B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{044BD861-EC05-436E-9BD8-7A7CA6BD99B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{044BD861-EC05-436E-9BD8-7A7CA6BD99B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,6 +184,8 @@ Global
 		{358E6904-9ED1-4FE8-B9DC-714049F81FFC} = {A4BA33DB-F360-43B4-A7A5-1CF79369D9C2}
 		{50E12AE3-AE0D-49BF-9933-7B9A239EA71A} = {A4BA33DB-F360-43B4-A7A5-1CF79369D9C2}
 		{02F1CE55-546A-4E78-B4CD-1E5F2D8F711F} = {270234FF-28DF-4BF6-8D36-CD720E22EA76}
+		{92C64051-8995-4A9C-8891-28EE09C574DE} = {5A71B4E5-C618-4D34-A109-2E722694DA35}
+		{044BD861-EC05-436E-9BD8-7A7CA6BD99B1} = {5A71B4E5-C618-4D34-A109-2E722694DA35}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {37FD6387-A1B8-4A66-AD2B-95A9FBF06BEE}

@@ -59,6 +59,8 @@ builder.Services.AddProductAIServices(builder.Configuration);
 builder.Services.AddQgoldServices(builder.Configuration);
 //Add DI StullerOrder
 builder.Services.AddStullerOrderServices(builder.Configuration);
+//Add DI Stuller
+builder.Services.AddStullerServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
 

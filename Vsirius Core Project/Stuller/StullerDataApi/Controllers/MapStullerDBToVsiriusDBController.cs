@@ -3,7 +3,7 @@ using StullerDataApi.Services.IServices;
 
 namespace StullerDataApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/stuller/[controller]")]
     [ApiController]
     public class MapStullerDBToVsiriusDBController : ControllerBase
     {
