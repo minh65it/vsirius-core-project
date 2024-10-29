@@ -18,7 +18,7 @@ namespace PackageApi._Repositories.Repositories
         public ClaimRepository(string? conn = null, string dbName = "Package", int bufferSize = 20000, IConfiguration configuration = null)
         {
             _configuration = configuration;
-            _conn = _configuration.GetSection("Database:ConnectionString").Value!;
+            _conn = _configuration.GetSection("Connectionstrings:MongoDB").Value!;
             _dbClient = new(_conn);
             _bufferSize = bufferSize;
             database = _dbClient.GetDatabase(dbName);

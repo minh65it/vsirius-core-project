@@ -61,6 +61,8 @@ builder.Services.AddQgoldServices(builder.Configuration);
 builder.Services.AddStullerOrderServices(builder.Configuration);
 //Add DI Stuller
 builder.Services.AddStullerServices(builder.Configuration);
+//Add DI Package
+builder.Services.AddPackageServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
 
