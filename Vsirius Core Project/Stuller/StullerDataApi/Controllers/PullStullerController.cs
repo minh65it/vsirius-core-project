@@ -4,7 +4,7 @@ using StullerDataApi.Services.Services;
 
 namespace StullerDataApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/stuller/[controller]")]
     [ApiController]
     public class PullStullerController : ControllerBase
     {

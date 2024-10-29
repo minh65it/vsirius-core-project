@@ -59,7 +59,7 @@ namespace VsiriusApi.DependencyInjection
 
             services.AddTransient<IMappingOrderStuller, MappingOrderStuller>();
             services.AddTransient<IOrderDBForStuller, OrderDBForStuller>();
-            services.AddTransient<IStullerApiClient, StullerApiClient>();
+            services.AddTransient<IStullerApiClient, AmazonIntegrationDataApi.Helpers.OrderAmazonProcessor.SubmitOrderToStuller.StullerApiClient>();
             services.AddLogging(builder => builder
                 .AddConsole()
                 .AddDebug()

@@ -8,7 +8,7 @@ namespace StullerDataApi.Services.Services
 
         public KeyService(IConfiguration configuration)
         {
-            _credentialsDictionary = configuration.GetSection("ApiVsiriusCredentials").Get<Dictionary<string, string>>();
+            _credentialsDictionary = configuration.GetSection("ApiVsiriusCredentialsStuller").Get<Dictionary<string, string>>();
         }
 
         public bool ValidateCredentials(string clientId, string clientSecret)

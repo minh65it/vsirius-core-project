@@ -11,8 +11,8 @@ namespace StullerDataApi.Data
     {
         public MongoContext(IMongoDbSettings connectionSetting)
         {
-            var client = new MongoClient(connectionSetting.ConnectionString);
-            Database = client.GetDatabase(connectionSetting.DatabaseName);
+            var client = new MongoClient(connectionSetting.MongoDB);
+            Database = client.GetDatabase(connectionSetting.StullerDatabase);
         }
 
         public IMongoDatabase Database { get; }
