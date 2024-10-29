@@ -7,7 +7,7 @@ using System.Data;
 
 namespace PackageApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/package/[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin")]
     public class ClaimController : ControllerBase

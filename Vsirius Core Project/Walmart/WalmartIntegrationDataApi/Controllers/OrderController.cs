@@ -6,7 +6,7 @@ using WalmartIntegrationDataApi.Dtos.Return;
 
 namespace WalmartIntegrationDataApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/walmart/[controller]")]
     [ApiController]
     public class OrderController : ControllerBase
     {

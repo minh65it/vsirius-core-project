@@ -6,6 +6,7 @@ using SkuMappingAPI.Data;
 using StullerDataApi.Data;
 using VsiriusDataModel.DataContext;
 using VsiriusSystem.Data;
+using WalmartIntegrationDataApi.Data;
 
 namespace VsiriusApi.DependencyInjection
 {
@@ -42,6 +43,11 @@ namespace VsiriusApi.DependencyInjection
             var mongoDbSettings = configuration.GetSection("ConnectionStrings").Get<MongoDbSettings>();
             services.Configure<MongoDbSettings>(
                configuration.GetSection("ConnectionStrings"));
+
+            // For Walmart
+            services.AddDbContext<WalmartDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("WalmartConnection"),
+                sqlServerOptions => sqlServerOptions.CommandTimeout(60000)));
 
         }
     }

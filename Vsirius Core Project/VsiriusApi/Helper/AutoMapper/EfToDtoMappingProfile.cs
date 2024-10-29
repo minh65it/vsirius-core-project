@@ -15,6 +15,9 @@ using VsiriusSystem.Dtos;
 using VsiriusSystem.Models;
 using QgoldIntegrationDataApi.Dtos.Qgold;
 using QgoldIntegrationDataApi.Models;
+using WalmartIntegrationDataApi.Dtos.Product;
+using WalmartIntegrationDataApi.Models;
+using WalmartIntegrationDataApi.Dtos.Return;
 
 namespace VsiriusApi.Helper.AutoMapper
 {
@@ -75,9 +78,14 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<QgoldFtpOrderItem, OrderMarketplaceItem>().ReverseMap();
             #endregion
 
-            #region
+            #region Qgold
             CreateMap<QgoldProduct, QgoldCsvData_DTO>();
             CreateMap<QgoldProduct, QgoldData>();
+            #endregion
+
+            #region Walmart
+            CreateMap<Walmart, WalmartDTO>();
+            CreateMap<ReturnOrder, ReturnOrderDTO>();
             #endregion
         }
     }

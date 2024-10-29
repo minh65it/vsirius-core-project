@@ -17,7 +17,7 @@ namespace WalmartIntegrationDataApi._Repositories
             _configuration = configuration;
             if (string.IsNullOrEmpty(dbName))
                 throw new ArgumentException(null, nameof(dbName));
-            _dbClient = new MongoClient(_configuration["ConnectionStringMongo"]);
+            _dbClient = new MongoClient(_configuration["Connectionstrings:MongoDB"]);
             database = _dbClient.GetDatabase(dbName);
         }
         public IMongoDatabase database { get; set; }

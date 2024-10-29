@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Identity\IdentityApi\IdentityApi.csproj" />
     <ProjectReference Include="..\MappingSKU\SkuMappingAPI\SkuMappingAPI.csproj" />
     <ProjectReference Include="..\Order\OrdersAPI\OrdersAPI.csproj" />
+    <ProjectReference Include="..\Package\PackageApi\PackageApi.csproj" />
     <ProjectReference Include="..\ProductAI\ProductAiApi\ProductAiApi.csproj" />
     <ProjectReference Include="..\Product\ProductApi\ProductApi.csproj" />
     <ProjectReference Include="..\QGold\QgoldIntegrationDataApi\QgoldIntegrationDataApi.csproj" />
@@ -29,6 +30,7 @@
     <ProjectReference Include="..\VsiriusSystem\JobClient\QuartzInfrastructure.csproj" />
     <ProjectReference Include="..\VsiriusSystem\VSiriusSystemLog\VSiriusSystemLog.csproj" />
     <ProjectReference Include="..\VsiriusSystem\VsiriusSystem\VsiriusSystem.csproj" />
+    <ProjectReference Include="..\Walmart\WalmartIntegrationDataApi\WalmartIntegrationDataApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

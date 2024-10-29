@@ -5,7 +5,7 @@ using WalmartIntegrationDataApi.Job;
 
 namespace WalmartIntegrationDataApi.Controllers
 {
-    [Route("[controller]")]
+    [Route("walmart/[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
     {

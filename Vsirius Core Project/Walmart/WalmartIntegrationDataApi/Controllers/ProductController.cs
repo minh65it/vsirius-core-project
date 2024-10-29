@@ -6,7 +6,7 @@ using WalmartIntegrationDataApi.Common.Helpers;
 
 namespace WalmartIntegrationDataApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/walmart/[controller]")]
     [ApiController]
     [CustomAuthen]
     public class ProductController : ControllerBase
