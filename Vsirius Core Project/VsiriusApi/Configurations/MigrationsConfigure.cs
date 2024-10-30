@@ -1,4 +1,5 @@
 ﻿using AmazonIntegrationDataApi.Data;
+using EbayCoreApi.DataContext;
 using ExcludedProductAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using SkuMappingAPI.Data;
@@ -10,6 +11,34 @@ namespace VsiriusApi.Configurations
 {
     public static class MigrationsConfigure
     {
+        public static void ApplyMigrationEbay(this IServiceCollection services)
+        {
+            var svProvider = services.BuildServiceProvider();
+            using (var scope = svProvider.CreateScope())
+            {
+                var _db = scope.ServiceProvider.GetRequiredService<EbayContext>();
+
+                if (_db.Database.GetPendingMigrations().Count() > 0)
+                {
+                    _db.Database.Migrate();
+                }
+            }
+        }
+
+        public static void ApplyMigrationPim(this IServiceCollection services)
+        {
+            var svProvider = services.BuildServiceProvider();
+            using (var scope = svProvider.CreateScope())
+            {
+
+                var _db = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+                if (_db.Database.GetPendingMigrations().Count() > 0)
+                {
+                    _db.Database.Migrate();
+                }
+            }
+        }
         public static void ApplyMigrationWalmart(this IServiceCollection services)
         {
             var svProvider = services.BuildServiceProvider();

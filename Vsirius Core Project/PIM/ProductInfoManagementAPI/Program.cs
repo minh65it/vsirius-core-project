@@ -55,12 +55,12 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 //Update Jobs
-DependencyInjection.AddUpdateJobs(builder.Services);
+//DependencyInjection.AddUpdateJobs(builder.Services);
 //Jobs
 builder.Services.AddTransient<ETLOrderController>();
 builder.Services.AddTransient<VariationController>();
-DependencyInjection.AddJob<PIM_ETLOrder>(builder.Services);
-DependencyInjection.AddJob<PIM_MapVariationProduct>(builder.Services);
+//DependencyInjection.AddJob<PIM_ETLOrder>(builder.Services);
+//DependencyInjection.AddJob<PIM_MapVariationProduct>(builder.Services);
 
 
 builder.Services.AddScoped<IMapper>(sp =>

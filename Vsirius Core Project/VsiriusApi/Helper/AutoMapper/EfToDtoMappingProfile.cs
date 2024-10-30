@@ -18,6 +18,11 @@ using QgoldIntegrationDataApi.Models;
 using WalmartIntegrationDataApi.Dtos.Product;
 using WalmartIntegrationDataApi.Models;
 using WalmartIntegrationDataApi.Dtos.Return;
+using OrderProcessApi.DTOs;
+using OrderProcessDomain.Qgold;
+using PimApi.Dtos.OrderDto;
+using PimApi.Models;
+using EbayCoreApi.Models;
 
 namespace VsiriusApi.Helper.AutoMapper
 {
@@ -71,11 +76,11 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<AmazonJewelryDataFeedItemV3, AmazonJewelryDataFeedItemV3_Dto>();
             CreateMap<AmazonJewelryDataForUpdate, AmazonJewelryDataToAmazon_Dto>();
             CreateMap<ReturnFBMOrder, ReturnFBMOrderRowDto>();
-            CreateMap<QgoldFtpOrderObject, OrderMarketplaceDto>()
+            CreateMap<QgoldFtpOrderObject, AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.OrderMarketplaceDto>()
                 .ForMember(des => des.Seller_Order_ID, act => act.MapFrom(src => src.Amz_Order_ID))
                 .ForMember(des => des.Item, act => act.MapFrom(src => src.Item)).ReverseMap();
 
-            CreateMap<QgoldFtpOrderItem, OrderMarketplaceItem>().ReverseMap();
+            CreateMap<QgoldFtpOrderItem,AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.OrderMarketplaceItem>().ReverseMap();
             #endregion
 
             #region Qgold
@@ -86,6 +91,38 @@ namespace VsiriusApi.Helper.AutoMapper
             #region Walmart
             CreateMap<Walmart, WalmartDTO>();
             CreateMap<ReturnOrder, ReturnOrderDTO>();
+            #endregion
+
+            #region QgoldOrder
+            CreateMap<QgoldFtpOrderObject, OrderMarketplace>()
+                .ForMember(des => des.Seller_Order_ID, act => act.MapFrom(src => src.Amz_Order_ID))
+                .ForMember(des => des.Item, act => act.MapFrom(src => src.Item)).ReverseMap();
+
+            CreateMap<OrderProcessDomain.AmazonSeller.QgoldFtpOrderItem, OrderProcessDomain.Qgold.OrderMarketplaceItem>().ReverseMap();
+            CreateMap<OrderProcessDomain.Stuller.OrderStuller, StullerOrderDTO>().ReverseMap();
+            CreateMap<OrderProcessDomain.Stuller.InvoiceDetail, OrderProcessApi.DTOs.InvoiceDetail>().ReverseMap();
+            //send mail questions
+            CreateMap<QgoldQA, QgoldQADTO>().ReverseMap();
+            CreateMap<OrderProcessDomain.Qgold.FilesInfo, OrderProcessApi.DTOs.FilesInfo>().ReverseMap();
+            CreateMap<OrderMarketplace, OrderProcessApi.DTOs.OrderMarketplaceDto>()
+                .ForMember(des => des.Item, act => act.MapFrom(src => src.Item)).ReverseMap();
+            CreateMap<OrderProcessDomain.Qgold.OrderMarketplaceItem, OrderMarketplaceItemDto>().ReverseMap();
+            CreateMap<OrderAmazonSubmitted, OrderAmazonSubmittedDto>()
+                .ForMember(des => des.Item, act => act.MapFrom(src => src.Item)).ReverseMap();
+            CreateMap<ItemSubmitAmazon, ItemSubmitAmazonDto>().ReverseMap();
+            #endregion
+
+            #region Pim
+            CreateMap<PimApi.Models.Product, PimApi.Dtos.ProductDto>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<PimApi.Models.Order, OrderDto>();
+            #endregion
+
+            #region Ebay
+            CreateMap<EbayCoreApi.Models.Product, EbayCoreApi.Dtos.ProductDto>();
+            CreateMap<EbayCoreApi.Models.Order, EbayCoreApi.Dtos.OrderDto>()
+            .ForMember(x => x.Supplier, opt => opt.MapFrom(src => src.OrderDetails.Select(x => x.Sku).FirstOrDefault().StartsWith("Q") ? "Qgold" : "Stuller"));
+            CreateMap<EbayCoreApi.Models.OrderDetail, EbayCoreApi.Dtos.OrderDetailDto>();
             #endregion
         }
     }

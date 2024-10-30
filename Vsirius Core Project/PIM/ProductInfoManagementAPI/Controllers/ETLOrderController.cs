@@ -4,7 +4,7 @@ using PimApi._Services.Interfaces;
 
 namespace PimApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/pim/[controller]")]
     [ApiController]
     public class ETLOrderController : ControllerBase
     {

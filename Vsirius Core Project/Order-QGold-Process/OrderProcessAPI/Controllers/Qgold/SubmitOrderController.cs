@@ -5,7 +5,7 @@ using OrderProcessDomain.AmazonSeller;
 
 namespace OrderProcessApi.Controllers.Qgold
 {
-    [Route("api/[controller]")]
+    [Route("api/qgoldOrder/[controller]")]
     [ApiController]
     public class SubmitOrderController : ControllerBase
     {

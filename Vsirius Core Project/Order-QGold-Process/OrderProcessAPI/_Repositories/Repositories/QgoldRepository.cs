@@ -18,7 +18,7 @@ namespace OrderProcessApi._Repositories.Repositories
         public QgoldRepository(string? conn = null, string dbName = "Qgold", int bufferSize = 20000, IConfiguration configuration = null)
         {
             _configuration = configuration;
-            _conn = conn ?? _configuration.GetSection("Database:ConnectionString").Value!;
+            _conn = conn ?? _configuration.GetSection("ConnectionStrings:MongoDB").Value!;
             _dbClient = new(_conn);
             _bufferSize = bufferSize;
             database = _dbClient.GetDatabase(dbName);
