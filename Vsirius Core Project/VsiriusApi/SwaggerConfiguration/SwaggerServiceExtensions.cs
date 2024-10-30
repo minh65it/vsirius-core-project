@@ -83,6 +83,8 @@ namespace VsiriusApi.SwaggerConfiguration
                             return apiDesc.GroupName == "System";
                         case "Etsy":
                             return apiDesc.GroupName == "Etsy";
+                        case "EbayCore":
+                            return apiDesc.GroupName == "EbayCore";
                         case "Walmart":
                             return apiDesc.GroupName == "Walmart";
                         case "Amazon":
@@ -113,7 +115,7 @@ namespace VsiriusApi.SwaggerConfiguration
                 c.SwaggerEndpoint("/swagger/Package/swagger.json", "Package API");
                 c.SwaggerEndpoint("/swagger/Excluded/swagger.json", "Excluded API");
                 c.SwaggerEndpoint("/swagger/Pim/swagger.json", "Pim API");
-                c.SwaggerEndpoint("/swagger/Ebay/swagger.json", "Ebay API");
+                c.SwaggerEndpoint("/swagger/EbayCore/swagger.json", "EbayCore API");
                 c.SwaggerEndpoint("/swagger/Etsy/swagger.json", "Etsy API");
                 c.SwaggerEndpoint("/swagger/Walmart/swagger.json", "Walmart API");
                 c.SwaggerEndpoint("/swagger/Amazon/swagger.json", "Amazon API");

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EbayCoreApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/ebay/[controller]")]
     [ApiController]
     public class OrderController : ControllerBase
     {

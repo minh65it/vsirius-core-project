@@ -6,7 +6,7 @@ using PimApi.Dtos.Variation;
 
 namespace PimApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/pim/[controller]")]
     [ApiController]
     public class VariationController : ControllerBase
     {

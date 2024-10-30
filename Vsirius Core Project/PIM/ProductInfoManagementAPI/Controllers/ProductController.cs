@@ -6,7 +6,7 @@ using PimApi.Helpers.Utilities;
 
 namespace PimApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/pim/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {

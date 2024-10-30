@@ -67,6 +67,10 @@ builder.Services.AddPackageServices(builder.Configuration);
 builder.Services.AddWalmartServices(builder.Configuration);
 //Add DI QgoldOrder
 builder.Services.AddQgoldOrderServices(builder.Configuration);
+//Add DI Pim
+builder.Services.AddPimServices(builder.Configuration);
+//Add DI Ebay
+builder.Services.AddEbayServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
 
@@ -103,6 +107,8 @@ builder.Services.ApplyMigrationExcluded();
 builder.Services.ApplyMigrationProductAI();
 builder.Services.ApplyMigrationAmazon();
 builder.Services.ApplyMigrationWalmart();
+builder.Services.ApplyMigrationPim();
+builder.Services.ApplyMigrationEbay();
 
 builder.Services.Configure<FormOptions>(x =>
 {

@@ -7,7 +7,7 @@ using StullerDataApi.Services.IServices;
 namespace VsiriusApi.Controllers.Stuller
 {
     [ApiExplorerSettings(GroupName = "Stuller")]
-    [Route("api/[controller]")]
+    [Route("api/vs/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
     {

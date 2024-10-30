@@ -16,6 +16,8 @@ using QgoldIntegrationDataApi.Models;
 using WalmartIntegrationDataApi.Dtos.Product;
 using WalmartIntegrationDataApi.Models;
 using WalmartIntegrationDataApi.Dtos.Return;
+using PimApi.Models;
+using EbayCoreApi.Models;
 
 
 namespace VsiriusApi.Helper.AutoMapper
@@ -82,6 +84,17 @@ namespace VsiriusApi.Helper.AutoMapper
             #region Walmart
             CreateMap<WalmartDTO, Walmart>();
             CreateMap<ReturnOrderDTO, ReturnOrder>();
+            #endregion
+
+            #region Pim
+            CreateMap<PimApi.Dtos.ProductDto,  PimApi.Models.Product>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            #endregion
+
+            #region Ebay
+            CreateMap<EbayCoreApi.Dtos.ProductDto, EbayCoreApi.Models.Product>();
+            CreateMap<EbayCoreApi.Dtos.OrderDto, EbayCoreApi.Models.Order>();
+            CreateMap<EbayCoreApi.Dtos.OrderDetailDto, EbayCoreApi.Models.OrderDetail>();
             #endregion
         }
     }

@@ -20,6 +20,9 @@ using WalmartIntegrationDataApi.Models;
 using WalmartIntegrationDataApi.Dtos.Return;
 using OrderProcessApi.DTOs;
 using OrderProcessDomain.Qgold;
+using PimApi.Dtos.OrderDto;
+using PimApi.Models;
+using EbayCoreApi.Models;
 
 namespace VsiriusApi.Helper.AutoMapper
 {
@@ -107,6 +110,19 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<OrderAmazonSubmitted, OrderAmazonSubmittedDto>()
                 .ForMember(des => des.Item, act => act.MapFrom(src => src.Item)).ReverseMap();
             CreateMap<ItemSubmitAmazon, ItemSubmitAmazonDto>().ReverseMap();
+            #endregion
+
+            #region Pim
+            CreateMap<PimApi.Models.Product, PimApi.Dtos.ProductDto>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<PimApi.Models.Order, OrderDto>();
+            #endregion
+
+            #region Ebay
+            CreateMap<EbayCoreApi.Models.Product, EbayCoreApi.Dtos.ProductDto>();
+            CreateMap<EbayCoreApi.Models.Order, EbayCoreApi.Dtos.OrderDto>()
+            .ForMember(x => x.Supplier, opt => opt.MapFrom(src => src.OrderDetails.Select(x => x.Sku).FirstOrDefault().StartsWith("Q") ? "Qgold" : "Stuller"));
+            CreateMap<EbayCoreApi.Models.OrderDetail, EbayCoreApi.Dtos.OrderDetailDto>();
             #endregion
         }
     }

@@ -5,7 +5,7 @@ using QuartzInfrastructure;
 
 namespace PimApi.Controllers
 {
-    [Route("[controller]")]
+    [Route("pim/[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
     {

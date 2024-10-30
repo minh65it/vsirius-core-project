@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 
 	<PackageReference Include="StandardSocketsHttpHandler" Version="2.2.0.8" />
 	<PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
@@ -34,12 +34,14 @@
   <ItemGroup>
     <ProjectReference Include="..\Amazon\AmazonIntegrationDataApi\AmazonIntegrationDataApi.csproj" />
     <ProjectReference Include="..\CSR\CSRApi\CSRApi.csproj" />
+    <ProjectReference Include="..\Ebay\EbayCoreApi\EbayCoreApi.csproj" />
     <ProjectReference Include="..\Excluded\ExcludedProductAPI\ExcludedProductAPI.csproj" />
     <ProjectReference Include="..\Identity\IdentityApi\IdentityApi.csproj" />
     <ProjectReference Include="..\MappingSKU\SkuMappingAPI\SkuMappingAPI.csproj" />
     <ProjectReference Include="..\Order-QGold-Process\OrderProcessAPI\OrderProcessApi.csproj" />
     <ProjectReference Include="..\Order\OrdersAPI\OrdersAPI.csproj" />
     <ProjectReference Include="..\Package\PackageApi\PackageApi.csproj" />
+    <ProjectReference Include="..\PIM\ProductInfoManagementAPI\PimApi.csproj" />
     <ProjectReference Include="..\ProductAI\ProductAiApi\ProductAiApi.csproj" />
     <ProjectReference Include="..\Product\ProductApi\ProductApi.csproj" />
     <ProjectReference Include="..\QGold\QgoldIntegrationDataApi\QgoldIntegrationDataApi.csproj" />

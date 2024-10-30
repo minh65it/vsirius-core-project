@@ -7,7 +7,7 @@ namespace PimApi.Helpers.AutoMapper
 {
     public class EfToDtoMappingProfile : Profile
     {
-        public EfToDtoMappingProfile()
+        public EfToDtoMappingProfile() 
         {
             CreateMap<Product, ProductDto>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
