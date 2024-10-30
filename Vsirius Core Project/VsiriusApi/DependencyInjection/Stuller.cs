@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Options;
+﻿
 using OfficeOpenXml;
 using StullerDataApi.Data;
 using StullerDataApi.IRepository;
@@ -18,8 +18,7 @@ namespace VsiriusApi.DependencyInjection
     {
         public static void AddStullerServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IMongoDbSettings>(p =>
-                p.GetRequiredService<IOptions<MongoDbSettings>>().Value);
+            
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 

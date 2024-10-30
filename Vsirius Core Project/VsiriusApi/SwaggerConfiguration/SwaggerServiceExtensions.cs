@@ -17,7 +17,7 @@ namespace VsiriusApi.SwaggerConfiguration
                 c.SwaggerDoc("ProductAI", new OpenApiInfo { Title = "ProductAI API", Version = "v1" });
                 c.SwaggerDoc("Product", new OpenApiInfo { Title = "Product API", Version = "v1" });
                 c.SwaggerDoc("Package", new OpenApiInfo { Title = "Package API", Version = "v1" });
-                c.SwaggerDoc("OrderProcess", new OpenApiInfo { Title = "OrderProcess API", Version = "v1" });
+                c.SwaggerDoc("QgoldOrder", new OpenApiInfo { Title = "OrderProcess API", Version = "v1" });
                 c.SwaggerDoc("Excluded", new OpenApiInfo { Title = "Excluded API", Version = "v1" });
                 c.SwaggerDoc("Pim", new OpenApiInfo { Title = "Pim API", Version = "v1" });
                 c.SwaggerDoc("EbayCore", new OpenApiInfo { Title = "EbayCore API", Version = "v1" });
@@ -73,8 +73,8 @@ namespace VsiriusApi.SwaggerConfiguration
                             return apiDesc.GroupName == "Product";
                         case "Package":
                             return apiDesc.GroupName == "Package";
-                        case "OrderProcess":
-                            return apiDesc.GroupName == "OrderProcess";
+                        case "QgoldOrder":
+                            return apiDesc.GroupName == "QgoldOrder";
                         case "Excluded":
                             return apiDesc.GroupName == "Excluded";
                         case "Pim":
@@ -111,7 +111,6 @@ namespace VsiriusApi.SwaggerConfiguration
                 c.SwaggerEndpoint("/swagger/CSR/swagger.json", "CSR API");
                 c.SwaggerEndpoint("/swagger/Product/swagger.json", "Product API");
                 c.SwaggerEndpoint("/swagger/Package/swagger.json", "Package API");
-                c.SwaggerEndpoint("/swagger/OrderProcess/swagger.json", "OrderProcess API");
                 c.SwaggerEndpoint("/swagger/Excluded/swagger.json", "Excluded API");
                 c.SwaggerEndpoint("/swagger/Pim/swagger.json", "Pim API");
                 c.SwaggerEndpoint("/swagger/Ebay/swagger.json", "Ebay API");
@@ -120,6 +119,7 @@ namespace VsiriusApi.SwaggerConfiguration
                 c.SwaggerEndpoint("/swagger/Amazon/swagger.json", "Amazon API");
                 c.SwaggerEndpoint("/swagger/System/swagger.json", "System API");
                 c.SwaggerEndpoint("/swagger/StullerOrder/swagger.json", "StullerOrder API");
+                c.SwaggerEndpoint("/swagger/QgoldOrder/swagger.json", "QgoldOrder API");
             });
         }
     }

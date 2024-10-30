@@ -65,6 +65,8 @@ builder.Services.AddStullerServices(builder.Configuration);
 builder.Services.AddPackageServices(builder.Configuration);
 //Add DI Walmart
 builder.Services.AddWalmartServices(builder.Configuration);
+//Add DI QgoldOrder
+builder.Services.AddQgoldOrderServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
 

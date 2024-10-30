@@ -7,7 +7,7 @@ using OrderProcessDomain.Qgold;
 
 namespace OrderProcessApi.Controllers.Qgold
 {
-    [Route("api/[controller]")]
+    [Route("api/qgoldOrder/[controller]")]
     [ApiController]
     public class QgoldOrderMarketplaceController : ControllerBase
     {

@@ -2,6 +2,7 @@
 using AmazonIntegrationDataApi.Data;
 using ExcludedProductAPI.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SkuMappingAPI.Data;
 using StullerDataApi.Data;
 using VsiriusDataModel.DataContext;
@@ -40,14 +41,23 @@ namespace VsiriusApi.DependencyInjection
                 }));
 
             // For Stuller
-            var mongoDbSettings = configuration.GetSection("ConnectionStrings").Get<MongoDbSettings>();
-            services.Configure<MongoDbSettings>(
+            //var mongoDbSettings = configuration.GetSection("ConnectionStrings").Get<MongoDbSettings>();
+            services.Configure<StullerDataApi.Data.MongoDbSettings>(
                configuration.GetSection("ConnectionStrings"));
+            services.AddSingleton<IMongoDbSettings>(p =>
+                p.GetRequiredService<IOptions<MongoDbSettings>>().Value);
 
             // For Walmart
             services.AddDbContext<WalmartDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("WalmartConnection"),
                 sqlServerOptions => sqlServerOptions.CommandTimeout(60000)));
+
+            // For Qgold Order
+            var mongoDbSettings2 = configuration.GetSection("ConnectionStrings").Get<OrderProcessApi.Data.MongoDbSettings>();
+            services.Configure<OrderProcessApi.Data.MongoDbSettings>(
+                configuration.GetSection("ConnectionStrings"));
+            services.AddSingleton<OrderProcessApi.Data.IMongoDbSettings>(p =>
+                    p.GetRequiredService<IOptions<OrderProcessApi.Data.MongoDbSettings>>().Value);
 
         }
     }

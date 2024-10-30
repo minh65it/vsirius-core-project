@@ -5,7 +5,7 @@ using OrderProcessApi.DTOs;
 
 namespace OrderProcessApi.Controllers.Qgold
 {
-    [Route("api/[controller]")]
+    [Route("api/qgoldOrder/[controller]")]
     [ApiController]
     public class PackageClaimQgoldController : ControllerBase
     {

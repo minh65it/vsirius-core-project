@@ -21,8 +21,9 @@ namespace OrderProcessApi._Services.Services.Qgold
 
         public QgoldOrderMarketplaceService(IOptions<MongoDbSettings> databaseSettings, IMapper mapper, IQgoldProcessService qgoldProcessService, IQgoldRepository qgoldDB)
         {
+            var test = databaseSettings.Value;
             var mongoClient = new MongoClient(
-             databaseSettings.Value.ConnectionString);
+             databaseSettings.Value.MongoDB);
 
             var mongoDatabase = mongoClient.GetDatabase(databaseSettings.Value.QgoldDatabaseName);
             _orderMarketplace = mongoDatabase.GetCollection<OrderMarketplace>(databaseSettings.Value.QgoldMarketplace);
