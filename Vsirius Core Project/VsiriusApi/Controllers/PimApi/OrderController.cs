@@ -6,7 +6,7 @@ using PimApi.Helpers.Utilities;
 namespace VsiriusApi.Controllers.PimApi
 {
     [ApiExplorerSettings(GroupName = "Pim")]
-    [Route("api/[controller]")]
+    [Route("api/pim/[controller]")]
     [ApiController]
     public class OrderController : ControllerBase
     {

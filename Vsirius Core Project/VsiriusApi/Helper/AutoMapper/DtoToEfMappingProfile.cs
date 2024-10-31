@@ -18,6 +18,8 @@ using WalmartIntegrationDataApi.Models;
 using WalmartIntegrationDataApi.Dtos.Return;
 using PimApi.Models;
 using EbayCoreApi.Models;
+using EtsyIntegrationDataAPI.Dtos.ProductEtsyDto;
+using EtsyIntegrationDataAPI.Models;
 
 
 namespace VsiriusApi.Helper.AutoMapper
@@ -95,6 +97,10 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<EbayCoreApi.Dtos.ProductDto, EbayCoreApi.Models.Product>();
             CreateMap<EbayCoreApi.Dtos.OrderDto, EbayCoreApi.Models.Order>();
             CreateMap<EbayCoreApi.Dtos.OrderDetailDto, EbayCoreApi.Models.OrderDetail>();
+            #endregion
+
+            #region Etsy
+            CreateMap<ProductEtsyDto, ProductEtsy>();
             #endregion
         }
     }

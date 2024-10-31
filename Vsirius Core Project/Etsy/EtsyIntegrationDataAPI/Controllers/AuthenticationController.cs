@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EtsyIntegrationDataAPI.Controllers
 {
-    [Route("[controller]")]
+    [Route("oldetsy/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {

@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using OrdersAPI._Services.Interfaces;
@@ -11,9 +12,9 @@ using VsiriusDataModel.DataModel;
 namespace VsiriusAPI.Controllers.OrderApi
 {
     [ApiExplorerSettings(GroupName = "Order")]
-    [Route("api/[controller]")]
+    [Route("api/order/[controller]")]
     [ApiController]
-    //[Authorize(Roles = "Customer, Admin")]
+    [Authorize(Roles = "Customer, Admin")]
     public class OrderController : ControllerBase
     {
         private readonly IVsiriusOrderService _service;

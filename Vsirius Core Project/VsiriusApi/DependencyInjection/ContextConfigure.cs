@@ -67,6 +67,11 @@ namespace VsiriusApi.DependencyInjection
 
             services.AddDbContext<EbayContext>(
                  options => options.UseSqlServer(configuration.GetConnectionString("EbayConnection")));
+            // For Etsy
+            services.AddDbContext<EtsyIntegrationDataAPI.Data.DataContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("EtsyConnection"),
+                sqlServerOptions => sqlServerOptions.CommandTimeout(60000))
+            );
         }
     }
 }

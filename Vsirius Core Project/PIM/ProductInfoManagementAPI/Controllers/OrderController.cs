@@ -5,7 +5,7 @@ using PimApi.Helpers.Utilities;
 
 namespace PimApi.Controllers
 {
-    [Route("api/pim/[controller]")]
+    [Route("api/oldpim/[controller]")]
     [ApiController]
     public class OrderController : ControllerBase
     {

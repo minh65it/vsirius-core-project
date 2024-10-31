@@ -50,7 +50,7 @@ namespace VSiriusSystemLog.WriteLog
             }
             catch (Exception)
             {
-
+                    
                 return false;
             }
         }

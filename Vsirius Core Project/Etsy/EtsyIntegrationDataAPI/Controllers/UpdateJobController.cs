@@ -4,7 +4,7 @@ using QuartzInfrastructure;
 
 namespace EtsyIntegrationDataAPI.Controllers
 {
-    [Route("[controller]")]
+    [Route("oldetsy/[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
     {

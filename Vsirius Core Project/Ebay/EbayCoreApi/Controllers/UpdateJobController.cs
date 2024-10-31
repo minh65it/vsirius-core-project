@@ -6,7 +6,7 @@ using QuartzInfrastructure;
 
 namespace EbayCoreApi.Controllers
 {
-    [Route("api/ebay/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
     {

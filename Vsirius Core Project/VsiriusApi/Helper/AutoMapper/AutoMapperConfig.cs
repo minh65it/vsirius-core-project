@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 
 namespace VsiriusApi.Helper.AutoMapper
-{
+{   
     public class AutoMapperConfig
     {
         public static MapperConfiguration RegisterMappings()

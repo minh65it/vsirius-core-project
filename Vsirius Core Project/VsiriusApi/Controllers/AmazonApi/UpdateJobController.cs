@@ -5,7 +5,7 @@ using QuartzInfrastructure;
 namespace VsiriusApi.Controllers.AmazonApi
 {
     [ApiExplorerSettings(GroupName = "Amazon")]
-    [Route("[controller]")]
+    [Route("amazon/[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
     {

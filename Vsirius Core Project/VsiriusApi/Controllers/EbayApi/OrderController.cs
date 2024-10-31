@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace VsiriusApi.Controllers.EbayApi
 {
     [ApiExplorerSettings(GroupName = "EbayCore")]
-    [Route("api/[controller]")]
+    [Route("api/ebayOrder/[controller]")]
     [ApiController]
     public class OrderController : ControllerBase
     {
