@@ -10,7 +10,7 @@ using VsiriusDataModel.DataModel;
 
 namespace OrdersAPI.Controllers
 {
-    [Route("api/order/[controller]")]
+    [Route("api/oldorder/[controller]")]
     [ApiController]
     [Authorize(Roles = "Customer, Admin")]
     public class OrderController : ControllerBase

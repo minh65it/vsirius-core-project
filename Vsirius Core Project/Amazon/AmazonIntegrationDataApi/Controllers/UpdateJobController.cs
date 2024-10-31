@@ -4,7 +4,7 @@ using QuartzInfrastructure;
 
 namespace AmazonIntegrationDataApi.Controllers
 {
-    [Route("amazon/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
     {

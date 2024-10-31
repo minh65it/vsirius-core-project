@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using OrdersAPI.Configurations;
 using OrdersAPI.Helpers.ConfigSignalR;
+using Quartz.Spi;
+using QuartzInfrastructure;
 using Serilog;
 using SkuMappingAPI.Data;
 using System.Reflection;
@@ -15,6 +17,8 @@ using VsiriusApi.Helper.AutoMapper;
 using VsiriusApi.Helpers.Utilities;
 using VsiriusApi.SwaggerConfiguration;
 using VsiriusDataModel.DataContext;
+using VsiriusSystem._Services.Interfaces;
+using VsiriusSystem._Services.Services;
 using VsiriusSystem.Data;
 using VSiriusSystemLog.CorrelationId;
 using VSiriusSystemLog.WriteLog;
@@ -71,9 +75,10 @@ builder.Services.AddQgoldOrderServices(builder.Configuration);
 builder.Services.AddPimServices(builder.Configuration);
 //Add DI Ebay
 builder.Services.AddEbayServices(builder.Configuration);
+//Add DI Etsy
+builder.Services.AddEtsyServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
-
 
 
 //Mapper
@@ -102,7 +107,7 @@ builder.Host.UseSerilog((context, configuration) =>
 builder.Services.ApplyMigrationQgoldApi();
 builder.Services.ApplyMigrationVsiriusContext();
 builder.Services.ApplyMigrationSKU();
-builder.Services.ApplyMigrationSystem();
+//builder.Services.ApplyMigrationSystem();
 builder.Services.ApplyMigrationExcluded();
 builder.Services.ApplyMigrationProductAI();
 builder.Services.ApplyMigrationAmazon();

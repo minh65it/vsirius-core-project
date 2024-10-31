@@ -35,6 +35,7 @@
     <ProjectReference Include="..\Amazon\AmazonIntegrationDataApi\AmazonIntegrationDataApi.csproj" />
     <ProjectReference Include="..\CSR\CSRApi\CSRApi.csproj" />
     <ProjectReference Include="..\Ebay\EbayCoreApi\EbayCoreApi.csproj" />
+    <ProjectReference Include="..\Etsy\EtsyIntegrationDataAPI\EtsyIntegrationDataAPI.csproj" />
     <ProjectReference Include="..\Excluded\ExcludedProductAPI\ExcludedProductAPI.csproj" />
     <ProjectReference Include="..\Identity\IdentityApi\IdentityApi.csproj" />
     <ProjectReference Include="..\MappingSKU\SkuMappingAPI\SkuMappingAPI.csproj" />

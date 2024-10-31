@@ -23,6 +23,9 @@ using OrderProcessDomain.Qgold;
 using PimApi.Dtos.OrderDto;
 using PimApi.Models;
 using EbayCoreApi.Models;
+using EtsyIntegrationDataAPI.Dtos.OrderEtsy;
+using EtsyIntegrationDataAPI.Dtos.ProductEtsyDto;
+using EtsyIntegrationDataAPI.Models;
 
 namespace VsiriusApi.Helper.AutoMapper
 {
@@ -76,11 +79,11 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<AmazonJewelryDataFeedItemV3, AmazonJewelryDataFeedItemV3_Dto>();
             CreateMap<AmazonJewelryDataForUpdate, AmazonJewelryDataToAmazon_Dto>();
             CreateMap<ReturnFBMOrder, ReturnFBMOrderRowDto>();
-            CreateMap<QgoldFtpOrderObject, AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.OrderMarketplaceDto>()
+            CreateMap<AmazonIntegrationDataApi.Models.OrderAmazonProcessor.QgoldFtpOrderObject, AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.OrderMarketplaceDto>()
                 .ForMember(des => des.Seller_Order_ID, act => act.MapFrom(src => src.Amz_Order_ID))
                 .ForMember(des => des.Item, act => act.MapFrom(src => src.Item)).ReverseMap();
 
-            CreateMap<QgoldFtpOrderItem,AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.OrderMarketplaceItem>().ReverseMap();
+            CreateMap<AmazonIntegrationDataApi.Models.OrderAmazonProcessor.QgoldFtpOrderItem,AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.OrderMarketplaceItem>().ReverseMap();
             #endregion
 
             #region Qgold
@@ -94,12 +97,12 @@ namespace VsiriusApi.Helper.AutoMapper
             #endregion
 
             #region QgoldOrder
-            CreateMap<QgoldFtpOrderObject, OrderMarketplace>()
+            CreateMap<OrderProcessDomain.AmazonSeller.QgoldFtpOrderObject, OrderMarketplace>()
                 .ForMember(des => des.Seller_Order_ID, act => act.MapFrom(src => src.Amz_Order_ID))
                 .ForMember(des => des.Item, act => act.MapFrom(src => src.Item)).ReverseMap();
 
             CreateMap<OrderProcessDomain.AmazonSeller.QgoldFtpOrderItem, OrderProcessDomain.Qgold.OrderMarketplaceItem>().ReverseMap();
-            CreateMap<OrderProcessDomain.Stuller.OrderStuller, StullerOrderDTO>().ReverseMap();
+            CreateMap<OrderProcessDomain.Stuller.OrderStuller, OrderProcessApi.DTOs.StullerOrderDTO>().ReverseMap();
             CreateMap<OrderProcessDomain.Stuller.InvoiceDetail, OrderProcessApi.DTOs.InvoiceDetail>().ReverseMap();
             //send mail questions
             CreateMap<QgoldQA, QgoldQADTO>().ReverseMap();
@@ -115,7 +118,7 @@ namespace VsiriusApi.Helper.AutoMapper
             #region Pim
             CreateMap<PimApi.Models.Product, PimApi.Dtos.ProductDto>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-            CreateMap<PimApi.Models.Order, OrderDto>();
+            CreateMap<PimApi.Models.Order, PimApi.Dtos.OrderDto.OrderDto>();
             #endregion
 
             #region Ebay
@@ -123,6 +126,25 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<EbayCoreApi.Models.Order, EbayCoreApi.Dtos.OrderDto>()
             .ForMember(x => x.Supplier, opt => opt.MapFrom(src => src.OrderDetails.Select(x => x.Sku).FirstOrDefault().StartsWith("Q") ? "Qgold" : "Stuller"));
             CreateMap<EbayCoreApi.Models.OrderDetail, EbayCoreApi.Dtos.OrderDetailDto>();
+            #endregion
+
+            #region Etsy
+            CreateMap<ProductEtsy, ProductEtsyDto>()
+                .ForMember(dest => dest.materials, opt => opt.MapFrom(src => src.materials.Select(x => x.material).ToList()))
+                .ForMember(dest => dest.tags, opt => opt.MapFrom(src => src.tags.Select(x => x.tag).ToList()))
+                .ForMember(dest => dest.styles, opt => opt.MapFrom(src => src.styles.Select(x => x.style).ToList()))
+                .ForMember(dest => dest.image_ids, opt => opt.MapFrom(src => src.image_ids.Select(x => x.listing_image_id).ToList()))
+                .ForMember(dest => dest.price, opt => opt.MapFrom(src => new EtsyIntegrationDataAPI.Dtos.ProductEtsyDto.PriceDto()
+                {
+                    amount = src.price,
+                    currency_code = "",
+                    divisor = null,
+                }));
+            CreateMap<EtsyIntegrationDataAPI.Models.Order, EtsyIntegrationDataAPI.Dtos.OrderEtsy.OrderDto>();
+
+            CreateMap<Shipment, ShipmentDto>();
+            CreateMap<Transaction, TransactionDto>();
+            CreateMap<Refund, RefundDto>();
             #endregion
         }
     }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EtsyIntegrationDataAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/oldetsy/[controller]")]
     [ApiController]
     public class MapPIMToEtsyDBController : ControllerBase
     {

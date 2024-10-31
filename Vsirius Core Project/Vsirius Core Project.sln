@@ -93,6 +93,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ebay", "ebay", "{88A5B615-1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EbayCoreApi", "Ebay\EbayCoreApi\EbayCoreApi.csproj", "{4D1DC576-5930-4264-B1ED-0A74D7493345}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etsy", "etsy", "{2CE72995-2D60-49F3-A032-3A23B4026A81}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EtsyIntegrationDataAPI", "Etsy\EtsyIntegrationDataAPI\EtsyIntegrationDataAPI.csproj", "{B3CDF397-6D9D-4EE5-908C-A1249E691528}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -207,6 +211,10 @@ Global
 		{4D1DC576-5930-4264-B1ED-0A74D7493345}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D1DC576-5930-4264-B1ED-0A74D7493345}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D1DC576-5930-4264-B1ED-0A74D7493345}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3CDF397-6D9D-4EE5-908C-A1249E691528}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3CDF397-6D9D-4EE5-908C-A1249E691528}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3CDF397-6D9D-4EE5-908C-A1249E691528}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3CDF397-6D9D-4EE5-908C-A1249E691528}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -238,6 +246,7 @@ Global
 		{F46C814B-7D7A-49E5-A73A-1D897F7243A2} = {BE47B250-7AF1-4216-83EC-4F51FA2E13A9}
 		{7832D5AC-77E4-45B1-B930-09D31E45927B} = {90C174C5-0B64-44C4-B65E-E9368072C4EC}
 		{4D1DC576-5930-4264-B1ED-0A74D7493345} = {88A5B615-1A62-4B77-9375-D9B3BA38EEC1}
+		{B3CDF397-6D9D-4EE5-908C-A1249E691528} = {2CE72995-2D60-49F3-A032-3A23B4026A81}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {37FD6387-A1B8-4A66-AD2B-95A9FBF06BEE}
