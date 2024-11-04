@@ -4,6 +4,7 @@ using AutoMapper;
 using CSRApi.Helpers.ConfigSignalR;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using OrdersAPI.Configurations;
 using OrdersAPI.Helpers.ConfigSignalR;
 using Quartz.Spi;
@@ -79,6 +80,8 @@ builder.Services.AddEbayServices(builder.Configuration);
 builder.Services.AddEtsyServices(builder.Configuration);
 
 builder.Services.AddScoped<ILoggerCustom, LoggerCustom>();
+
+ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
 
 //Mapper

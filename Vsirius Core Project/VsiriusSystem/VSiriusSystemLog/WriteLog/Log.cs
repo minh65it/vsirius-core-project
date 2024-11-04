@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using VsiriusSystem._Services.Interfaces;
 using VSiriusSystemLog.CorrelationId;
 
 namespace VSiriusSystemLog.WriteLog
@@ -17,27 +18,31 @@ namespace VSiriusSystemLog.WriteLog
         private readonly IConfiguration _configuration;
         private readonly ICorrelationIdGenerator _correlationIdGenerator;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private ILogService _logService;
 
         public LoggerCustom(
             IConfiguration configuration, 
             IHttpContextAccessor httpContextAccessor, 
-            ICorrelationIdGenerator correlationIdGenerator)
+            ICorrelationIdGenerator correlationIdGenerator,
+            ILogService logService)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _correlationIdGenerator = correlationIdGenerator;
+            _logService = logService;
         }
         private async Task<bool> CallAPI(LogDto logDto)
         {
             try
             {
+               
                 HttpClient client = new HttpClient();
                 var json = System.Text.Json.JsonSerializer.Serialize(logDto);
                 var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
                 client.DefaultRequestHeaders.Add("X-Correlation-Id", logDto.CorrelationId.ToString());
-                client.DefaultRequestHeaders.Add("clientId", _configuration.GetSection("ApiVsiriusCredentials")["ClientId"]);
-                client.DefaultRequestHeaders.Add("clientSecret", _configuration.GetSection("ApiVsiriusCredentials")["ClientSecret"]);
+                client.DefaultRequestHeaders.Add("clientId", _configuration.GetSection("ApiVsiriusCredentialsSystem")["ClientId"]);
+                client.DefaultRequestHeaders.Add("clientSecret", _configuration.GetSection("ApiVsiriusCredentialsSystem")["ClientSecret"]);
 
                 HttpResponseMessage response = await client.PostAsync(_configuration["VsiriusSystemApi"] + "Log/WriteLogs", content);
                 if (response.IsSuccessStatusCode)

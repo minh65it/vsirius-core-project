@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Azure;
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using QgoldIntegrationDataApi._JobServices.Interfaces;
@@ -9,6 +10,7 @@ using QgoldIntegrationDataApi.Dtos.Qgold;
 using QgoldIntegrationDataApi.Helpers;
 using QgoldIntegrationDataApi.Helpers.AutoMapper;
 using QgoldIntegrationDataApi.Helpers.Ultilities;
+using System.IO;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,17 +23,20 @@ namespace QgoldIntegrationDataApi._JobServices.JobServices
         private readonly IQgoldCsvDataService _serviceAPI;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly PimApi._Services.Interfaces.IProductService _servicePim;
 
         public MappingQgoldToVsiriusService(
             IQgoldCsvDataService serviceAPI,
             IConfiguration configuration,
             IMapper mapper,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            PimApi._Services.Interfaces.IProductService servicePim)
         {
             _mapper = mapper;
             _serviceAPI = serviceAPI;
             _configuration = configuration;
             _serviceProvider = serviceProvider;
+            this._servicePim = servicePim;
         }
 
         public async Task MappingQgoldToVsirius()
@@ -90,7 +95,7 @@ namespace QgoldIntegrationDataApi._JobServices.JobServices
                     ExportListExcelQgoldToVsirius(listVsirius);
                     Common.WriteLog("Export data done!");
                     //Call api import data Vsirius
-                    List<string> listSkuVsirius = await GetItemSkuVsirius();
+                    List<string> listSkuVsirius = await GetItemSkuVsirius_RFT();
 
                     //var checkImportExcelApi = await callApiVsiriusWeb.ImportExcelApi(workbookQgolds);
                     Common.WriteLog("Start Import Data to Vsirius");
@@ -98,7 +103,7 @@ namespace QgoldIntegrationDataApi._JobServices.JobServices
                     Common.WriteLog("End Import Data to Vsirius");
 
                     Common.WriteLog("Start Delete Item Vsirius");
-                    await DeleteItemVsirius(listSkuVsirius, listVsirius);
+                    await DeleteItemVsirius_RFT(listSkuVsirius, listVsirius);
                     Common.WriteLog("End Delete Item Vsirius");
                 }
 
@@ -251,6 +256,26 @@ namespace QgoldIntegrationDataApi._JobServices.JobServices
             }
         }
 
+        private async Task<bool> DeleteItemVsirius_RFT(List<string> listSkuVsirius, List<VsiriusProduct_DTO3> listVsirius)
+        {
+            try
+            {
+                var skuNotInDto = listSkuVsirius.Except(listVsirius.Select(x => x.item_sku)).ToList();
+                var rs = await _servicePim.RemoveMultipleProduct(skuNotInDto);
+                Common.WriteLog($"Result when DeleteItemVsirius: " + rs.Message);
+                if (rs.Success)
+                {
+                    return true;
+                }
+                return false;
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
         private async Task<bool> ImportExcelApi()
         {
             try
@@ -317,6 +342,39 @@ namespace QgoldIntegrationDataApi._JobServices.JobServices
             }
         }
 
+        private async Task<bool> ImportExcelApi_RFT()
+        {
+            try
+            {
+                var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                var _exportPathVsirius = Path.Combine(
+                        AppDomain.CurrentDomain.BaseDirectory,
+                        "Storage",
+                        "ExportExcel",
+                        $"DataQgoldtoVsirius_{DateTime.Now:ddMMyyyy}");
+                Common.CreateFolder(_exportPathVsirius);
+                List<FileInfo> fileInfos = new DirectoryInfo(_exportPathVsirius).GetFiles()
+                .Where(f => Regex.IsMatch(f.Name, @"^.+\.(xlsx|xls|csv)$")).OrderBy(f => f.CreationTime).ToList();
+
+                foreach (var file in fileInfos)
+                {
+                    IFormFile formFile = CreateFormFileFromSystemFile(file);
+                    var rs = await _servicePim.ImportFile(formFile);
+                    Common.WriteLog($"API request. Response from import file {file.Name}:" + rs.Message);
+
+                    if (!rs.Success)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                Common.WriteLog("Could not ImportExcel to Web " + e.Message);
+                return false;
+            }
+        }
         private async Task<List<string>> GetItemSkuVsirius()
         {
             try
@@ -343,6 +401,21 @@ namespace QgoldIntegrationDataApi._JobServices.JobServices
                 Common.WriteLog("Could not get item SKU " + e.Message);
                 return new List<string>();
             }
+        }
+
+        private async Task<List<string>> GetItemSkuVsirius_RFT()
+        {
+            try
+            {
+                var data = await _servicePim.GetAllItemSKU("q");
+                return data;
+            }
+            catch (Exception e)
+            {
+                Common.WriteLog("Could not get item SKU " + e.Message);
+                return new List<string>();
+            }
+            
         }
 
         private async Task<string> LoginAuth()
@@ -561,6 +634,17 @@ namespace QgoldIntegrationDataApi._JobServices.JobServices
             }
 
             return result;
+        }
+
+        public IFormFile CreateFormFileFromSystemFile(FileInfo fileInfo)
+        {
+            var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read);
+
+            return new FormFile(fileStream, 0, fileStream.Length, "file", fileInfo.Name)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = "application/octet-stream"
+            };
         }
     }
 }

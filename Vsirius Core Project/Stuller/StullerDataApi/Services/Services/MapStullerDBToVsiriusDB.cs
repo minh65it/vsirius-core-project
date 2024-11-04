@@ -34,5 +34,23 @@ namespace StullerDataApi.Services.Services
             }
             await Common.WriteLogAsync(@$"StullerToVsiriusWebProcessor done ===============================");
         }
+
+        public async Task MapToVsiriusDB_RFT()
+        {
+            await Common.WriteLogAsync(@$"StullerToVsiriusWebProcessor start =================================");
+            //export data
+            //await _exportDataVsirius.ExportExcel();
+
+            //Import data
+            await Common.WriteLogAsync("Stuller to VsiriusWeb import excel!");
+            var listItemSKUDatabase = await _callAPIVSiriusWeb.GetAllItem_RFT();
+            var checkImport = await _callAPIVSiriusWeb.ImportExcel_RFT();
+            //Delete data
+            if (checkImport)
+            {
+                await _callAPIVSiriusWeb.DeleteMultiple_RFT(listItemSKUDatabase);
+            }
+            await Common.WriteLogAsync(@$"StullerToVsiriusWebProcessor done ===============================");
+        }
     }
 }

@@ -4,7 +4,7 @@ using StullerDataApi.Jobs;
 
 namespace StullerDataApi.Controllers
 {
-    [Route("stuller/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
     {
