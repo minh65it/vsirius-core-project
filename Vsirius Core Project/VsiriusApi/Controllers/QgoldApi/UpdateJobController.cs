@@ -5,7 +5,7 @@ using QuartzInfrastructure;
 namespace VsiriusApi.Controllers.QgoldApi
 {
     [ApiExplorerSettings(GroupName = "Qgold")]
-    [Route("[controller]")]
+    [Route("qgold/[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
     {

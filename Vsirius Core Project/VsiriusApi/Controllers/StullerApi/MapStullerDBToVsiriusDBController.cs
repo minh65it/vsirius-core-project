@@ -19,14 +19,14 @@ namespace VsiriusApi.Controllers.Stuller
         [HttpPost]
         public async Task<IActionResult> MapToVsiriusDB()
         {
-            if (IsRunning)
+            if (IsRunning) 
             {
                 return BadRequest("MapToVsiriusDB is running");
             }
             else
             {
                 IsRunning = true;
-                await _mapStullerDBToVsiriusDB.MapToVsiriusDB();
+                 await _mapStullerDBToVsiriusDB.MapToVsiriusDB_RFT();
                 IsRunning = false;
                 return Ok("MapToVsiriusDB is done");
 

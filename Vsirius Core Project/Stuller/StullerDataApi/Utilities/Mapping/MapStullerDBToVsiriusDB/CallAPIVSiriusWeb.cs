@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Azure;
+using Newtonsoft.Json;
 using OfficeOpenXml;
+using SharpCompress.Common;
 using System.Text;
 
 namespace StullerDataApi.Utilities.Mapping.MapStullerDBToVsiriusDB
@@ -7,8 +9,11 @@ namespace StullerDataApi.Utilities.Mapping.MapStullerDBToVsiriusDB
     public interface ICallAPIVSiriusWeb
     {
         public Task<List<string>> GetAllItem();
+        public Task<List<string>> GetAllItem_RFT();
         public Task<bool> ImportExcel();
+        public Task<bool> ImportExcel_RFT();
         public Task<string> DeleteMultiple(List<string> listItemSKUDatabase);
+        public Task<string> DeleteMultiple_RFT(List<string> listItemSKUDatabase);
     }
     public class CallAPIVSiriusWeb : ICallAPIVSiriusWeb
     {
@@ -16,12 +21,14 @@ namespace StullerDataApi.Utilities.Mapping.MapStullerDBToVsiriusDB
         private readonly string urlProduct = "";
         private readonly string urlIdentity = "";
         private readonly IConfiguration _config;
+        private readonly PimApi._Services.Interfaces.IProductService _servicePim;
 
-        public CallAPIVSiriusWeb(IConfiguration config)
+        public CallAPIVSiriusWeb(IConfiguration config, PimApi._Services.Interfaces.IProductService servicePim)
         {
             _config = config;
             urlProduct = _config.GetSection("APIPIM:urlProduct").Value!;
             urlIdentity = _config.GetSection("APIVSirius:urlIdentity").Value!;
+            _servicePim = servicePim;
         }
 
         public async Task<List<string>> GetAllItem()
@@ -63,6 +70,23 @@ namespace StullerDataApi.Utilities.Mapping.MapStullerDBToVsiriusDB
                 throw;
             }
 
+        }
+
+        public async Task<List<string>> GetAllItem_RFT()
+        {
+            try
+            {
+                var data = await _servicePim.GetAllItemSKU("s");
+                await Common.WriteLogAsync("Get all item sku done");
+                return data;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                await Common.WriteLogAsync("Could not get all item connect " + e.ToString());
+                throw;
+            }
+            
         }
 
         public async Task<string> LoginIdentity()
@@ -157,6 +181,42 @@ namespace StullerDataApi.Utilities.Mapping.MapStullerDBToVsiriusDB
                 return false;
             }
         }
+
+        public async Task<bool> ImportExcel_RFT()
+        {
+            try
+            {
+                await Common.WriteLogAsync("Start import excel to Vsirius api/VsiriusProduct/ImportExcel");
+                string massage = "";
+
+                for (int i = 1; i <= 21; i++)
+                {
+                    string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+                    string folderPath = Path.Combine(baseDirectory, "Storage", "DataExport");
+                    string filepathResult = folderPath + @$"\DataStullerToVSirius_{i}.csv";
+                    if (!File.Exists(filepathResult))
+                        continue;
+                    IFormFile formFile = CreateFormFileFromSystemFile(filepathResult);
+                    var rs = await _servicePim.ImportFile(formFile);
+                    if(rs.Success)
+                    {
+                        massage = $"File uploaded successfully.";
+                    } else
+                    {
+                        massage = $"File uploaded failed: "+ rs.Message;
+                    }
+                }
+                await Common.WriteLogAsync(massage);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                await Common.WriteLogAsync("Could not import file excel connect " + e.ToString());
+                return false;
+            }
+        }
         public async Task<string> DeleteMultiple(List<string> listItemSKUDatabase)
         {
             try
@@ -214,6 +274,69 @@ namespace StullerDataApi.Utilities.Mapping.MapStullerDBToVsiriusDB
                 await Common.WriteLogAsync("Could not delete connect " + e.ToString());
                 return "delete SKU Vsirius false!!!";
             }
+        }
+
+        public async Task<string> DeleteMultiple_RFT(List<string> listItemSKUDatabase)
+        {
+            try
+            {
+                List<string> listItemSKUNotDelete = new List<string>();
+                for (int i = 1; i < 21; i++)
+                {
+                    string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                    string folderPath = Path.Combine(baseDirectory, "Storage", "DataExport");
+                    string filepathResult = folderPath + @$"\DataStullerToVSirius_{i}.csv";
+                    if (!File.Exists(filepathResult))
+                        continue;
+
+                    ExcelPackage targetWorkbook = new ExcelPackage(filepathResult);
+                    var destWorksheet = targetWorkbook.Workbook.Worksheets[0];
+                    for (int j = 4; j <= destWorksheet.Dimension.End.Row; j++)
+                    {
+                        var value = destWorksheet.Cells[j, 2].Value?.ToString();
+                        if (value != null)
+                        {
+                            listItemSKUNotDelete.Add(value);
+                        }
+                    }
+                    Console.WriteLine($"Get all item sku from excel file {i} done");
+                }
+                var test = listItemSKUNotDelete.Select(x => x);
+                var listDelete = listItemSKUDatabase.Except(listItemSKUNotDelete.Select(x => x)).ToList();
+
+                Console.WriteLine("Call service RemoveMultipleProduct");
+                var rs = await _servicePim.RemoveMultipleProduct(listDelete);
+                if (rs.Success)
+                {
+                    Console.WriteLine("Successful delete!!!");
+                    await Common.WriteLogAsync("Delete done");
+                    return "Successful delete!!!";
+                } else
+                {
+                    Console.WriteLine("Failed delete!!!");
+                    await Common.WriteLogAsync("Delete failed");
+                    return "Failed deletes!!!";
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                await Common.WriteLogAsync("Could not delete connect " + e.ToString());
+                return "delete SKU Vsirius false!!!";
+            }
+            
+        }
+
+        public IFormFile CreateFormFileFromSystemFile(string filePath)
+        {
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            var fileName = Path.GetFileName(filePath);
+
+            return new FormFile(fileStream, 0, fileStream.Length, "file", fileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = "application/octet-stream"
+            };
         }
     }
 }

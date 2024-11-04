@@ -5,7 +5,7 @@ using StullerDataApi.Jobs;
 namespace VsiriusApi.Controllers.Stuller
 {
     [ApiExplorerSettings(GroupName = "Stuller")]
-    [Route("[controller]")]
+    [Route("stuller/[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
     {

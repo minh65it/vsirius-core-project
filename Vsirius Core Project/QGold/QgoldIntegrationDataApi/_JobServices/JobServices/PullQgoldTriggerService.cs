@@ -641,7 +641,7 @@ namespace QgoldIntegrationDataApi._JobServices.JobServices
             #region Mở ra khi chạy Develop
             //Comemet filePath, csvContent khi chạy thực tế
             //3 dòng dưới để đoc file test. (Hàm DownloadCsv() khá lâu) 
-            string filePath = AppDomain.CurrentDomain.BaseDirectory + @$"\Storage\ExportExcel\FileQgold\58772_Extract.txt";
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + @$"\ExportExcel\FileQgold\58772_Extract.txt";
             string csvContent = File.ReadAllText(filePath);
             csvContent = csvContent.Replace(", ", " ");
             #endregion

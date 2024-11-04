@@ -4,7 +4,7 @@ using QuartzInfrastructure;
 
 namespace QgoldIntegrationDataApi.Controllers
 {
-    [Route("qgold/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UpdateJobController : ControllerBase
     {
