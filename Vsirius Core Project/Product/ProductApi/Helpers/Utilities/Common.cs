@@ -283,7 +283,7 @@ namespace ProductApi.Helpers.Utilities
                 Dictionary<string, string> dictDataDefinitions = new();
                 List<ValidValueVsiriusModel> lstUpdate = new();
 
-                var fileName = Path.Combine(Directory.GetCurrentDirectory(), @"Resources/Template/VsiriusTemplate1.0.xlsm");
+                var fileName = Path.Combine(Directory.GetCurrentDirectory(), @"ResourcesProductApi/Template/VsiriusTemplate1.0.xlsm");
 
                 // mở file Excel và đọc dữ liệu
                 //var workbook = new Workbook(filePath);
@@ -418,6 +418,7 @@ namespace ProductApi.Helpers.Utilities
             var _fileLogName = "Log_" + DateTime.Now.ToString("yyyyMMdd") + ".txt";
 
             string file = Path.Combine(_logPath, _fileLogName);
+            //string file = _logPath;
 
             if (!Directory.Exists(_logPath))
             {

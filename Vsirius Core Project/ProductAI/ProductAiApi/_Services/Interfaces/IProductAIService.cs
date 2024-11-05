@@ -7,6 +7,7 @@ namespace ProductAiApi._Services.Interfaces
     {
         Task<PaginationUtil<ProductAiDto>> GetAll(PaginationParam pagination, string? search, bool? isReview);
         Task<OperationResult<ProductAiDto?>> CreateProduct(CreateUpdateProductAiDto dto);
+        Task<OperationResult<ProductAiDto?>> CreateProduct_RFT(CreateUpdateProductAiDto dto);
         Task<OperationResult<object?>> Delete(string sku);
         Task<ProductAiDto?> GetDetail(string sku);
         Task<OperationResult<object?>> ConfirmProducts(List<string> skus);

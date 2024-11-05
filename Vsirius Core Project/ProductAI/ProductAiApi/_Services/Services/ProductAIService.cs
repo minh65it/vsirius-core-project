@@ -6,7 +6,10 @@ using ProductAiApi._Services.Interfaces;
 using ProductAiApi.Common;
 using ProductAiApi.DTOs;
 using ProductAiApi.Models;
+using System.Text;
 using System.Text.Json;
+using VsiriusSystem._Services.Interfaces;
+using VsiriusSystem.Dtos;
 
 namespace ProductAiApi._Services.Services
 {
@@ -14,13 +17,19 @@ namespace ProductAiApi._Services.Services
     {
         private readonly IProductAIRepository _productAIRepository;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IChatGPTService _chatGPTService;
 
         public ProductAIService(
             IProductAIRepository productAIRepository,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IHttpContextAccessor httpContextAccessor,
+            IChatGPTService chatGPTService)
         {
             _productAIRepository = productAIRepository;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
+            _chatGPTService = chatGPTService;
         }
         public async Task<PaginationUtil<ProductAiDto>> GetAll(PaginationParam pagination, string? search, bool? isReview)
         {
@@ -189,8 +198,135 @@ namespace ProductAiApi._Services.Services
                         Data = null
                     };
                 }
+            }
+        }
+
+        public async Task<OperationResult<ProductAiDto?>> CreateProduct_RFT(CreateUpdateProductAiDto dto)
+        {
+            dto.ImgUrl = null;
+            var entity = await _productAIRepository.FindById(dto.SKU);
+            if (entity != null)
+            {
+                return new OperationResult<ProductAiDto?>
+                {
+                    Success = false,
+                    Message = "Product has exist",
+                    Data = CustomMapper.ChangeProductAIToDTO(entity)
+                };
+            }
+            else
+            {
+                string content =
+                    $"This is my product information: {dto.Description}" +
+                    $"\nPlease create the product name (maximum 200 characters and without special characters), " +
+                    $"\nkeyword product, bulletpoints (5-9 points and 500-1000 characters every point)" +
+                    $"\nto make the product suitable for SEO on amazon, ebay, google... . " +
+                    $"\nReply me with format: " +
+                    $"\n|title: ..." +
+                    $"\n|brand: ...(if exist)" +
+                    $"\n|keywords: abc, xyz, ..." +
+                    $"\n|bulletpoint1: ..." +
+                    $"\n|bulletpoint2: ...";
+
+                if (!string.IsNullOrWhiteSpace(dto.ImgUrl))
+                {
+                    content = await CreateContentWithImg(dto.ImgUrl, dto.Description);
+                }
+                if (string.IsNullOrEmpty(content))
+                {
+                    return new OperationResult<ProductAiDto?>
+                    {
+                        Success = false,
+                        Message = "Limitted Azure request of month",
+                        Data = null
+                    };
+                }
+                var encodedContent = Uri.EscapeDataString(content);
+                var session = _httpContextAccessor.HttpContext?.Session;
+                var chatGPTDtos = session!.Get("chatGPTDtos");
+                var listChatOld = new List<ChatGPTDto>();
+                if (chatGPTDtos != null)
+                {
+                    var compressedData = Encoding.UTF8.GetString(chatGPTDtos);
+                    listChatOld = JsonSerializer.Deserialize<List<ChatGPTDto>>(compressedData);
+                }
+
+                var result = await _chatGPTService.ChatWithGPT(encodedContent, listChatOld);
+
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                };
+
+                var serializedResult = JsonSerializer.Serialize(result, options);
+                var bytes = Encoding.UTF8.GetBytes(serializedResult);
+                session!.Set("chatGPTDtos", bytes);
+                if (result != null && result.Count > 0)
+                {
+                    string contentMessage = result[^1].content!;
+                    var brandAI = GetValueFromContent("|brand:", contentMessage);
+                    var myBrand = string.IsNullOrWhiteSpace(dto.Brand) ? "Generic" : dto.Brand;
+
+                    entity = new()
+                    {
+                        SKU = dto.SKU,
+                        ProductName = GetValueFromContent("|title:", contentMessage),
+                        Keywords = GetValueFromContent("|keywords:", contentMessage),
+                        BulletPoint1 = GetValueFromContent("|bulletpoint1:", contentMessage),
+                        BulletPoint2 = GetValueFromContent("|bulletpoint2:", contentMessage),
+                        BulletPoint3 = GetValueFromContent("|bulletpoint3:", contentMessage),
+                        BulletPoint4 = GetValueFromContent("|bulletpoint4:", contentMessage),
+                        BulletPoint5 = GetValueFromContent("|bulletpoint5:", contentMessage),
+                        BulletPoint6 = GetValueFromContent("|bulletpoint6:", contentMessage),
+                        BulletPoint7 = GetValueFromContent("|bulletpoint7:", contentMessage),
+                        BulletPoint8 = GetValueFromContent("|bulletpoint8:", contentMessage),
+                        BulletPoint9 = GetValueFromContent("|bulletpoint9:", contentMessage),
+                        IsReview = false,
+                        Note = contentMessage,
+                        TimeStamp = DateTime.Now,
+                    };
 
 
+                    if (!entity.ProductName.Contains(brandAI, StringComparison.OrdinalIgnoreCase))
+                    {
+                        entity.ProductName = $"{myBrand} {entity.ProductName}";
+                        entity.Brand = myBrand;
+                    }
+                    else
+                    {
+                        entity.Brand = brandAI;
+                    }
+
+                    if (string.IsNullOrEmpty(entity.Brand))
+                    {
+                        return new OperationResult<ProductAiDto?>
+                        {
+                            Success = true,
+                            Message = "error when generate product",
+                            Data = null
+                        };
+                    }
+
+                    _productAIRepository.Add(entity);
+
+                    await _productAIRepository.SaveChangesAsync();
+
+                    return new OperationResult<ProductAiDto?>
+                    {
+                        Success = true,
+                        Data = CustomMapper.ChangeProductAIToDTO(entity)
+                    };
+                }
+                else
+                {
+                    return new OperationResult<ProductAiDto?>
+                    {
+                        Success = false,
+                        Message = "Connect To Open AI failed",
+                        Data = null
+                    };
+                }
             }
         }
 

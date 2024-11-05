@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ProductAiApi._JobServices.Interfaces;
 using ProductAiApi._Repositories.Interfaces;
@@ -14,15 +15,24 @@ namespace ProductAiApi._JobServices.JobServices
         private readonly IConfiguration _configuration;
         private readonly IProductAIRepository _repository;
         private readonly IProductAIService _productAIService;
+        private readonly IMapper _mapper;
+        private readonly PimApi._Services.Interfaces.IOrderService _servicePim;
+        private readonly PimApi._Services.Interfaces.IProductService _servicePimProduct;
 
         public CreateProductAiFromPimService(
             IConfiguration configuration,
             IProductAIRepository repository,
-            IProductAIService productAIService)
+            IProductAIService productAIService,
+            IMapper mapper,
+            PimApi._Services.Interfaces.IOrderService servicePim,
+            PimApi._Services.Interfaces.IProductService servicePimProduct)
         {
             _configuration = configuration;
             _repository = repository;
             _productAIService = productAIService;
+            _servicePim = servicePim;
+            _mapper = mapper;
+            _servicePimProduct = servicePimProduct;
         }
 
         public async Task CreateProductAIFromPim()
@@ -32,7 +42,7 @@ namespace ProductAiApi._JobServices.JobServices
             {
                 int amountProductCreate = 400;
                 Util.WriteLog($"Start Pull Top Product Data");
-                List<PimProductDto> lstData = await PullTopProductFromPIMAsync();
+                List<PimProductDto> lstData = await PullTopProductFromPIMAsync_RFT();
                 lstData = lstData
                     .GroupBy(item => item.item_sku)
                     .Select(group => group.First())
@@ -74,7 +84,7 @@ namespace ProductAiApi._JobServices.JobServices
             {
                 List<PimProductDto> allResults = new List<PimProductDto>();
                 var pageSize = 3000;
-                var dataFirstCall = await GetPaginationResultFromAllPimProductAsync(1, pageSize);
+                var dataFirstCall = await GetPaginationResultFromAllPimProductAsync_RFT(1, pageSize);
                 var totalPages = 0;
                 List<PimProductDto> firstData = new List<PimProductDto>();
                 //first data
@@ -97,7 +107,7 @@ namespace ProductAiApi._JobServices.JobServices
                 {
                     int pageNumber = i;
 
-                    tasks.Add(GetPaginationResultFromAllPimProductAsync(pageNumber, pageSize));
+                    tasks.Add(GetPaginationResultFromAllPimProductAsync_RFT(pageNumber, pageSize));
 
                     if (amountRunTask < 3 && i != totalPages)
                     {
@@ -167,6 +177,40 @@ namespace ProductAiApi._JobServices.JobServices
             return result;
         }
 
+        private async Task<PaginationUtil<PimProductDto>> GetPaginationResultFromAllPimProductAsync_RFT(int pageNumber, int pageSize)
+        {
+            try
+            {
+                PimApi.Helpers.Utilities.PaginationParam param = new PimApi.Helpers.Utilities.PaginationParam();
+                PimApi.Dtos.SearchParams searchParam = new PimApi.Dtos.SearchParams();
+                param.PageNumber = pageNumber;
+                param.PageSize = pageSize;
+
+                var data = await _servicePimProduct.GetData(param, searchParam, true);
+                List<PimProductDto?> list = new List<PimProductDto?>();
+                foreach (var item in data.Result)
+                {
+                    PimProductDto dto = _mapper.Map<PimProductDto>(item);
+                    list.Add(dto);
+                }
+                PaginationUtil<PimProductDto> paginationUtil = new PaginationUtil<PimProductDto>(
+                    list,
+                    data.Pagination.TotalCount,
+                    data.Pagination.PageNumber,
+                    data.Pagination.PageSize,
+                    data.Pagination.Skip);
+                Util.WriteLog($"Call service success at page {pageNumber}");
+                return paginationUtil;
+            }
+            catch (Exception ex)
+            {
+                Util.WriteLog($"Call Api failed with exception {ex.Message} at page {pageNumber}");
+                return new PaginationUtil<PimProductDto>();
+            }
+            
+
+        }
+
         private async Task<int> CreateAndInsertToDb(List<PimProductDto> lstData, int amountProductCreate)
         {
             List<string> lstAllSku = await _repository.FindAll()
@@ -185,7 +229,7 @@ namespace ProductAiApi._JobServices.JobServices
                             Description = item.product_description,
                             ImgUrl = string.Empty
                         };
-                        var rs = await _productAIService.CreateProduct(dto);
+                        var rs = await _productAIService.CreateProduct_RFT(dto);
                         if (rs.Success)
                         {
                             amountProductCreate--;
@@ -263,6 +307,68 @@ namespace ProductAiApi._JobServices.JobServices
                 return null;
             }
         }
+        private async Task<List<PimProductDto>> PullTopProductFromPIMAsync_RFT()
+        {
+            try
+            {
+                List<PimProductDto> allResults = new List<PimProductDto>();
+                var pageSize = 3000;
+                var dataFirstCall = await GetPaginationResultFromTopProductAsync_RFT(1, pageSize);
+                var totalPages = 0;
+                List<PimProductDto> firstData = new List<PimProductDto>();
+                //first data
+                if (dataFirstCall != null)
+                {
+                    firstData = dataFirstCall.Result;
+                    totalPages = dataFirstCall.Pagination.TotalPage;
+                    allResults.AddRange(firstData);
+                    Util.WriteLog($"Total pages: {totalPages}");
+                }
+                else
+                {
+                    return null;
+                }
+
+                //List rest data
+                List<Task<PaginationUtil<PimProductDto>>> tasks = new List<Task<PaginationUtil<PimProductDto>>>();
+                int amountRunTask = 0;
+                for (int i = 2; i <= totalPages; i++)
+                {
+                    int pageNumber = i;
+
+                    tasks.Add(GetPaginationResultFromTopProductAsync_RFT(pageNumber, pageSize));
+
+                    if (amountRunTask < 3 && i != totalPages)
+                    {
+                        amountRunTask++;
+                    }
+                    else
+                    {
+                        amountRunTask = 0;
+                        var results = await Task.WhenAll(tasks);
+                        foreach (var result in results)
+                        {
+                            if (result != null)
+                            {
+                                allResults.AddRange(result.Result);
+                            }
+                            else
+                            {
+                                Util.WriteLog($"Failed when add record");
+                            }
+                        }
+                        tasks.RemoveAll(x => x.IsCompleted);
+                    }
+                }
+
+                return allResults;
+            }
+            catch (Exception ex)
+            {
+                Util.WriteLog($"Pull Data Failed with exception: {ex.Message}");
+                return null;
+            }
+        }
 
         private async Task<PaginationUtil<PimProductDto>> GetPaginationResultFromTopProductAsync(int pageNumber, int pageSize)
         {
@@ -295,6 +401,30 @@ namespace ProductAiApi._JobServices.JobServices
             }
 
             return result;
+        }
+
+        private async Task<PaginationUtil<PimProductDto>> GetPaginationResultFromTopProductAsync_RFT(int pageNumber, int pageSize)
+        {
+            PimApi.Helpers.Utilities.PaginationParam param = new PimApi.Helpers.Utilities.PaginationParam();
+            PimApi.Dtos.OrderDto.SearchOrderParams searchParam = new PimApi.Dtos.OrderDto.SearchOrderParams();
+            param.PageNumber = pageNumber;
+            param.PageSize = pageSize;
+            
+            var data = await _servicePim.GetProductTop(param, searchParam) ;
+            List<PimProductDto?> list = new List<PimProductDto?>();
+            foreach (var item in data.Result)
+            {
+                PimProductDto dto = _mapper.Map<PimProductDto>(item);
+                list.Add(dto);
+            }
+            PaginationUtil<PimProductDto> paginationUtil = new PaginationUtil<PimProductDto>(
+                list, 
+                data.Pagination.TotalCount, 
+                data.Pagination.PageNumber, 
+                data.Pagination.PageSize, 
+                data.Pagination.Skip);
+
+            return paginationUtil;
         }
     }
 }

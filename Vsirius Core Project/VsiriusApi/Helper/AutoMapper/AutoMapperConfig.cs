@@ -10,6 +10,7 @@ namespace VsiriusApi.Helper.AutoMapper
             {
                 cfg.AddProfile(new EfToDtoMappingProfile());
                 cfg.AddProfile(new DtoToEfMappingProfile());
+                cfg.AddProfile(new DtoToDtoMappingProfile());
             });
         }
     }

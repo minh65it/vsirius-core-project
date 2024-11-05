@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AutoMapper;
+using Newtonsoft.Json;
 using ProductApi.Helpers.Utilities;
 
 namespace ProductApi.Helpers.httpClient
@@ -11,12 +12,16 @@ namespace ProductApi.Helpers.httpClient
 
     {
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
         private string urlGet;
+        private readonly ProductAiApi._Services.Interfaces.IProductAIService _service;
 
-        public ProductAIClient(IConfiguration configuration)
+        public ProductAIClient(IConfiguration configuration, ProductAiApi._Services.Interfaces.IProductAIService service, IMapper mapper)
         {
             _configuration = configuration;
+            _mapper = mapper;
             urlGet = _configuration.GetSection("ProductAiApi:UrlGetAllData").Value!;
+            _service = service;
         }
 
         public async Task<List<ProductAiDto>> GetProductAI()
@@ -25,8 +30,8 @@ namespace ProductApi.Helpers.httpClient
 
             try
             {
-                var pageSize = 3000;
-                PaginationUtility<ProductAiDto> dataFirstCall = await GetPaginationResult(1, pageSize);
+                var pageSize = 500;
+                PaginationUtility<ProductAiDto> dataFirstCall = await GetPaginationResult_RFT(1, pageSize);
                 var totalPages = 0;
                 List<ProductAiDto> firstData = new();
                 //first data
@@ -49,7 +54,7 @@ namespace ProductApi.Helpers.httpClient
                 {
                     int pageNumber = i;
 
-                    tasks.Add(GetPaginationResult(pageNumber, pageSize));
+                    tasks.Add(GetPaginationResult_RFT(pageNumber, pageSize));
 
                     if (amountRunTask < 3 && i != totalPages)
                     {
@@ -112,6 +117,38 @@ namespace ProductApi.Helpers.httpClient
 
             return result;
         }
+
+        public async Task<PaginationUtility<ProductAiDto>> GetPaginationResult_RFT(int pageNumber, int pageSize)
+        {
+            try
+            {
+                ProductAiApi.Common.PaginationParam pagination = new ProductAiApi.Common.PaginationParam();
+                pagination.PageNumber = pageNumber;
+                pagination.PageSize = pageSize;
+                var data = await _service.GetAll(pagination, null, null);
+                List<ProductAiDto> list = new List<ProductAiDto>();
+                foreach (var item in data.Result)
+                {
+                    ProductAiDto dto = _mapper.Map<ProductAiDto>(item);
+                    list.Add(dto);
+                }
+                PaginationUtility<ProductAiDto> result = new PaginationUtility<ProductAiDto>(
+                    list,
+                    data.Pagination.TotalCount,
+                    data.Pagination.PageNumber,
+                    data.Pagination.PageSize,
+                    data.Pagination.Skip);
+                await Common.WriteLogAsync($"Call service ProductAI success at page {pageNumber}");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await Common.WriteLogAsync($"Call service ProductAI failed with exception {ex.Message} at page {pageNumber}");
+                return new PaginationUtility<ProductAiDto>();
+            }
+            
+        }
+
     }
     public class ProductAiDto
     {

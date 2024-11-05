@@ -50,10 +50,10 @@ namespace ProductApi._Services.Services
         {
             try
             {
-                await _elasticSearchProductService.DeleteAllProductInElastic();
+                //await _elasticSearchProductService.DeleteAllProductInElastic();
                 await Common.WriteLogAsync("Map data VSiriusDB to VSiriusWeb START //========================================================");
-                var pageSize = 3000;
-                var dataFirstCall = await _vSiriusProductApiClient.GetPaginationResult(1, pageSize, new SemaphoreSlim(2));
+                var pageSize = 500;
+                var dataFirstCall = await _vSiriusProductApiClient.GetPaginationResult_RFT(1, pageSize, new SemaphoreSlim(2));
                 var totalPages = 0;
                 //call api AI
                 var dataAI = await _productAIClient.GetProductAI();
@@ -80,11 +80,11 @@ namespace ProductApi._Services.Services
                 for (int i = 2; i <= totalPages; i++)
                 {
                     // using async await
-                    var result = await _vSiriusProductApiClient.GetPaginationResult(i, pageSize, semaphore);
+                    var result = await _vSiriusProductApiClient.GetPaginationResult_RFT(i, pageSize, semaphore);
                     if (result == null)
                     {
                         Thread.Sleep(5000);
-                        result = await _vSiriusProductApiClient.GetPaginationResult(i, pageSize, semaphore);
+                        result = await _vSiriusProductApiClient.GetPaginationResult_RFT(i, pageSize, semaphore);
                     }
                     if (result == null)
                     {
