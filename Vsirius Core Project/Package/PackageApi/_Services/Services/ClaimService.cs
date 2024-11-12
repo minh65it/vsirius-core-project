@@ -24,7 +24,7 @@ namespace PackageApi._Services.Services
             _claimRepository = claimRepository;
             _mapper = mapper;
             _configuration = configuration;
-            _collectionName = _configuration.GetSection("Database:ClaimCollection").Value;
+            _collectionName = _configuration.GetSection("Connectionstrings:ClaimCollection").Value;
             _azureStorage = azureStorage;
         }
 
@@ -94,7 +94,9 @@ namespace PackageApi._Services.Services
             {
                 if (model.DocumentType == null)
                     return new OperationResult() { Success = false, Message = "Error created, DocumentType is not null", };
-                var dataAdd = _mapper.Map<Claim>(model);
+                //var dataAdd = _mapper.Map<Claim>(model);
+                Claim dataAdd = new Claim();
+                dataAdd.Notes = _mapper.Map<List<string>>(model.Notes);
                 dataAdd.DocumentType = model.DocumentType?.ToString();
                 dataAdd.Id = Guid.NewGuid().ToString();
                 dataAdd.ScanDate = DateTime.Now;
@@ -104,7 +106,8 @@ namespace PackageApi._Services.Services
                     foreach (var item in model.Images)
                     {
                         var tmp = await _azureStorage.UploadAsync(item, PackageCommon.RenameFile(item, DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + dataAdd.Id));
-                        string textImg = await CallApiGetTextFromImage(item);
+                        //string textImg = await CallApiGetTextFromImage(item);
+                        string textImg = "";
                         listImg.Add(new ImageInfo()
                         {
                             Text = textImg,

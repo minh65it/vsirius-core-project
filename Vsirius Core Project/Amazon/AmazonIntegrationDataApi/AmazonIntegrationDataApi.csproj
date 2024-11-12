@@ -20,7 +20,7 @@
       
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
-    <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
     <PackageReference Include="Quartz.Extensions.Hosting" Version="3.8.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Order-QGold-Process\OrderProcessAPI\OrderProcessApi.csproj" />
+    <ProjectReference Include="..\..\PIM\ProductInfoManagementAPI\PimApi.csproj" />
     <ProjectReference Include="..\..\VsiriusSystem\JobClient\QuartzInfrastructure.csproj" />
     <ProjectReference Include="..\..\VsiriusSystem\VSiriusSystemLog\VSiriusSystemLog.csproj" />
     <ProjectReference Include="..\Amazon-SP-API-CSharp-1.7.9\Source\FikaAmazonAPI\FikaAmazonAPI.csproj" />

@@ -59,5 +59,10 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
             }
 
         }
+
+        //public async Task<PaginationUtility<AmazonJewelryDataFeedItemV3_Dto>> GetPaginationResult_RFT(int pageNumber, int pageSize, SemaphoreSlim semaphore)
+        //{
+
+        //}
     }
 }

@@ -16,10 +16,9 @@ using QgoldIntegrationDataApi.Models;
 using WalmartIntegrationDataApi.Dtos.Product;
 using WalmartIntegrationDataApi.Models;
 using WalmartIntegrationDataApi.Dtos.Return;
-using PimApi.Models;
-using EbayCoreApi.Models;
 using EtsyIntegrationDataAPI.Dtos.ProductEtsyDto;
 using EtsyIntegrationDataAPI.Models;
+using PackageApi.Models;
 
 
 namespace VsiriusApi.Helper.AutoMapper
@@ -34,6 +33,11 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<NotificationDto, Notifications>();
             CreateMap<IdentityUserIdDto, SecretIdentityUserInfo>();
             CreateMap<DrivenHtmlPagesDto, DrivenHtmlPages>();
+            #endregion
+
+            #region Package
+            CreateMap<PackageApi.Dtos.Claim.ClaimParam, PackageApi.Models.Claim>().ReverseMap();
+            CreateMap<PackageApi.Dtos.Claim.ClaimDTO, PackageApi.Models.Claim>().ReverseMap();
             #endregion
 
             #region Identity
