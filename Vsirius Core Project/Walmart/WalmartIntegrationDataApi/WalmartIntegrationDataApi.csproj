@@ -43,7 +43,7 @@
 
 	<ItemGroup>
 		<None Update="Aspose.Cells.dll">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</None>
 		<None Update="Files\Inventory-v3.xlsx">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>

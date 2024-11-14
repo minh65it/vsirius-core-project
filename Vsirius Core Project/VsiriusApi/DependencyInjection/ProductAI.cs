@@ -19,7 +19,7 @@ namespace VsiriusApi.DependencyInjection
             services.AddScoped<ICreateProductAiFromPimService, CreateProductAiFromPimService>();
             services.AddScoped<IProductAIService, ProductAIService>();
 
-            //services.AddJob<ProductAI_CreateProductAiFromPim>();
+            services.AddJob<ProductAI_CreateProductAiFromPim>();
         }
     }
 }

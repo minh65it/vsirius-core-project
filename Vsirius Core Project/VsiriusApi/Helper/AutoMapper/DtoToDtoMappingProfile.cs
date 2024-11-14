@@ -18,6 +18,8 @@ namespace VsiriusApi.Helper.AutoMapper
             #region Amazon
             CreateMap<OrderProcessApi.DTOs.QgoldOrderDTO, AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.QgoldOrderDto>();
             CreateMap<OrderProcessDomain.Qgold.ItemQgold, AmazonIntegrationDataApi.Models.OrderAmazonProcessor.Providers.QgoldInvoiceItem>();
+
+            CreateMap<PimApi.Dtos.ProductDto, AmazonIntegrationDataApi.Dtos.AmazonJewelryDataFeedItemV3_Dto>();
             #endregion
         }
     }

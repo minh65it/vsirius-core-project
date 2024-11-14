@@ -3,24 +3,16 @@
 using AutoMapper;
 using CSRApi.Helpers.ConfigSignalR;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using OrdersAPI.Configurations;
 using OrdersAPI.Helpers.ConfigSignalR;
-using Quartz.Spi;
-using QuartzInfrastructure;
 using Serilog;
-using SkuMappingAPI.Data;
 using System.Reflection;
 using VsiriusApi.Configurations;
 using VsiriusApi.DependencyInjection;
 using VsiriusApi.Helper.AutoMapper;
 using VsiriusApi.Helpers.Utilities;
 using VsiriusApi.SwaggerConfiguration;
-using VsiriusDataModel.DataContext;
-using VsiriusSystem._Services.Interfaces;
-using VsiriusSystem._Services.Services;
-using VsiriusSystem.Data;
 using VSiriusSystemLog.CorrelationId;
 using VSiriusSystemLog.WriteLog;
 

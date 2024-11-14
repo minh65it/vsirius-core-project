@@ -149,6 +149,7 @@ namespace AmazonIntegrationDataApi._Services.Services
             }
             catch (Exception ex)
             {
+                await Utilities2.WriteLogAsync("Job Amazon_UpdateInventoryToAmazon");
                 await Utilities2.WriteLogAsync(ex.ToString());
                 return new OperationResult() { IsSuccess = false };
             }
@@ -195,6 +196,7 @@ namespace AmazonIntegrationDataApi._Services.Services
             }
             catch (Exception ex)
             {
+                await Utilities2.WriteLogAsync("Job Amazon_UpdatePriceToAmazon");
                 await Utilities2.WriteLogAsync(ex.ToString());
                 return new OperationResult() { IsSuccess = false };
             }

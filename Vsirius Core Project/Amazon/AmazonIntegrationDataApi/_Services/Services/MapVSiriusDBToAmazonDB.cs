@@ -34,7 +34,7 @@ namespace AmazonIntegrationDataApi._Services.Services
             {
                 await Utilities2.WriteLogAsync("Map data VSiriusDB to AmazonDB START //========================================================");
                 var pageSize = 3000;
-                var dataFirstCall = await _vSiriusProductApiClient.GetPaginationResult(1, pageSize, new SemaphoreSlim(2));
+                var dataFirstCall = await _vSiriusProductApiClient.GetPaginationResult_RFT(1, pageSize, new SemaphoreSlim(2));
                 var totalPages = 0;
                 //first data
                 List<ExcludedProductDto>? lstExcludedProduct = await _excludedProduct.GetExcludedProducts();
@@ -59,11 +59,11 @@ namespace AmazonIntegrationDataApi._Services.Services
                 {
 
                     //// using async await
-                    var result = await _vSiriusProductApiClient.GetPaginationResult(i, pageSize, semaphore);
+                    var result = await _vSiriusProductApiClient.GetPaginationResult_RFT(i, pageSize, semaphore);
                     if (result == null)
                     {
                         Thread.Sleep(5000);
-                        result = await _vSiriusProductApiClient.GetPaginationResult(i, pageSize, semaphore);
+                        result = await _vSiriusProductApiClient.GetPaginationResult_RFT(i, pageSize, semaphore);
                     }
                     if (result == null)
                     {
@@ -140,6 +140,7 @@ namespace AmazonIntegrationDataApi._Services.Services
             }
             catch (Exception ex)
             {
+                await Utilities2.WriteLogAsync($"Job Amazon_MapPIMToAmazonDB");
                 await Utilities2.WriteLogAsync($"Get Data Failed with exception: {ex.Message} ");
                 return new OperationResult { IsSuccess = false };
             }

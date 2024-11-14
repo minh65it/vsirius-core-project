@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
@@ -18,18 +19,21 @@ namespace VSiriusSystemLog.WriteLog
         private readonly IConfiguration _configuration;
         private readonly ICorrelationIdGenerator _correlationIdGenerator;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private ILogService _logService;
+        private readonly ILogService _logService;
+        private readonly IMapper _mapper;
 
         public LoggerCustom(
             IConfiguration configuration, 
             IHttpContextAccessor httpContextAccessor, 
             ICorrelationIdGenerator correlationIdGenerator,
-            ILogService logService)
+            ILogService logService,
+            IMapper mapper)
         {
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _correlationIdGenerator = correlationIdGenerator;
             _logService = logService;
+            _mapper = mapper;
         }
         private async Task<bool> CallAPI(LogDto logDto)
         {
@@ -59,16 +63,31 @@ namespace VSiriusSystemLog.WriteLog
                 return false;
             }
         }
+
+        private async Task<bool> CallAPI_RFT(LogDto logDto)
+        {
+            try
+            {
+                VsiriusSystem.Dtos.LogDto dto = _mapper.Map<VsiriusSystem.Dtos.LogDto>(logDto);
+                var result = await _logService.CreateLog(dto);
+                return result.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            
+        }
         public async Task<bool> CreateLogError(string? exception, string? message = "")
         {
             try
             {
                 string correlationId = _correlationIdGenerator.Get();
-                string url = _httpContextAccessor.HttpContext.Request.Path;
+                string url = "vsirius/api";
                 var correlationGuid = new Guid(correlationId);
                 var logDto = GetValueLog(correlationGuid, message, LogLevel.Error.ToString(), exception, url);
 
-                return await CallAPI(logDto);
+                return await CallAPI_RFT(logDto);
             }
             catch (Exception) { return false; }
         }
@@ -77,11 +96,11 @@ namespace VSiriusSystemLog.WriteLog
             try
             {
                 string correlationId = _correlationIdGenerator.Get();
-                string url = _httpContextAccessor.HttpContext.Request.Path;
+                string url = "vsirius/api";
                 var correlationGuid = new Guid(correlationId);
                 var logDto = GetValueLog(correlationGuid, message, LogLevel.Information.ToString(), null, url);
 
-                return await CallAPI(logDto);
+                return await CallAPI_RFT(logDto);
             }
             catch (Exception) { return false; }
         }
@@ -91,11 +110,11 @@ namespace VSiriusSystemLog.WriteLog
             try
             {
                 string correlationId = _correlationIdGenerator.Get();
-                string url = _httpContextAccessor.HttpContext.Request.Path;
+                string url = "vsirius/api";
                 var correlationGuid = new Guid(correlationId);
                 var logDto = GetValueLog(correlationGuid, message, LogLevel.Warning.ToString(), null, url);
 
-                return await CallAPI(logDto);
+                return await CallAPI_RFT(logDto);
             }
             catch (Exception) { return false; }
         }
@@ -116,7 +135,7 @@ namespace VSiriusSystemLog.WriteLog
 
         private string GetProjectName()
         {
-            string name = _configuration.GetSection("ApiVsiriusCredentials")["ClientId"];
+            string name = _configuration.GetSection("ApiVsiriusCredentialsSystem")["ClientId"];
             return name;
         }
     }

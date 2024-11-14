@@ -6,6 +6,7 @@ using AmazonIntegrationDataApi.Helpers.OrderAmazonProcessor.SubmitOrderToStuller
 using AmazonIntegrationDataApi.Helpers.OrderAmazonProcessor.UpdateOrderFulfillment;
 using AmazonIntegrationDataApi.Helpers.Ultilities;
 using AmazonIntegrationDataApi.Helpers.Utilities;
+using AmazonIntegrationDataApi.Jobs;
 using FikaAmazonAPI;
 using FikaAmazonAPI.ConstructFeed.Messages;
 using VSiriusSystemLog.WriteLog;
@@ -99,6 +100,7 @@ namespace AmazonIntegrationDataApi._Services.Services
             }
             catch (Exception ex)
             {
+                await Utilities2.WriteLogAsync($"Job Amazon_UpdatePriceToAmazon");
                 await Utilities2.WriteLogAsync($"Program.Main error: {ex.ToString()}");
                 if (retry == 1)
                 {
@@ -202,11 +204,12 @@ namespace AmazonIntegrationDataApi._Services.Services
                     {
                         await Utilities2.WriteLogAsync($"OrderSubmitted not save file {orders?.Count} //==========================================");
                     }
-                    return new OperationResult() { IsSuccess = true };
+                    return new OperationResult() { IsSuccess = true }; 
                 }
                 else
                 {
-                    await _logService.CreateLogError($"SubmitOrder to API failed {orders?.Count} ", "SubmitOrderToQgold");
+                    await _logService.CreateLogError("Job Amazon_GetNewAmazonOrder");
+                    await _logService.CreateLogError($"SubmitOrder to service failed {orders?.Count} ", "SubmitOrderToQgold");
                     await Utilities2.WriteLogAsync($"SubmitOrder to API failed {orders?.Count} //==========================================");
                     return new OperationResult() { IsSuccess = false };
                 }
@@ -226,11 +229,12 @@ namespace AmazonIntegrationDataApi._Services.Services
                 dataQ = await _getOrderDB.OrderQgoldFulfillment();
                 if (dataQ != null)
                 {
-                    data.AddRange(dataQ);
+                    data.AddRange(dataQ); 
                 }
             }
             catch (Exception e)
             {
+                await Utilities2.WriteLogAsync($"Job Amazon_SubmitOrderAmazonToQgold");
                 await Utilities2.WriteLogAsync($"OrderQgoldFulfillment error: {e.ToString()}");
             }
             //=============================get order form Stuller and AmazonSeller from Database local ======================
@@ -252,6 +256,7 @@ namespace AmazonIntegrationDataApi._Services.Services
             }
             catch (Exception e)
             {
+                await Utilities2.WriteLogAsync($"Job Amazon_UpdateTrackingOrderAmazon");
                 await Utilities2.WriteLogAsync($"OrderStullerFulfillment error: {e.ToString()}");
             }
 
@@ -271,6 +276,7 @@ namespace AmazonIntegrationDataApi._Services.Services
             }
             else
             {
+                await Utilities2.WriteLogAsync($"Job Amazon_UpdateTrackingOrderAmazon");
                 await Utilities2.WriteLogAsync($"No data Update tracking to amazon DONE //==========================================");
             }
             return new OperationResult { IsSuccess = true };

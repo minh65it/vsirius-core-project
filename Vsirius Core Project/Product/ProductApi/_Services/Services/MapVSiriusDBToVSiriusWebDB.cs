@@ -7,6 +7,7 @@ using ProductApi._Services.Interfaces;
 using ProductApi.Dtos;
 using ProductApi.Helpers.httpClient;
 using ProductApi.Helpers.Utilities;
+using ProductApi.Jobs;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -123,6 +124,7 @@ namespace ProductApi._Services.Services
             }
             catch (Exception ex)
             {
+                await Common.WriteLogAsync($"Job VSiriusWeb_MapPIMToVSiriusWebDB");
                 await Common.WriteLogAsync($"Get Data Failed with exception: {ex.Message} ");
                 return new OperationResult { Success = false };
             }

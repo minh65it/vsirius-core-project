@@ -1,5 +1,6 @@
 ﻿using AmazonIntegrationDataApi.Dtos;
 using AmazonIntegrationDataApi.Helpers.Ultilities;
+using AutoMapper;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -8,16 +9,21 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
     public interface IVSiriusProductApiClient
     {
         public Task<PaginationUtility<AmazonJewelryDataFeedItemV3_Dto>> GetPaginationResult(int pageNumber, int pageSize, SemaphoreSlim semaphore);
+        public Task<PaginationUtility<AmazonJewelryDataFeedItemV3_Dto>> GetPaginationResult_RFT(int pageNumber, int pageSize, SemaphoreSlim semaphore);
     }
     public class VSiriusProductApiClient : IVSiriusProductApiClient
     {
         private readonly IConfiguration _configuration;
         private string url;
+        private readonly PimApi._Services.Interfaces.IProductService _servicePim;
+        private readonly IMapper _mapper;
 
-        public VSiriusProductApiClient(IConfiguration configuration)
+        public VSiriusProductApiClient(IConfiguration configuration, PimApi._Services.Interfaces.IProductService servicePim, IMapper mapper)
         {
             _configuration = configuration;
             url = _configuration.GetSection("PoductPIM:UrlGetAllData").Value!;
+            _servicePim = servicePim;
+            _mapper = mapper;
         }
         public async Task<PaginationUtility<AmazonJewelryDataFeedItemV3_Dto>> GetPaginationResult(int pageNumber, int pageSize, SemaphoreSlim semaphore)
         {
@@ -60,9 +66,37 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
 
         }
 
-        //public async Task<PaginationUtility<AmazonJewelryDataFeedItemV3_Dto>> GetPaginationResult_RFT(int pageNumber, int pageSize, SemaphoreSlim semaphore)
-        //{
+        public async Task<PaginationUtility<AmazonJewelryDataFeedItemV3_Dto>> GetPaginationResult_RFT(int pageNumber, int pageSize, SemaphoreSlim semaphore)
+        {
+            await semaphore.WaitAsync();
+            PaginationUtility<AmazonJewelryDataFeedItemV3_Dto> result = new PaginationUtility<AmazonJewelryDataFeedItemV3_Dto>(null, 1, 1, 1, 1);
+            try
+            {
+                PimApi.Helpers.Utilities.PaginationParam pagination = new PimApi.Helpers.Utilities.PaginationParam();
+                pagination.PageNumber = pageNumber;
+                pagination.PageSize = pageSize;
 
-        //}
+                PimApi.Dtos.SearchParams search = new PimApi.Dtos.SearchParams();
+                var data = await _servicePim.GetData(pagination, search, true);
+
+                result.Result = new List<AmazonJewelryDataFeedItemV3_Dto>();
+                foreach (var item in data.Result)
+                {
+                    AmazonJewelryDataFeedItemV3_Dto dto = _mapper.Map<AmazonJewelryDataFeedItemV3_Dto>(item);
+                    result.Result.Add(dto); 
+                }
+                result.Pagination.TotalCount = data.Pagination.TotalCount;
+                result.Pagination.PageSize = data.Pagination.PageSize;
+                result.Pagination.PageNumber = data.Pagination.PageNumber;
+                result.Pagination.Skip = data.Pagination.Skip;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await Utilities2.WriteLogAsync($"Call service failed with exception {ex.Message}");
+                return result;
+            }
+            
+        }
     }
 }

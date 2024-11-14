@@ -28,6 +28,7 @@ namespace CSRApi._Services.Services
 
         public async Task<OperationResult> Create(ContactDto dto)
         {
+            await _logService.CreateLogError("test");
             var data = _mapper.Map<Contacts>(dto);
             try
             {

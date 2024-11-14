@@ -62,6 +62,7 @@ namespace AmazonIntegrationDataApi._Services.Services
             }
             catch (Exception ex)
             {
+                await Utilities2.WriteLogAsync($"Job Amazon_ReturnAmazonOrder");
                 await Utilities2.WriteLogAsync($"Get Return Orders error: {ex.ToString()}", $"GetReturnOrders_error_{DateTime.Now:yyyy-MM-dd_hh:mm:ss}.txt");
                 return new OperationResult() { IsSuccess = false, Error = ex.ToString() };
             }

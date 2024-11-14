@@ -1,4 +1,5 @@
 ﻿using AmazonIntegrationDataApi.Helpers.Ultilities;
+using AutoMapper;
 using FikaAmazonAPI.AmazonSpApiSDK.Services;
 using Newtonsoft.Json;
 using System.Text;
@@ -13,10 +14,14 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
     public class ExcludedProduct : IExcludedProduct
     {
         private readonly IConfiguration _configuration;
+        private readonly ExcludedProductAPI._Services.Interfaces.IExcludedProductService _service;
+        private readonly IMapper _mapper;
 
-        public ExcludedProduct(IConfiguration configuration)
+        public ExcludedProduct(IConfiguration configuration, ExcludedProductAPI._Services.Interfaces.IExcludedProductService service, IMapper mapper)
         {
             _configuration = configuration;
+            _service = service;
+            _mapper = mapper;
         }
 
         public async Task<List<ExcludedProductDto>?> GetExcludedProducts()
@@ -148,6 +153,40 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
             }
 
             return result;
+        }
+
+        private async Task<PaginationUtility<ExcludedProductDto>?> GetPaginationExcludedProductAsync_RFT(int pageNumber, int pageSize)
+        {
+            PaginationUtility<ExcludedProductDto> result = new PaginationUtility<ExcludedProductDto>(null, 0, 1, 1, 1);
+            try
+            {
+                ExcludedProductAPI.Helpers.PaginationParam pagination = new ExcludedProductAPI.Helpers.PaginationParam();
+                pagination.PageSize = pageSize;
+                pagination.PageNumber = pageNumber;
+
+                ExcludedProductAPI.DTOs.ExcludedProductParam param = new ExcludedProductAPI.DTOs.ExcludedProductParam();
+                param.Marketplace = "Amazon";
+                var data = await _service.GetAll(pagination, param);
+                result.Result = new List<ExcludedProductDto>();
+
+                foreach (var item in data.Result)
+                {
+                    ExcludedProductDto dto = _mapper.Map<ExcludedProductDto>(item);
+                    result.Result.Add(dto);
+                }
+
+                result.Pagination.TotalCount = data.Pagination.TotalCount;
+                result.Pagination.PageNumber = data.Pagination.PageNumber;
+                result.Pagination.PageSize = data.Pagination.PageSize;
+                result.Pagination.Skip = data.Pagination.Skip;
+                return result;
+            }
+            catch (Exception ex)
+            { 
+            await Utilities2.WriteLogAsync($"Call service failed with exception {ex.Message} at page {pageNumber}");
+            return result;
+            }
+            
         }
     }
 }

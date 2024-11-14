@@ -6,6 +6,7 @@ using ProductAiApi._Repositories.Interfaces;
 using ProductAiApi._Services.Interfaces;
 using ProductAiApi.Common;
 using ProductAiApi.DTOs;
+using ProductAiApi.Jobs;
 using System.Text;
 
 namespace ProductAiApi._JobServices.JobServices
@@ -72,6 +73,7 @@ namespace ProductAiApi._JobServices.JobServices
             }
             catch (Exception ex)
             {
+                Util.WriteLog("Job ProductAI_CreateProductAiFromPim");
                 Util.WriteLog("Process Mapper Error:" + ex.Message);
             }
 
