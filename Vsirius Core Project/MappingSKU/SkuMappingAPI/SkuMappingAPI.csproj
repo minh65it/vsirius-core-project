@@ -11,9 +11,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="SkuMappingAPI\obj\**" />
+	  <Content Remove="SkuMappingAPI\obj\**" />
+	  <EmbeddedResource Remove="SkuMappingAPI\obj\**" />
+	  <None Remove="SkuMappingAPI\obj\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
+		<PackageReference Include="MongoDB.Bson" Version="3.0.0" />
+		<PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="112.1.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
@@ -23,5 +32,9 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
   </ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="SkuMappingAPI\" />
+	</ItemGroup>
 
 </Project>

@@ -24,6 +24,10 @@
 	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
 
 	  <PackageReference Include="AWSSDK.Textract" Version="3.7.105.7" />
+
+	  <PackageReference Include="MongoDB.Bson" Version="3.0.0" />
+
+	  <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="112.1.0" />
 	  <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
 	  <PackageReference Include="Serilog.Enrichers.CorrelationId" Version="3.0.1" />
 	  <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
