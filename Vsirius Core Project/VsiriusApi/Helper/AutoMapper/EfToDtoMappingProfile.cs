@@ -26,6 +26,8 @@ using EbayCoreApi.Models;
 using EtsyIntegrationDataAPI.Dtos.OrderEtsy;
 using EtsyIntegrationDataAPI.Dtos.ProductEtsyDto;
 using EtsyIntegrationDataAPI.Models;
+using PackageApi.Dtos.Claim;
+using PackageApi.Models;
 
 namespace VsiriusApi.Helper.AutoMapper
 {
@@ -38,6 +40,13 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<Contacts, ContactDto>();
             CreateMap<Notifications, NotificationDto>();
             CreateMap<DrivenHtmlPages, DrivenHtmlPagesDto>();
+            #endregion
+
+            #region Package
+            CreateMap<Claim, ClaimParam>().ReverseMap().ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Images, opt => opt.Ignore())
+                .ForMember(dest => dest.DocumentType, opt => opt.Ignore());
+            CreateMap<Claim, PackageApi.Dtos.Claim.ClaimDTO>().ReverseMap();
             #endregion
 
             #region Identity

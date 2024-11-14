@@ -9,7 +9,7 @@ namespace PackageApi.Controllers
 {
     [Route("api/package/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class ClaimController : ControllerBase
     {
         private readonly IClaimService _claimService;

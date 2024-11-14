@@ -8,10 +8,10 @@ namespace PackageApi.Utilities.Mapping
     {
         public EfToDtoMappingProfile()
         {
-            CreateMap<Claim, ClaimParam>().ReverseMap().ForMember(dest => dest.Id, opt => opt.Ignore())
+            CreateMap<PackageApi.Models.Claim, PackageApi.Dtos.Claim.ClaimParam>().ReverseMap().ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Images, opt => opt.Ignore())
                 .ForMember(dest => dest.DocumentType, opt => opt.Ignore());
-            CreateMap<Claim, ClaimDTO>().ReverseMap();
+            CreateMap<PackageApi.Models.Claim, PackageApi.Dtos.Claim.ClaimDTO>().ReverseMap();
         }
     }
 }

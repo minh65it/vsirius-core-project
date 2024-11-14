@@ -14,6 +14,11 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<PimApi.Dtos.ProductDto, ProductApi.Dtos.VsiriusProductDto>();
             CreateMap<ProductAiApi.DTOs.ProductAiDto, ProductApi.Helpers.httpClient.ProductAiDto>();
             #endregion
+
+            #region Amazon
+            CreateMap<OrderProcessApi.DTOs.QgoldOrderDTO, AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.QgoldOrderDto>();
+            CreateMap<OrderProcessDomain.Qgold.ItemQgold, AmazonIntegrationDataApi.Models.OrderAmazonProcessor.Providers.QgoldInvoiceItem>();
+            #endregion
         }
     }
 }

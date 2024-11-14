@@ -191,7 +191,7 @@ namespace AmazonIntegrationDataApi._Services.Services
                 var check = false;
                 if (_isProduction)
                 {
-                    check = await _qgoldApiClient.SubmitOrder(orders, false);
+                    check = await _qgoldApiClient.SubmitOrder_RFT(orders, false);
                 }
                 if (check)
                 {

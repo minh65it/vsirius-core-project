@@ -45,7 +45,7 @@ namespace AmazonIntegrationDataApi._Services.Services
                 MarketPlaceID = _config.GetSection("FikaAmazonAPI:MarketPlaceID").Value,
                 SellerID = _config.GetSection("FikaAmazonAPI:SellerId").Value,
                 IsDebugMode = true,
-                //Environment = Environments.Sandbox
+                Environment = _config.GetSection("FikaAmazonAPI:Environment").Value!.Equals("Production") ? FikaAmazonAPI.Utils.Constants.Environments.Production: FikaAmazonAPI.Utils.Constants.Environments.Sandbox
             });
             try
             {
