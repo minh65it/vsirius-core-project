@@ -37,8 +37,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FikaAmazonAPI.SampleCode", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainAmazon", "Amazon\Domain\DomainAmazon.csproj", "{62EC2A23-AE87-42BD-A5DB-F4BD79C15AFC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "productAI", "productAI", "{3EDC9698-F9C5-4CFB-854C-B8869A95C448}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProductAiApi", "ProductAI\ProductAiApi\ProductAiApi.csproj", "{146B974C-C415-4786-9791-F472815844AC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "qgold", "qgold", "{A4BA33DB-F360-43B4-A7A5-1CF79369D9C2}"
