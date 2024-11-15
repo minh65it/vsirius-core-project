@@ -12,7 +12,6 @@
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-
 	<PackageReference Include="StandardSocketsHttpHandler" Version="2.2.0.8" />
 	<PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
 	<PackageReference Include="System.Text.Encoding" Version="4.3.0" />
