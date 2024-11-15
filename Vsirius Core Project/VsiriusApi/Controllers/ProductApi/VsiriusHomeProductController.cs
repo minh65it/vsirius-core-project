@@ -6,7 +6,7 @@ using ProductApi.Dtos;
 namespace VsiriusApi.Controllers.ProductApi
 {
     [ApiExplorerSettings(GroupName = "Product")]
-    [Route("api/[controller]")]
+    [Route("product/api/[controller]")]
     [ApiController]
     public class VsiriusHomeProductController : ControllerBase
     {

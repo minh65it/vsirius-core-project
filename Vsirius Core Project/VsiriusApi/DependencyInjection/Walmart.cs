@@ -25,7 +25,7 @@ namespace VsiriusApi.DependencyInjection
             services.AddSingleton<IValidationWithMasterExcel, ValidationWithMasterExcel>();
             
             //Update Jobs
-            //services.AddUpdateJobs();
+            services.AddUpdateJobs();
             //Add Job
             services.AddScoped<IGetOrderWalmartService, GetOrderWalmartService>();
             services.AddScoped<IGetReturnOrderService, GetReturnOrderService>();
@@ -37,20 +37,20 @@ namespace VsiriusApi.DependencyInjection
             services.AddScoped<IUpdateInventoryService, UpdateInventoryService>();
             services.AddScoped<IUpdatePriceService, UpdatePriceService>();
             services.AddScoped<IMapVsiriusToWalmartService, MapVsiriusToWalmartService>();
-            /*
+            
             services.AddTransient<TriggerController>();
             
             services.AddJob<Walmart_UpdateTrackingOrder>();
             services.AddJob<Walmart_SubmitOrderToQgold>();
-            services.AddJob<Walmart_GetReturnOrder>();
-            services.AddJob<Walmart_GetOrder>();
+            //services.AddJob<Walmart_GetReturnOrder>();
+            //services.AddJob<Walmart_GetOrder>();
 
-            services.AddJob<Walmart_ApplyShippingTemplate>();
-            services.AddJob<Walmart_UpdateInventory>();
-            services.AddJob<Walmart_UpdatePrice>();
-            services.AddJob<Walmart_UploadProductToSeller>();
-            services.AddJob<Walmart_MapVsiriusToWalmart>();
-            */
+            //services.AddJob<Walmart_ApplyShippingTemplate>();
+            //services.AddJob<Walmart_UpdateInventory>();
+            //services.AddJob<Walmart_UpdatePrice>();
+            //services.AddJob<Walmart_UploadProductToSeller>();
+            //services.AddJob<Walmart_MapVsiriusToWalmart>();
+            
         }
     }
 }

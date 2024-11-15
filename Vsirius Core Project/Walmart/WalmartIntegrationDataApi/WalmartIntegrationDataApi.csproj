@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Stuller-Order-Process\StullerOrderProcessAPI\StullerOrderProcessAPI.csproj" />
     <ProjectReference Include="..\..\VsiriusSystem\JobClient\QuartzInfrastructure.csproj" />
     <ProjectReference Include="..\..\VsiriusSystem\VSiriusSystemLog\VSiriusSystemLog.csproj" />
   </ItemGroup>

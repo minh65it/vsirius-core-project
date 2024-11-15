@@ -50,6 +50,7 @@
 
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Excluded\ExcludedProductAPI\ExcludedProductAPI.csproj" />
     <ProjectReference Include="..\..\Order-QGold-Process\OrderProcessAPI\OrderProcessApi.csproj" />
     <ProjectReference Include="..\..\PIM\ProductInfoManagementAPI\PimApi.csproj" />
     <ProjectReference Include="..\..\VsiriusSystem\JobClient\QuartzInfrastructure.csproj" />

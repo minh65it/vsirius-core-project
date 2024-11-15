@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace VsiriusApi.Controllers.IdentityApi
 {
     [ApiExplorerSettings(GroupName = "Identity")]
-    [Route("api/[controller]")]
+    [Route("identity/api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {

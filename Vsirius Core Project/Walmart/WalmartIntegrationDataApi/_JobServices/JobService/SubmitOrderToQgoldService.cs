@@ -23,7 +23,7 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
             IConfiguration configuration)
         {
             _orderQgoldRepository = orderQgoldRepository;
-            _orderWalmartRepository = orderWalmartRepository;
+            _orderWalmartRepository = orderWalmartRepository; 
             _configuration = configuration;
         }
 

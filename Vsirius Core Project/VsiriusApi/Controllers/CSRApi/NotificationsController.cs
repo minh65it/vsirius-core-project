@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 namespace VsiriusApi.Controllers.CSRApi
 {
     [ApiExplorerSettings(GroupName = "CSR")]
-    [Route("api/[controller]")]
+    [Route("csr/api/[controller]")]
     [ApiController]
     public class NotificationsController : ControllerBase
     {

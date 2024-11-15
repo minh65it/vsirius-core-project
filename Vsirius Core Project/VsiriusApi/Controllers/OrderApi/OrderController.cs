@@ -12,7 +12,7 @@ using VsiriusDataModel.DataModel;
 namespace VsiriusAPI.Controllers.OrderApi
 {
     [ApiExplorerSettings(GroupName = "Order")]
-    [Route("api/order/[controller]")]
+    [Route("order/api/order/[controller]")]
     [ApiController]
     [Authorize(Roles = "Customer, Admin")]
     public class OrderController : ControllerBase

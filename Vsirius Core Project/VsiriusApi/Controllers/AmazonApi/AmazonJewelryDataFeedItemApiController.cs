@@ -11,7 +11,7 @@ namespace VsiriusApi.Controllers.AmazonApi
 {
     [ApiExplorerSettings(GroupName = "Amazon")]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("amazon/api/[controller]")]
     public class AmazonJewelryDataFeedItemApiController : ControllerBase
     {
         private readonly IAmazonJewelryDataFeedItemService _service;

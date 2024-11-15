@@ -9,6 +9,7 @@ using WalmartIntegrationDataApi.CollectionMongo;
 using System.Text;
 using Newtonsoft.Json;
 using WalmartIntegrationDataApi.Common.Helpers;
+using AutoMapper;
 
 namespace WalmartIntegrationDataApi._JobServices.JobService
 {
@@ -18,17 +19,23 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
         private readonly IOrderWalmartRepository _orderWalmartRepository;
         private readonly IInteractWalmartSellerCommonService _interactWalmartSellerService;
         private readonly IOrderQgoldRepository _orderQgoldRepository;
+        private readonly StullerOrderProcessAPI._Services.Interfaces.IOrderStullerService _orderStullerService;
+        private readonly IMapper _mapper;
 
         public TrackingWalmartOrderService(
             IOrderWalmartRepository orderWalmartRepository,
             IInteractWalmartSellerCommonService interactWalmartSellerService,
             IConfiguration configuration,
-            IOrderQgoldRepository orderQgoldRepository)
+            IOrderQgoldRepository orderQgoldRepository,
+            StullerOrderProcessAPI._Services.Interfaces.IOrderStullerService orderStullerService,
+            IMapper mapper)
         {
             _orderWalmartRepository = orderWalmartRepository;
             _interactWalmartSellerService = interactWalmartSellerService;
             _configuration = configuration;
             _orderQgoldRepository = orderQgoldRepository;
+            _orderStullerService = orderStullerService;
+            _mapper = mapper;
         }
 
         public async Task UpdateTrackingWalmartOrder()
@@ -267,7 +274,7 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
             var result = new List<OrderStullerDTO>();
             try
             {
-                PaginationUtility<OrderStullerDTO>? firstGet = await CallApiToGetOrderStuller(1, 1000);
+                PaginationUtility<OrderStullerDTO>? firstGet = await CallApiToGetOrderStuller_RFT(1, 1000);
                 
                 if (firstGet != null)
                 {
@@ -275,7 +282,7 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
 
                     for (int pageNumber = 2; pageNumber <= firstGet.Pagination.TotalPage; pageNumber++)
                     {
-                        var data = await CallApiToGetOrderStuller(pageNumber, 1000);
+                        var data = await CallApiToGetOrderStuller_RFT(pageNumber, 1000);
                         result.AddRange(data!.Result);
                     }
                 }
@@ -314,6 +321,37 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
             }
 
             return null;
+        }
+
+        private async Task<PaginationUtility<OrderStullerDTO>?> CallApiToGetOrderStuller_RFT(int pageNumber, int pageSize)
+        {
+            PaginationUtility<OrderStullerDTO> result = new PaginationUtility<OrderStullerDTO>(null, 1, 1, 1, 1);
+            try
+            {
+                StullerOrderProcessAPI.Common.Helpers.PaginationParam pagination = new StullerOrderProcessAPI.Common.Helpers.PaginationParam();
+                pagination.PageNumber = pageNumber;
+                pagination.PageSize = pageSize;
+                var data = await _orderStullerService.GetOrders(pagination, new StullerOrderProcessAPI.Dtos.SearchOrderStullerParam());
+
+                result.Result = new List<OrderStullerDTO>();
+                result.Pagination.PageNumber = data.Pagination.PageNumber;
+                result.Pagination.PageSize = data.Pagination.PageSize;
+                result.Pagination.TotalCount = data.Pagination.TotalCount;
+                result.Pagination.Skip = data.Pagination.Skip;
+                foreach (var item in data.Result)
+                {
+                    OrderStullerDTO dto = _mapper.Map<OrderStullerDTO>(item);
+                    result.Result.Add(dto);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Util.WriteLog($"CallApiToGetOrderStuller failed. Exception: {ex.Message}");
+                return result;
+            }
+            
+
         }
 
         private async Task CallApiSellerUpdate(List<UpdateStatusOrder> lstUpdate)

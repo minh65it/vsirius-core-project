@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace VsiriusApi.Controllers.CSRApi
 {
     [ApiExplorerSettings(GroupName = "CSR")]
-    [Route("api/[controller]")]
+    [Route("csr/api/[controller]")]
     [ApiController]
     public class DrivenHtmlPagesController : ControllerBase
     {

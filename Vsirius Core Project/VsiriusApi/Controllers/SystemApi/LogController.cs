@@ -7,7 +7,7 @@ using VsiriusSystem.Helpers.Utilities;
 namespace VsiriusApi.Controllers.SystemApi
 {
     [ApiExplorerSettings(GroupName = "System")]
-    [Route("api/[controller]")]
+    [Route("system/api/[controller]")]
     [ApiController]
     public class LogController : ControllerBase
     {
