@@ -49,6 +49,9 @@
 		<None Update="Files\Inventory-v3.xlsx">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="Files\Inventory.xlsx">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="Files\Price.xlsm">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
