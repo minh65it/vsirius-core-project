@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using AutoMapper;
+using MongoDB.Driver;
 using System.Text;
 using System.Text.Json;
 using WalmartIntegrationDataApi._JobServices.Interfaces;
@@ -16,15 +17,21 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
         private readonly IOrderQgoldRepository _orderQgoldRepository;
         private readonly IOrderWalmartRepository _orderWalmartRepository;
         private readonly IConfiguration _configuration;
+        private readonly OrderProcessApi._Services.IServices.Qgold.ISubmitOrderQgoldService _qgoldProcessService;
+        private readonly IMapper _mapper;
 
         public SubmitOrderToQgoldService(
             IOrderQgoldRepository orderQgoldRepository,
             IOrderWalmartRepository orderWalmartRepository,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IMapper mapper,
+            OrderProcessApi._Services.IServices.Qgold.ISubmitOrderQgoldService qgoldProcessService)
         {
             _orderQgoldRepository = orderQgoldRepository;
             _orderWalmartRepository = orderWalmartRepository; 
             _configuration = configuration;
+            _qgoldProcessService = qgoldProcessService;
+            _mapper = mapper;
         }
 
         public async Task SendWalmartOrderToQgold()
@@ -160,7 +167,7 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                 }
             }
 
-            var isSuccess = await CallSubmittedApi(lstUpload);
+            var isSuccess = await CallSubmittedApi_RFT(lstUpload);
 
             if (isSuccess)
             {
@@ -207,6 +214,26 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                 Util.WriteLog($"CallSubmittedApi Err: {JsonSerializer.Serialize(response)}");
                 return false;
 
+            }
+            catch (Exception ex)
+            {
+                Util.WriteLog($"CallSubmittedApi Err: {ex.Message}");
+                return false;
+            }
+        }
+
+        private async Task<bool> CallSubmittedApi_RFT(List<OrderQgoldParam> lstUpload)
+        {
+            try
+            {
+                var list = new List<OrderProcessDomain.AmazonSeller.QgoldFtpOrderObject>();
+                foreach (var item in lstUpload)
+                {
+                    var dto = _mapper.Map<OrderProcessDomain.AmazonSeller.QgoldFtpOrderObject>(item);
+                    list.Add(dto);
+                }
+                var result = await _qgoldProcessService.SubmitQgold(list, null);
+                return result;
             }
             catch (Exception ex)
             {

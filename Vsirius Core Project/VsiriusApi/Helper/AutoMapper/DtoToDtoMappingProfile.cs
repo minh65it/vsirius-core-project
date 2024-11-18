@@ -25,6 +25,9 @@ namespace VsiriusApi.Helper.AutoMapper
             #region Walmart
             CreateMap<StullerOrderProcessAPI.Dtos.StullerOrderDTO, WalmartIntegrationDataApi.Dtos.Order.OrderStullerDTO>();
             CreateMap<StullerOrderProcessAPI.Models.ItemStuller, WalmartIntegrationDataApi.Dtos.Order.ItemStuller>();
+
+            CreateMap<WalmartIntegrationDataApi.Dtos.Qgold.OrderQgoldParam, OrderProcessDomain.AmazonSeller.QgoldFtpOrderObject>();
+            CreateMap<WalmartIntegrationDataApi.Dtos.Qgold.ItemQgoldParam, OrderProcessDomain.AmazonSeller.QgoldFtpOrderItem>();
             #endregion
         }
     }

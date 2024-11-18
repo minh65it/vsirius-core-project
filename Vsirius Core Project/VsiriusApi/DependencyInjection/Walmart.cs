@@ -43,9 +43,9 @@ namespace VsiriusApi.DependencyInjection
             services.AddJob<Walmart_UpdateTrackingOrder>();
             services.AddJob<Walmart_SubmitOrderToQgold>();
             services.AddJob<Walmart_GetReturnOrder>();
-            //services.AddJob<Walmart_GetOrder>();
+            services.AddJob<Walmart_GetOrder>();
 
-            //services.AddJob<Walmart_ApplyShippingTemplate>();
+            services.AddJob<Walmart_ApplyShippingTemplate>();
             //services.AddJob<Walmart_UpdateInventory>();
             //services.AddJob<Walmart_UpdatePrice>();
             //services.AddJob<Walmart_UploadProductToSeller>();
