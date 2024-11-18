@@ -69,7 +69,7 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                 Util.WriteLog("Get Order From Qgold DB in 7 days End");
 
                 Util.WriteLog("Filter lstUpdate Start");
-                List<UpdateStatusOrder> lstUpdate = new();
+                List<UpdateStatusOrder> lstUpdate = new(); 
                 //lay order can update tu qgold
                 foreach (var qgold in lstOrderQgold)
                 {

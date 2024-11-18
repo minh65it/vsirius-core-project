@@ -66,4 +66,13 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ResourcesProductApi\Template\VsiriusTemplate1.0.xlsm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ResourcesProductApi\Template\VsiriusTemplate1.1.xlsm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

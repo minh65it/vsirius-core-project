@@ -21,6 +21,11 @@ namespace VsiriusApi.Helper.AutoMapper
 
             CreateMap<PimApi.Dtos.ProductDto, AmazonIntegrationDataApi.Dtos.AmazonJewelryDataFeedItemV3_Dto>();
             #endregion
+
+            #region Walmart
+            CreateMap<StullerOrderProcessAPI.Dtos.StullerOrderDTO, WalmartIntegrationDataApi.Dtos.Order.OrderStullerDTO>();
+            CreateMap<StullerOrderProcessAPI.Models.ItemStuller, WalmartIntegrationDataApi.Dtos.Order.ItemStuller>();
+            #endregion
         }
     }
 }

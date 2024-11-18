@@ -163,6 +163,7 @@ namespace ProductApi._Services.Services
             var propertiesValid = dto.GetType().GetProperties();
 
             var client = new ElasticClient(new Uri(_configuration["ElasticConnectString:API"]!));
+            var pingResponse = client.Ping();
             var searchDescriptor = new SearchDescriptor<VsiriusProduct>();
 
             var mustQueries = new List<QueryContainer>

@@ -8,7 +8,33 @@ namespace ProductApi.Helpers.Utilities
 {
     public static class Common
     {
-        public static string _logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Storage", "Logs");
+        public static string _logPath = checkPath();
+
+        public static string checkPath()
+        {
+            try
+            {
+                var path = AppDomain.CurrentDomain.BaseDirectory.ToString();
+
+
+                var storagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Storage", "Logs");
+
+
+                if (!Directory.Exists(storagePath))
+                {
+                    // Nếu không tồn tại, tạo thư mục
+                    Directory.CreateDirectory(storagePath);
+                }
+
+                return storagePath; 
+            }
+            catch (Exception)
+            {
+                throw new Exception(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Storage", "Logs"));
+                
+            }
+            
+        }
         public static List<List<T>> DivideList<T>(List<T> sourceList, int chunkSize)
         {
             if (chunkSize <= 0)

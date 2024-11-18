@@ -52,7 +52,16 @@ namespace ProductApi._Services.Services
             try
             {
                 //await _elasticSearchProductService.DeleteAllProductInElastic();
-                await Common.WriteLogAsync("Map data VSiriusDB to VSiriusWeb START //========================================================");
+                try
+                {
+                    await Common.WriteLogAsync("Map data VSiriusDB to VSiriusWeb START //========================================================");
+                }
+                catch (Exception ex)
+                {
+
+                    throw new Exception(ex.ToString());
+                }
+                
                 var pageSize = 500;
                 var dataFirstCall = await _vSiriusProductApiClient.GetPaginationResult_RFT(1, pageSize, new SemaphoreSlim(2));
                 var totalPages = 0;
@@ -124,9 +133,11 @@ namespace ProductApi._Services.Services
             }
             catch (Exception ex)
             {
+
                 await Common.WriteLogAsync($"Job VSiriusWeb_MapPIMToVSiriusWebDB");
                 await Common.WriteLogAsync($"Get Data Failed with exception: {ex.Message} ");
                 return new OperationResult { Success = false };
+                throw new Exception(ex.ToString());
             }
         }
         public async Task<OperationResult> Insert(List<VsiriusProductDto> input)
