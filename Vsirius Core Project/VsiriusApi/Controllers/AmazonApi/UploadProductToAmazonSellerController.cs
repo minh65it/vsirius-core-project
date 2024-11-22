@@ -1,4 +1,4 @@
-﻿using AmazonIntegrationDataApi._Services.Interfaces;
+﻿    using AmazonIntegrationDataApi._Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace VsiriusApi.Controllers.AmazonApi

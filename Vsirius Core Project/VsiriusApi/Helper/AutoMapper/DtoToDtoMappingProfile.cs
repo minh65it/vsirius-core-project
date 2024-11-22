@@ -28,6 +28,8 @@ namespace VsiriusApi.Helper.AutoMapper
 
             CreateMap<WalmartIntegrationDataApi.Dtos.Qgold.OrderQgoldParam, OrderProcessDomain.AmazonSeller.QgoldFtpOrderObject>();
             CreateMap<WalmartIntegrationDataApi.Dtos.Qgold.ItemQgoldParam, OrderProcessDomain.AmazonSeller.QgoldFtpOrderItem>();
+
+            CreateMap<WalmartIntegrationDataApi.Dtos.Vsirius.ExcludedProductDto, ExcludedProductAPI.DTOs.ExcludedProductDTO>();
             #endregion
         }
     }

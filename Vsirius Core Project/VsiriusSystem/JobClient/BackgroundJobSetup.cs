@@ -188,8 +188,8 @@ namespace QuartzInfrastructure
                                 rs.Tittle = reader["Tittle"].ToString() ?? string.Empty;
                                 rs.Description = reader["Description"].ToString() ?? string.Empty;
                                 rs.Cron = reader["Cron"].ToString() ?? string.Empty;
-                                rs.IsRestartDocker = reader["IsRestartDocker"].ToString()!.Equals("1");
-                                rs.IsStop = reader["IsStop"].ToString()!.Equals("1");
+                                rs.IsRestartDocker = bool.Parse(reader["IsRestartDocker"].ToString()!);
+                                rs.IsStop = bool.Parse(reader["IsStop"].ToString()!);
                                 rs.StartDate = DateTime.Parse(reader["StartDate"].ToString()!);
                             }
                             connection.Close();

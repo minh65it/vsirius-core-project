@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using OfficeOpenXml;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,12 +28,13 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
         private readonly string _templatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Template");
         private readonly string _insertPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Storage", "Insert", DateTime.Now.ToString("yyyyMMdd"));
         private readonly string _deletePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Delete", DateTime.Now.ToString("yyyyMMdd"));
-
+        private readonly ExcludedProductAPI._Services.Interfaces.IExcludedProductService _excludedProductService;
 
 
         public UploadProductToSellerService(
             IMapper mapper,
             IConfiguration config,
+            ExcludedProductAPI._Services.Interfaces.IExcludedProductService excludedProductService,
             IInteractWalmartSellerCommonService interactWalmart,
             IServiceProvider serviceProvider)
         {
@@ -40,13 +42,14 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
             _mapper = mapper;
             _interactWalmart = interactWalmart;
             _serviceProvider = serviceProvider;
+            _excludedProductService = excludedProductService;
         }
 
         public async Task UploadProductToSeller()
         {
             Util.WriteLog("---------------------------Upload Product To Seller Process Start-------------------------------------");
             try
-            {               
+            {
                 List<ExcludedProductDto> lstExcluded = new();
                 //Pull all data in walmart (seller)
                 Util.WriteLog("GetDataSeller Start");
@@ -212,23 +215,23 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                 //Lấy danh sách cần update với điều kiện: (local) thường là những sản phẩm bị lỗi cần update
                 //1. những sku trên seller có trạng thái publishedStatus != PUBLISHED
                 //2. những sku có trong seller lẫn local
-                List<string?> lstSkuSellerError = 
+                List<string?> lstSkuSellerError =
                     lstSeller.Where(x => x.publishedStatus != "PUBLISHED")
                     .Select(x => x.sku)
                     .ToList();
 
-                var lstVariation = lstLocal.Where(x => 
+                var lstVariation = lstLocal.Where(x =>
                 !string.IsNullOrEmpty(x.variantGroupId)
                 && !lstSkuMustRetired.Contains(x.SKU)
                 ).ToList();
 
-                var lstUpdate = lstLocal.Where(x => 
+                var lstUpdate = lstLocal.Where(x =>
                 lstSkuSellerError.Contains(x.SKU)
-                && !lstSkuMustRetired.Contains(x.SKU) 
+                && !lstSkuMustRetired.Contains(x.SKU)
                 ).ToList();
 
                 lstUpdate.AddRange(lstVariation);
-                lstUpdate = lstUpdate.Distinct().ToList(); 
+                lstUpdate = lstUpdate.Distinct().ToList();
 
                 Util.WriteLog("Export Excel To Bulk Update Item In Seller Start");
 
@@ -301,7 +304,7 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
 
                 foreach (var batch in batches)
                 {
-                    await CallApiToCreateUpdateExcludedProduct(batch);
+                    await CallApiToCreateUpdateExcludedProduct_RFT(batch);
                 }
 
             }
@@ -334,6 +337,18 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
             {
                 Util.WriteLog($"Error exception: {ex.Message}");
             }
+        }
+
+        private async Task CallApiToCreateUpdateExcludedProduct_RFT(List<ExcludedProductDto> batch)
+        {
+            var list = new List<ExcludedProductAPI.DTOs.ExcludedProductDTO>();
+            foreach (var item in batch)
+            {
+                var dto = _mapper.Map<ExcludedProductAPI.DTOs.ExcludedProductDTO>(item);
+                list.Add(dto);
+            }
+            var result = await _excludedProductService.BulkCreateUpdate(list);
+            Util.WriteLog("Response from service: " + result);
         }
 
         private async Task BulkUpdateItem()
@@ -539,7 +554,7 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                         {
                             await Task.Delay(TimeSpan.FromHours(4));
                         }
-                        await Task.Delay(TimeSpan.FromSeconds(2));
+                        await Task.Delay(TimeSpan.FromSeconds(10));
 
                     }
                 }
@@ -574,19 +589,24 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                         $"multipart/form-data; boundary={tokenResult.CorrelationId}");
 
                     var formData = new MultipartFormDataContent();
-                    var fileContent = new StreamContent(fileInfo.OpenRead());
-                    fileContent.Headers.ContentType =
-                    new MediaTypeHeaderValue("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-                    formData.Add(fileContent, "file", fileInfo.Name);
-                    HttpResponseMessage response = await client.PostAsync(url, formData);
-
-                    if (response.IsSuccessStatusCode)
+                    using (StreamContent fileContent = new StreamContent(fileInfo.OpenRead()))
                     {
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<ResultFeed>(responseBody);
-                        string feedId = result!.FeedId;
-                        Util.WriteLog($"Upload Success File: {fileInfo.Name}. FeedId: {feedId}");
+                        fileContent.Headers.ContentType =
+                            new MediaTypeHeaderValue("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        formData.Add(fileContent, "file", fileInfo.Name);
+                        var request = new HttpRequestMessage(HttpMethod.Post, url);
+                        request.Content = formData;
+                        HttpResponseMessage response = await client.SendAsync(request);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            var result = JsonConvert.DeserializeObject<ResultFeed>(responseBody);
+                            string feedId = result!.FeedId;
+                            Util.WriteLog($"Upload Success File: {fileInfo.Name}. FeedId: {feedId}");
+                        }
+
                     }
+
                 }
             }
             catch (Exception ex)
