@@ -49,7 +49,7 @@ namespace VsiriusApi.DependencyInjection
             services.AddJob<Walmart_UpdateInventory>();
             services.AddJob<Walmart_UpdatePrice>();
             services.AddJob<Walmart_UploadProductToSeller>();
-            //services.AddJob<Walmart_MapVsiriusToWalmart>();
+            services.AddJob<Walmart_MapVsiriusToWalmart>();
             
         }
     }

@@ -15,15 +15,24 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly IProductWalmartService _productWalmartService;
+        private readonly PimApi._Services.Interfaces.IProductService _productService;
+        private readonly PimApi._Services.Interfaces.IVariationService _variationService;
+        private readonly ExcludedProductAPI._Services.Interfaces.IExcludedProductService _excludedProductService;
 
         public MapVsiriusToWalmartService(
             IConfiguration configuration,
             IProductWalmartService productWalmartService,
+            PimApi._Services.Interfaces.IProductService productService,
+            PimApi._Services.Interfaces.IVariationService variationService,
+            ExcludedProductAPI._Services.Interfaces.IExcludedProductService excludedProductService,
             IMapper mapper)
         {
             _mapper = mapper;
             _configuration = configuration;
             _productWalmartService = productWalmartService;
+            _productService = productService;
+            _excludedProductService = excludedProductService;
+            _variationService = variationService;
         }
 
 
@@ -64,7 +73,7 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                         }
                     }
                 }
-
+                /*
                 //Util.WriteLog("Start Call API get mapping SKU");
                 //List<QgoldWalmartSKUParam> lstSKUMap = await GetSKUMapping();
 
@@ -83,14 +92,14 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                 //}
                 //lstSKUMap.Clear();
                 //Util.WriteLog("End Call API get mapping SKU");
-
+                */
                 Util.WriteLog("Start delete old Data");
                 lstData = await ListDataAfterDelete(lstData);
                 Util.WriteLog("End delete old Data");
 
                 #region Bulk insert update to local API Walmart
 
-                List<VariationDto> lstVariation = await GetLstVariation();
+                List<VariationDto> lstVariation = await GetLstVariation_RFT();
                 Util.WriteLog("Push Data Start Bulk insert update to local API Walmart");
                 await PushItemToLocalWalmartApi(lstData, lstVariation);
                 Util.WriteLog("Push Data End Bulk insert update to local API Walmart");
@@ -123,6 +132,25 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
             catch (Exception ex)
             {
                 Util.WriteLog($"GetLstVariation failed with err: {ex.Message}");
+            }
+            return rs;
+        }
+
+        private async Task<List<VariationDto>> GetLstVariation_RFT()
+        {
+            var rs = new List<VariationDto>();
+            try
+            {
+                var data = await _variationService.GetAll();
+                foreach (var item in data)
+                {
+                    var dto = _mapper.Map<VariationDto>(item);
+                    rs.Add(dto);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.ToString());
             }
             return rs;
         }
@@ -249,7 +277,7 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
             {
                 List<ExcludedProductDto> allResults = new();
                 var pageSize = 3000;
-                var dataFirstCall = await GetPaginationExcludedProductAsync(1, pageSize);
+                var dataFirstCall = await GetPaginationExcludedProductAsync_RFT(1, pageSize);
                 var totalPages = 0;
                 List<ExcludedProductDto> firstData = new();
                 //first data
@@ -265,35 +293,18 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                     return null;
                 }
 
-                //List rest data
-                List<Task<PaginationUtility<ExcludedProductDto>?>> tasks = new();
-                int amountRunTask = 0;
                 for (int i = 2; i <= totalPages; i++)
                 {
                     int pageNumber = i;
 
-                    tasks.Add(GetPaginationExcludedProductAsync(pageNumber, pageSize));
-
-                    if (amountRunTask < 3 && i != totalPages)
+                    var getData = await GetPaginationExcludedProductAsync_RFT(pageNumber, pageSize);
+                    if (getData.Result != null)
                     {
-                        amountRunTask++;
+                        allResults.AddRange(getData.Result);
                     }
                     else
                     {
-                        amountRunTask = 0;
-                        var results = await Task.WhenAll(tasks);
-                        foreach (var result in results)
-                        {
-                            if (result != null)
-                            {
-                                allResults.AddRange(result.Result);
-                            }
-                            else
-                            {
-                                Util.WriteLog($"Failed when add record");
-                            }
-                        }
-                        tasks.RemoveAll(x => x.IsCompleted);
+                        Util.WriteLog($"Failed when add record");
                     }
                 }
 
@@ -339,13 +350,48 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
             return result;
         }
 
+        private async Task<PaginationUtility<ExcludedProductDto>?> GetPaginationExcludedProductAsync_RFT(int pageNumber, int pageSize)
+        {
+            var result = new PaginationUtility<ExcludedProductDto>(null, 1, 1, 1, 1);
+            try
+            {
+                var pagination = new ExcludedProductAPI.Helpers.PaginationParam();
+                pagination.PageSize = pageSize;
+                pagination.PageNumber = pageNumber;
+
+                var search = new ExcludedProductAPI.DTOs.ExcludedProductParam();
+                search.Marketplace = "Walmart";
+
+                var data = await _excludedProductService.GetAll(pagination, search);
+                result.Result = new List<ExcludedProductDto>();
+
+                result.Pagination.TotalCount = data.Pagination.TotalCount;
+                result.Pagination.PageNumber = data.Pagination.PageNumber;
+                result.Pagination.PageSize = data.Pagination.PageSize;
+                result.Pagination.Skip = data.Pagination.Skip;
+                foreach (var item in data.Result)
+                {
+                    var dto = _mapper.Map<ExcludedProductDto>(item);
+                    result.Result.Add(dto);
+                }
+                Util.WriteLog($"Get data from Excluded success at page {pageNumber}");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Util.WriteLog($"Get data from Excluded failed with exception {ex.Message} at page {pageNumber}");
+                return result;
+            }
+
+        }
+
         private async Task<List<VsiriusProductDto>?> PullDataFromVsiriusAsync()
         {
             try
             {
                 List<VsiriusProductDto> allResults = new();
                 var pageSize = 3000;
-                var dataFirstCall = await GetPaginationResultAsync(1, pageSize);
+                var dataFirstCall = await GetPaginationResultAsync_RFT(1, pageSize);
                 var totalPages = 0;
                 List<VsiriusProductDto> firstData = new();
                 //first data
@@ -361,35 +407,18 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                     return null;
                 }
 
-                //List rest data
-                List<Task<PaginationUtility<VsiriusProductDto>?>> tasks = new();
-                int amountRunTask = 0;
                 for (int i = 2; i <= totalPages; i++)
                 {
                     int pageNumber = i;
 
-                    tasks.Add(GetPaginationResultAsync(pageNumber, pageSize));
-
-                    if (amountRunTask < 3 && i != totalPages)
+                    var getData = await GetPaginationResultAsync_RFT(pageNumber, pageSize);
+                    if (getData.Result != null)
                     {
-                        amountRunTask++;
+                        allResults.AddRange(getData.Result);
                     }
                     else
                     {
-                        amountRunTask = 0;
-                        var results = await Task.WhenAll(tasks);
-                        foreach (var result in results)
-                        {
-                            if (result != null)
-                            {
-                                allResults.AddRange(result.Result);
-                            }
-                            else
-                            {
-                                Util.WriteLog($"Failed when add record");
-                            }
-                        }
-                        tasks.RemoveAll(x => x.IsCompleted);
+                        Util.WriteLog($"Failed when add record");
                     }
                 }
 
@@ -433,6 +462,40 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
             }
 
             return result;
+        }
+
+        private async Task<PaginationUtility<VsiriusProductDto>?> GetPaginationResultAsync_RFT(int pageNumber, int pageSize)
+        {
+            PaginationUtility<VsiriusProductDto> result = new PaginationUtility<VsiriusProductDto>(null, 1, 1, 1, 1);
+            try
+            {
+                var pagination = new PimApi.Helpers.Utilities.PaginationParam();
+                pagination.PageSize = pageSize;
+                pagination.PageNumber = pageNumber;
+
+                var search = new PimApi.Dtos.SearchParams();
+
+                var data = await _productService.GetData(pagination, search, true);
+                result.Result = new List<VsiriusProductDto>();
+
+                result.Pagination.PageNumber = data.Pagination.PageNumber;
+                result.Pagination.PageSize = data.Pagination.PageSize;
+                result.Pagination.TotalCount = data.Pagination.TotalCount;
+                result.Pagination.Skip = data.Pagination.Skip;
+                foreach (var item in data.Result)
+                {
+                    var dto = _mapper.Map<VsiriusProductDto>(item);
+                    result.Result.Add(dto);
+                }
+                Util.WriteLog($"Get data from Pim success at page {pageNumber}");
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Util.WriteLog($"Get data from Pim failed with exception {ex.Message} at page {pageNumber}");
+                return result;
+            }
+
         }
     }
 }

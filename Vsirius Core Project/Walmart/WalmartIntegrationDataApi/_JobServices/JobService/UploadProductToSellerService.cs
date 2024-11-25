@@ -603,6 +603,10 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                             var result = JsonConvert.DeserializeObject<ResultFeed>(responseBody);
                             string feedId = result!.FeedId;
                             Util.WriteLog($"Upload Success File: {fileInfo.Name}. FeedId: {feedId}");
+                        } else
+                        {
+                            string responseBody = await response.Content.ReadAsStringAsync();
+                            Util.WriteLog($"Upload Failed File: {fileInfo.Name}. Status: {response.StatusCode}. Message: {responseBody}");
                         }
 
                     }
