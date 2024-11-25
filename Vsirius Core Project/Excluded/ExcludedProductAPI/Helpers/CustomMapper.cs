@@ -1,6 +1,6 @@
 ﻿using ExcludedProductAPI.DTOs;
 using ExcludedProductAPI.Models;
-using SharpCompress.Common;
+//using SharpCompress.Common;
 
 namespace ExcludedProductAPI.Helpers
 {

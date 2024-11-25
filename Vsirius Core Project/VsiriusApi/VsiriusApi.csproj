@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
+    <PackageReference Include="MongoDB.Bson" Version="3.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 	<PackageReference Include="StandardSocketsHttpHandler" Version="2.2.0.8" />
 	<PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
@@ -23,8 +24,7 @@
 	<PackageReference Include="AWSSDK.SQS" Version="3.7.400.42" />
 	<PackageReference Include="AWSSDK.Core" Version="3.7.400.42" />
 	<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-	<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />  
-	<PackageReference Include="System.Text.Json" Version="8.0.5" />
+	<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 	<PackageReference Include="System.Text.Encodings.Web" Version="8.0.0" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	<PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="112.1.0" />
