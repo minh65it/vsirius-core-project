@@ -87,7 +87,7 @@ namespace StullerDataApi.Utilities.Mapping.MapStullerDBToVsiriusDB
 
                 string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-                string folderPath = Path.Combine(baseDirectory, "Resources");
+                string folderPath = Path.Combine(baseDirectory, "ResourcesStullerApi");
                 string sourceFilePath = folderPath + @"\DataStullerMapping.xlsx";
 
                 string filepath = Path.Combine(baseDirectory, "Storage", "DataExport", "DataStullerToVSirius");
