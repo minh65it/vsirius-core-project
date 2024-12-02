@@ -20,6 +20,8 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<OrderProcessDomain.Qgold.ItemQgold, AmazonIntegrationDataApi.Models.OrderAmazonProcessor.Providers.QgoldInvoiceItem>();
 
             CreateMap<PimApi.Dtos.ProductDto, AmazonIntegrationDataApi.Dtos.AmazonJewelryDataFeedItemV3_Dto>();
+
+            CreateMap<ExcludedProductAPI.DTOs.ExcludedProductDTO, AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB.ExcludedProductDto>().ReverseMap();
             #endregion
 
             #region Walmart

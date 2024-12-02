@@ -54,7 +54,7 @@ namespace ProductApi._Services.Services
                 //await _elasticSearchProductService.DeleteAllProductInElastic();
                 try
                 {
-                    await Common.WriteLogAsync("Map data VSiriusDB to VSiriusWeb START //========================================================");
+                    await Common.WriteLogAsync("Map data VSiriusDB to VSiriusWeb START //======================================================");
                 }
                 catch (Exception ex)
                 {

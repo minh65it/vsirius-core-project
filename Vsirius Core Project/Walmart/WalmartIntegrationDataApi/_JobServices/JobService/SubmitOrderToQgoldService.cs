@@ -166,9 +166,14 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
                     lstUpload.Add(paramQgold);
                 }
             }
-
-            var isSuccess = await CallSubmittedApi_RFT(lstUpload);
-
+            bool isSuccess = false;
+            if (lstUpload.Any())
+            {
+                Util.WriteLog("Start submit order");
+                isSuccess = await CallSubmittedApi_RFT(lstUpload);
+                Util.WriteLog("End submit order");
+            }
+            
             if (isSuccess)
             {
                 foreach (var item in lstUpload)

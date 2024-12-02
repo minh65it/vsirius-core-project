@@ -308,7 +308,7 @@ namespace AmazonIntegrationDataApi.Helpers.Ultilities
                 Dictionary<string, string> dictDataDefinitions = new();
                 List<ValidValueVsiriusModel> lstUpdate = new();
 
-                var fileName = Path.Combine(Directory.GetCurrentDirectory(), @"Resources\VsiriusTemplate1.0.xlsm");
+                var fileName = Path.Combine(Directory.GetCurrentDirectory(), @"ResourcesAmazonApi\VsiriusTemplate1.0.xlsm");
 
                 // mở file Excel và đọc dữ liệu
                 //var workbook = new Workbook(filePath);
