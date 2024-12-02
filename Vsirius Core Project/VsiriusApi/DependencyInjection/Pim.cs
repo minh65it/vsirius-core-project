@@ -23,14 +23,14 @@ namespace VsiriusApi.DependencyInjection
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IETLOrderService, ETLOrderService>();
             services.AddScoped<IOrderService, OrderService>();
-            /*
+
             services.AddUpdateJobs();
             //Jobs
             services.AddTransient<ETLOrderController>();
             services.AddTransient<VariationController>();
             services.AddJob<PIM_ETLOrder>();
             services.AddJob<PIM_MapVariationProduct>();
-            */
+
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         }
     }

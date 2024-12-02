@@ -14,7 +14,7 @@ namespace VsiriusApi.DependencyInjection
     {
         public static void AddProductAIServices(this IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddTransient<TriggerController>();
+            services.AddTransient<TriggerController>();
             services.AddTransient<IProductAIRepository, ProductAIRepository>();
             services.AddScoped<ICreateProductAiFromPimService, CreateProductAiFromPimService>();
             services.AddScoped<IProductAIService, ProductAIService>();

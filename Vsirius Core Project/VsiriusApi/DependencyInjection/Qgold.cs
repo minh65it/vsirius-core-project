@@ -15,10 +15,10 @@ namespace VsiriusApi.DependencyInjection
     {
         public static void AddQgoldServices(this IServiceCollection services, IConfiguration configuration)
         {
-            //services.AddUpdateJobs();
-            //services.AddTransient<QgoldProcessTriggerController>();
-            //services.AddJob<Qgold_PullProduct>();
-            //services.AddJob<Qgold_MappingQgoldToPIM>();
+            services.AddUpdateJobs();
+            services.AddTransient<QgoldProcessTriggerController>();
+            services.AddJob<Qgold_PullProduct>();
+            services.AddJob<Qgold_MappingQgoldToPIM>();
 
             services.AddTransient<IRepositoryAccessor, RepositoryAccessor>();
             services.AddScoped<IQgoldCsvDataService, QgoldCsvDataService>();
