@@ -1,4 +1,6 @@
-﻿using MongoDB.Driver;
+﻿using AutoMapper;
+using Azure;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using StullerOrderProcessAPI._JobServices.Interfaces;
 using StullerOrderProcessAPI._Repositories.Interfaces;
@@ -14,21 +16,30 @@ namespace StullerOrderProcessAPI._JobServices.JobService
     {
         private readonly IConfiguration _configuration;
         private readonly IStullerOrderRepository _orderStullerRepository;
+        private readonly AmazonIntegrationDataApi._Services.Interfaces.IOrderAmazonProcessor _amazonProcessor;
+        private readonly WalmartIntegrationDataApi._Services.Interfaces.IOrderWalmartService _walmartOrder;
+        private readonly IMapper _mapper;
 
         public GetStullerOrderService(
             IConfiguration configuration,
+            AmazonIntegrationDataApi._Services.Interfaces.IOrderAmazonProcessor amazonProcessor,
+            WalmartIntegrationDataApi._Services.Interfaces.IOrderWalmartService walmartOrder,
+            IMapper mapper,
             IStullerOrderRepository orderStullerRepository)
         {
             _configuration = configuration;
+            _amazonProcessor = amazonProcessor;
             _orderStullerRepository = orderStullerRepository;
+            _walmartOrder = walmartOrder;
+            _mapper = mapper;
         }
 
         public async Task GetStullerOrder()
         {
             try
             {
-                List<UnshipOrderDto> amazonOrders = await GetAmazonOrders();
-                List<UnshipOrderDto> walmartOrders = await GetWalmartOrders();
+                List<UnshipOrderDto> amazonOrders = await GetAmazonOrders_RFT();
+                List<UnshipOrderDto> walmartOrders = await GetWalmartOrders_RFT();
 
                 List<UnshipOrderDto> lstStullerPoFromMarketplace = new();
                 lstStullerPoFromMarketplace.AddRange(amazonOrders);
@@ -153,6 +164,44 @@ namespace StullerOrderProcessAPI._JobServices.JobService
             }
         }
 
+        private async Task<List<UnshipOrderDto>> GetWalmartOrders_RFT()
+        {
+            var param = new WalmartIntegrationDataApi.Dtos.Order.UnshippedOrderIdsParam();
+            var data = await _walmartOrder.GetUnshippedOrderIds(param);
+
+            var result = new List<UnshipOrderDto>();
+            foreach ( var item in data)
+            {
+                var dto = _mapper.Map<UnshipOrderDto>(item);
+                result.Add(dto);
+            }
+            return result;
+        }
+
+        private async Task<List<UnshipOrderDto>> GetAmazonOrders_RFT()
+        {
+            try
+            {
+                var param = new AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.UnshippedOrderIdsParam();
+                param.Provider = "Stuller";
+                param.FromDate = DateTime.Now.AddDays(-7).ToShortDateString();
+
+                var data = await _amazonProcessor.GetUnshippedOrderIds(param);
+                var rs = new List<UnshipOrderDto>();
+                foreach (var item in data)
+                {
+                    var dto = _mapper.Map<UnshipOrderDto>(item);
+                    rs.Add(dto);
+                }
+                return rs;
+            }
+            catch (Exception ex)
+            {
+                Utils.WriteLog($"GetAmazonOrders failed: {ex.ToString()}");
+                return new();
+            }
+        }
+
         private async Task<List<UnshipOrderDto>> GetAmazonOrders()
         {
             try
@@ -178,5 +227,6 @@ namespace StullerOrderProcessAPI._JobServices.JobService
                 return new();
             }
         }
+        
     }
 }

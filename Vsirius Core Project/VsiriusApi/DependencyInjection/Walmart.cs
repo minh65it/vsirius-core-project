@@ -8,6 +8,7 @@ using WalmartIntegrationDataApi._JobServices.Interfaces;
 using WalmartIntegrationDataApi._JobServices.JobService;
 using WalmartIntegrationDataApi.Common.Helpers;
 using WalmartIntegrationDataApi.Job;
+using StullerOrderProcessAPI._Repositories.Repositories;
 
 namespace VsiriusApi.DependencyInjection
 {
@@ -20,6 +21,7 @@ namespace VsiriusApi.DependencyInjection
 
             services.AddTransient<IOrderWalmartRepository, OrderWalmartRepository>();
             services.AddTransient<IOrderQgoldRepository, OrderQgoldRepository>();
+            services.AddTransient<WalmartIntegrationDataApi._Repositories.Interfaces.IStullerOrderRepository, WalmartIntegrationDataApi._Repositories.Repositories.StullerOrderRepository>();
             services.AddTransient<OperationResult>();
 
             services.AddSingleton<IValidationWithMasterExcel, ValidationWithMasterExcel>();
@@ -37,7 +39,8 @@ namespace VsiriusApi.DependencyInjection
             services.AddScoped<IUpdateInventoryService, UpdateInventoryService>();
             services.AddScoped<IUpdatePriceService, UpdatePriceService>();
             services.AddScoped<IMapVsiriusToWalmartService, MapVsiriusToWalmartService>();
-            
+            services.AddScoped<IOrderStullerService, OrderStullerService>();
+
             services.AddTransient<TriggerController>();
             
             services.AddJob<Walmart_UpdateTrackingOrder>();

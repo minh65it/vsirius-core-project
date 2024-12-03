@@ -30,6 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Amazon\AmazonIntegrationDataApi\AmazonIntegrationDataApi.csproj" />
+    <ProjectReference Include="..\..\Product\ProductApi\ProductApi.csproj" />
     <ProjectReference Include="..\..\VsiriusSystem\JobClient\QuartzInfrastructure.csproj" />
   </ItemGroup>
 

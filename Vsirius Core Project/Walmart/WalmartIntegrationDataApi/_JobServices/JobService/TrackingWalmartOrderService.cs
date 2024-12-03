@@ -10,6 +10,7 @@ using System.Text;
 using Newtonsoft.Json;
 using WalmartIntegrationDataApi.Common.Helpers;
 using AutoMapper;
+using WalmartIntegrationDataApi.DtosOrderStuller;
 
 namespace WalmartIntegrationDataApi._JobServices.JobService
 {
@@ -19,7 +20,7 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
         private readonly IOrderWalmartRepository _orderWalmartRepository;
         private readonly IInteractWalmartSellerCommonService _interactWalmartSellerService;
         private readonly IOrderQgoldRepository _orderQgoldRepository;
-        private readonly StullerOrderProcessAPI._Services.Interfaces.IOrderStullerService _orderStullerService;
+        private readonly WalmartIntegrationDataApi._Services.Interfaces.IOrderStullerService _orderStullerService;
         private readonly IMapper _mapper;
 
         public TrackingWalmartOrderService(
@@ -27,7 +28,7 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
             IInteractWalmartSellerCommonService interactWalmartSellerService,
             IConfiguration configuration,
             IOrderQgoldRepository orderQgoldRepository,
-            StullerOrderProcessAPI._Services.Interfaces.IOrderStullerService orderStullerService,
+            WalmartIntegrationDataApi._Services.Interfaces.IOrderStullerService orderStullerService,
             IMapper mapper)
         {
             _orderWalmartRepository = orderWalmartRepository;
@@ -328,10 +329,10 @@ namespace WalmartIntegrationDataApi._JobServices.JobService
             PaginationUtility<OrderStullerDTO> result = new PaginationUtility<OrderStullerDTO>(null, 1, 1, 1, 1);
             try
             {
-                StullerOrderProcessAPI.Common.Helpers.PaginationParam pagination = new StullerOrderProcessAPI.Common.Helpers.PaginationParam();
+                PaginationParam pagination = new PaginationParam();
                 pagination.PageNumber = pageNumber;
                 pagination.PageSize = pageSize;
-                var data = await _orderStullerService.GetOrders(pagination, new StullerOrderProcessAPI.Dtos.SearchOrderStullerParam());
+                var data = await _orderStullerService.GetOrders(pagination, new SearchOrderStullerParam());
 
                 result.Result = new List<OrderStullerDTO>();
                 result.Pagination.PageNumber = data.Pagination.PageNumber;

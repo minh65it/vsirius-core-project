@@ -37,7 +37,19 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<PimApi.Dtos.Variation.VariationDto, WalmartIntegrationDataApi.Dtos.Product.VariationDto>();
 
             CreateMap<PimApi.Dtos.ProductDto, WalmartIntegrationDataApi.Dtos.Vsirius.VsiriusProductDto>();
+
+            CreateMap<WalmartIntegrationDataApi.DtosOrderStuller.StullerOrderDTO, WalmartIntegrationDataApi.Dtos.Order.OrderStullerDTO>();
+            CreateMap<WalmartIntegrationDataApi.DtosOrderStuller.ItemStuller, WalmartIntegrationDataApi.Dtos.Order.ItemStuller>();
+
+            CreateMap<WalmartIntegrationDataApi.Dtos.Order.UnshipOrderDto, StullerOrderProcessAPI.Dtos.UnshipOrderDto>();
+            CreateMap<WalmartIntegrationDataApi.Dtos.Order.ItemUnShip, StullerOrderProcessAPI.Dtos.ItemUnShip>();
             #endregion
+
+            #region Stuller Order Process
+            CreateMap<AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.UnshipOrderDto, StullerOrderProcessAPI.Dtos.UnshipOrderDto>();
+            CreateMap<AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.ItemUnShip, StullerOrderProcessAPI.Dtos.ItemUnShip>();
+            #endregion
+
         }
     }
 }

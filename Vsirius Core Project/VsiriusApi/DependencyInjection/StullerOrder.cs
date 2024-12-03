@@ -19,9 +19,9 @@ namespace VsiriusApi.DependencyInjection
 
             services.AddScoped<IGetStullerOrderService, GetStullerOrderService>();
 
-            //services.AddTransient<TriggerController>();
-            //services.AddUpdateJobs();
-            //services.AddJob<Stuller_GetOrder>();
+            services.AddTransient<TriggerController>();
+            services.AddUpdateJobs();
+            services.AddJob<Stuller_GetOrder>();
         }
     }
 }
