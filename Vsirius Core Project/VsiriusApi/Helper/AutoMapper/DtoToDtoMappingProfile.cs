@@ -50,6 +50,21 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.ItemUnShip, StullerOrderProcessAPI.Dtos.ItemUnShip>();
             #endregion
 
+            #region Ebay
+            CreateMap<PimApi.Dtos.ProductDto, EbayCoreApi.Dtos.PimProductDto>();
+
+            CreateMap<ExcludedProductAPI.DTOs.ExcludedProductDTO, EbayCoreApi.Dtos.ExcludedProductDto>();
+
+            CreateMap<PimApi.Dtos.Variation.VariationDto, EbayCoreApi.Dtos.VariationDto>();
+
+            CreateMap<OrderProcessApi.DTOs.QgoldOrderDTO, EbayCoreApi.Dtos.OrderQgoldDto>();
+            CreateMap<OrderProcessDomain.Qgold.ItemQgold, EbayCoreApi.Dtos.ItemQgold>();
+
+            CreateMap<EbayCoreApi.Dtos.SubmitQgoldOrderDto, OrderProcessDomain.AmazonSeller.QgoldFtpOrderObject>();
+            CreateMap<EbayCoreApi.Dtos.ItemQgoldParam, OrderProcessDomain.AmazonSeller.QgoldFtpOrderItem>();
+
+            CreateMap<StullerOrderProcessAPI.Dtos.StullerOrderDTO, EbayCoreApi.Dtos.OrderStullerDto>();
+            #endregion
         }
     }
 }

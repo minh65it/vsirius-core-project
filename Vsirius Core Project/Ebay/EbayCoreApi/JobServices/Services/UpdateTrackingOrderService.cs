@@ -1,4 +1,5 @@
-﻿using eBay.Service.Call;
+﻿using AutoMapper;
+using eBay.Service.Call;
 using eBay.Service.Core.Soap;
 using EbayCoreApi.Common.Configurations;
 using EbayCoreApi.Common.Helpers;
@@ -15,10 +16,20 @@ namespace EbayCoreApi.JobServices.Services
     public class UpdateTrackingOrderService : IUpdateTrackingOrderService
     {
         private readonly EbayContext _context;
+        private readonly OrderProcessApi._Services.IServices.Qgold.IQgoldProcessService _serviceQgoldProcess;
+        private readonly StullerOrderProcessAPI._Services.Interfaces.IOrderStullerService _orderStullerService;
+        private readonly IMapper _mapper;
 
-        public UpdateTrackingOrderService(EbayContext context)
+
+        public UpdateTrackingOrderService(EbayContext context, 
+            OrderProcessApi._Services.IServices.Qgold.IQgoldProcessService serviceQgoldProcess,
+            StullerOrderProcessAPI._Services.Interfaces.IOrderStullerService orderStullerService,
+            IMapper mapper)
         {
             _context = context;
+            _serviceQgoldProcess = serviceQgoldProcess;
+            _orderStullerService = orderStullerService;
+            _mapper = mapper;
         }
 
         public async Task UpdateTrackingOrder()
@@ -34,10 +45,10 @@ namespace EbayCoreApi.JobServices.Services
                     && x.IsSubmit == true)
                     .ToListAsync();
 
-                List<OrderQgoldDto> lstOrderQgold = await GetQgoldOrder();
+                List<OrderQgoldDto> lstOrderQgold = await GetQgoldOrder_RFT();
                 lstOrderQgold = lstOrderQgold.Where(x => !string.IsNullOrEmpty(x.Tracking)).ToList();
 
-                List<OrderStullerDto> lstOrderStuller = await GetStullerOrder();
+                List<OrderStullerDto> lstOrderStuller = await GetStullerOrder_RFT();
 
                 var lstTracking = new List<TrackingDto>();
 
@@ -152,6 +163,34 @@ namespace EbayCoreApi.JobServices.Services
             return default;
         }
 
+        private async Task<List<OrderStullerDto>> GetStullerOrder_RFT()
+        {
+            var result = new List<OrderStullerDto>();
+            try
+            {
+                var pagination = new StullerOrderProcessAPI.Common.Helpers.PaginationParam();
+                pagination.PageSize = 300;
+
+                var search = new StullerOrderProcessAPI.Dtos.SearchOrderStullerParam();
+                search.FromDate = $"{DateTime.Now.AddDays(-5):yyyy-MM-dd}";
+                search.ToDate = $"{DateTime.Now:yyyy-MM-dd}";
+
+                var data = await _orderStullerService.GetOrders(pagination, search);
+
+                foreach (var item in data.Result)
+                {
+                    var dto = _mapper.Map<OrderStullerDto>(item);
+                    result.Add(dto);
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return result;
+            }
+        }
+
         private async Task<List<OrderQgoldDto>> GetQgoldOrder()
         {
             var client = new HttpClient();
@@ -164,6 +203,33 @@ namespace EbayCoreApi.JobServices.Services
                 return JsonConvert.DeserializeObject<PaginationDto<OrderQgoldDto>>(content).Data;
             }
             return default;
+        }
+
+        private async Task<List<OrderQgoldDto>> GetQgoldOrder_RFT()
+        {
+            var result = new List<OrderQgoldDto>();
+            try
+            {
+                var pagination = new OrderProcessApi.DTOs.PaginationParam();
+                pagination.PageSize = 300;
+
+                var search = new OrderProcessApi.DTOs.SearchQgoldProcessParam();
+                search.FromDate = $"{DateTime.Now.AddDays(-5):yyyy-MM-dd}";
+                search.ToDate = $"{DateTime.Now:yyyy-MM-dd}";
+
+                var data = await _serviceQgoldProcess.GetOrders(pagination, search);
+
+                foreach (var item in data.Data)
+                {
+                    var dto = _mapper.Map<OrderQgoldDto>(item);
+                    result.Add(dto);
+                }
+                return result;
+            }
+            catch (Exception)
+            {
+                return result;
+            }
         }
     }
 }

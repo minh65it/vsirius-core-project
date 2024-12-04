@@ -33,6 +33,7 @@
     <ProjectReference Include="..\..\Amazon\AmazonIntegrationDataApi\AmazonIntegrationDataApi.csproj" />
     <ProjectReference Include="..\..\Product\ProductApi\ProductApi.csproj" />
     <ProjectReference Include="..\..\VsiriusSystem\JobClient\QuartzInfrastructure.csproj" />
+    <ProjectReference Include="..\..\Walmart\WalmartIntegrationDataApi\WalmartIntegrationDataApi.csproj" />
   </ItemGroup>
 
 </Project>

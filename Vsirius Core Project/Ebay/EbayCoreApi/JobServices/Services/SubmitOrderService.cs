@@ -1,9 +1,11 @@
-﻿using EbayCoreApi.Common.Configurations;
+﻿using AutoMapper;
+using EbayCoreApi.Common.Configurations;
 using EbayCoreApi.Common.Helpers;
 using EbayCoreApi.DataContext;
 using EbayCoreApi.Dtos;
 using EbayCoreApi.JobServices.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Mathematics;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -12,11 +14,20 @@ namespace EbayCoreApi.JobServices.Services
     public class SubmitOrderService : ISubmitOrderService
     {
         private readonly EbayContext _context;
+        private readonly OrderProcessApi._Services.IServices.Qgold.IQgoldProcessService _qgoldProcessService;
+        private readonly OrderProcessApi._Services.IServices.Qgold.ISubmitOrderQgoldService _submitOrderQgoldProcessService;
+        private readonly IMapper _mapper;
 
         public SubmitOrderService(
+            OrderProcessApi._Services.IServices.Qgold.IQgoldProcessService qgoldProcessService,
+            OrderProcessApi._Services.IServices.Qgold.ISubmitOrderQgoldService submitOrderQgoldProcessService,
+            IMapper mapper,
             EbayContext context)
         {
             _context = context;
+            _qgoldProcessService = qgoldProcessService;
+            _mapper = mapper;
+            _submitOrderQgoldProcessService = submitOrderQgoldProcessService;
         }
 
         public async Task SubmitOrderEbay()
@@ -31,7 +42,7 @@ namespace EbayCoreApi.JobServices.Services
                     .ToListAsync();
 
                 UtilHelper.WriteLog("Get Order From Qgold DB in 5 days Start");
-                List<OrderQgoldDto> lstOrderQgold = await GetQgoldOrder();
+                List<OrderQgoldDto> lstOrderQgold = await GetQgoldOrder_RFT();
                 UtilHelper.WriteLog($"Amount Order Qgold in DB: {lstOrderQgold.Count}");
 
                 var lstSubmit = new List<SubmitQgoldOrderDto>();
@@ -82,12 +93,13 @@ namespace EbayCoreApi.JobServices.Services
                         }
 
                         lstSubmit.Add(submitOrder);
-                    }
+                    };
                 }
 
                 if (lstSubmit.Any())
                 {
-                    bool isSuccess = await CallSubmittedApi(lstSubmit);
+                    UtilHelper.WriteLog($"Starting submit order with {lstSubmit.Count} order");
+                    bool isSuccess = await CallSubmittedApi_RFT(lstSubmit);
                     if (isSuccess)
                     {
                         var lstEntityUpdateOrderSubmit = 
@@ -146,6 +158,28 @@ namespace EbayCoreApi.JobServices.Services
             }
         }
 
+        private async Task<bool> CallSubmittedApi_RFT(List<SubmitQgoldOrderDto> lstSubmit)
+        {
+            bool result = false;
+            try
+            {
+                var listSubmit = new List<OrderProcessDomain.AmazonSeller.QgoldFtpOrderObject>();
+                foreach (var item in lstSubmit)
+                {
+                    var dto = _mapper.Map<OrderProcessDomain.AmazonSeller.QgoldFtpOrderObject>(item);
+                    listSubmit.Add(dto);
+                }
+                result = await _submitOrderQgoldProcessService.SubmitQgold(listSubmit, null);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                UtilHelper.WriteLog($"Submit order failed with err: {ex.ToString}");
+                return result;
+            }
+        }
+
         private async Task<List<OrderQgoldDto>> GetQgoldOrder()
         {
             var client = new HttpClient();
@@ -158,6 +192,34 @@ namespace EbayCoreApi.JobServices.Services
                 return JsonConvert.DeserializeObject<PaginationDto<OrderQgoldDto>>(content).Data;
             }
             return default;
+        }
+
+        private async Task<List<OrderQgoldDto>> GetQgoldOrder_RFT()
+        {
+            var result = new List<OrderQgoldDto>();
+            try
+            {
+                var pagination = new OrderProcessApi.DTOs.PaginationParam();
+                pagination.PageSize = 300;
+
+                var search = new OrderProcessApi.DTOs.SearchQgoldProcessParam();
+                search.FromDate = $"{DateTime.Now.AddDays(-5):yyyy - MM - dd}";
+                search.ToDate = $"{DateTime.Now:yyyy-MM-dd}";
+
+                var data = await _qgoldProcessService.GetOrders(pagination, search);
+
+                foreach (var item in data.Data)
+                {
+                    var dto = _mapper.Map<OrderQgoldDto>(item);
+                    result.Add(dto);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                UtilHelper.WriteLog($"Get order from order process Err: {ex.ToString}");
+                return result;
+            }
         }
     }
 }

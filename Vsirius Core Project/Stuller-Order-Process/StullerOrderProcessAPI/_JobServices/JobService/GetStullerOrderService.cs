@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Azure;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using StullerOrderProcessAPI._JobServices.Interfaces;
@@ -167,6 +166,9 @@ namespace StullerOrderProcessAPI._JobServices.JobService
         private async Task<List<UnshipOrderDto>> GetWalmartOrders_RFT()
         {
             var param = new WalmartIntegrationDataApi.Dtos.Order.UnshippedOrderIdsParam();
+            param.Provider = "Stuller";
+            param.FromDate = DateTime.Now.AddDays(-7).ToShortDateString();
+
             var data = await _walmartOrder.GetUnshippedOrderIds(param);
 
             var result = new List<UnshipOrderDto>();
