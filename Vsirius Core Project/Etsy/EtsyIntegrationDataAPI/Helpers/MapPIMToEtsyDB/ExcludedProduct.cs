@@ -1,4 +1,5 @@
-﻿using EtsyIntegrationDataAPI.Dtos.MapPIMToEtsyDB;
+﻿using AutoMapper;
+using EtsyIntegrationDataAPI.Dtos.MapPIMToEtsyDB;
 using EtsyIntegrationDataAPI.Utilities;
 using Newtonsoft.Json;
 using System.Text;
@@ -10,17 +11,24 @@ namespace EtsyIntegrationDataAPI.Helpers.MapPIMToEtsyDB
     {
         public Task<List<ExcludedProductDto>?> GetExcludedProducts();
         public Task<bool> UpdateExcludedProducts(List<ExcludedProductDto> listUpdate);
+        public Task<bool> UpdateExcludedProducts_RFT(List<ExcludedProductDto> listUpdate);
     }
     public class ExcludedProduct : IExcludedProduct
     {
         private readonly IConfiguration _configuration;
         private ILoggerCustom _logService;
+        private readonly ExcludedProductAPI._Services.Interfaces.IExcludedProductService _serviceExcluded;
+        private readonly IMapper _mapper;
 
-        public ExcludedProduct(IConfiguration configuration, 
-            ILoggerCustom logService)
+        public ExcludedProduct(IConfiguration configuration,
+            ILoggerCustom logService,
+            IMapper mapper,
+            ExcludedProductAPI._Services.Interfaces.IExcludedProductService serviceExcluded)
         {
             _configuration = configuration;
             _logService = logService;
+            _serviceExcluded = serviceExcluded;
+            _mapper = mapper;
         }
 
         public async Task<List<ExcludedProductDto>?> GetExcludedProducts()
@@ -29,7 +37,7 @@ namespace EtsyIntegrationDataAPI.Helpers.MapPIMToEtsyDB
             {
                 List<ExcludedProductDto> allResults = new();
                 var pageSize = 3000;
-                var dataFirstCall = await GetPaginationExcludedProductAsync(1, pageSize);
+                var dataFirstCall = await GetPaginationExcludedProductAsync_RFT(1, pageSize);
                 var totalPages = 0;
                 List<ExcludedProductDto> firstData = new();
                 //first data
@@ -45,35 +53,22 @@ namespace EtsyIntegrationDataAPI.Helpers.MapPIMToEtsyDB
                     return null;
                 }
 
-                //List rest data
-                List<Task<PaginationUtility<ExcludedProductDto>?>> tasks = new();
-                int amountRunTask = 0;
                 for (int i = 2; i <= totalPages; i++)
                 {
                     int pageNumber = i;
 
-                    tasks.Add(GetPaginationExcludedProductAsync(pageNumber, pageSize));
+                    var getData = await GetPaginationExcludedProductAsync_RFT(pageNumber, pageSize);
 
-                    if (amountRunTask < 3 && i != totalPages)
+                    foreach (var result in getData.Result)
                     {
-                        amountRunTask++;
-                    }
-                    else
-                    {
-                        amountRunTask = 0;
-                        var results = await Task.WhenAll(tasks);
-                        foreach (var result in results)
+                        if (result != null)
                         {
-                            if (result != null)
-                            {
-                                allResults.AddRange(result.Result);
-                            }
-                            else
-                            {
-                                await _logService.CreateLogError($"Failed when add record");
-                            }
+                            allResults.AddRange(getData.Result);
                         }
-                        tasks.RemoveAll(x => x.IsCompleted);
+                        else
+                        {
+                            await _logService.CreateLogError($"Failed when add record");
+                        }
                     }
                 }
 
@@ -112,6 +107,25 @@ namespace EtsyIntegrationDataAPI.Helpers.MapPIMToEtsyDB
                 return false;
             }
 
+        }
+
+        public async Task<bool> UpdateExcludedProducts_RFT(List<ExcludedProductDto> listUpdate)
+        {
+            try
+            {
+                var list = new List<ExcludedProductAPI.DTOs.ExcludedProductDTO>();
+                foreach (var item in listUpdate)
+                {
+                    var dto = _mapper.Map<ExcludedProductAPI.DTOs.ExcludedProductDTO>(item);
+                }
+                var data = await _serviceExcluded.BulkCreateUpdate(list);
+                return data.Success;
+            }
+            catch (Exception ex)
+            {
+                await _logService.CreateLogError($"Get excluded product failed: with exception {ex.Message}");
+                return false;
+            }
         }
         public class ResponseData
         {
@@ -152,6 +166,41 @@ namespace EtsyIntegrationDataAPI.Helpers.MapPIMToEtsyDB
             }
 
             return result;
+        }
+
+        private async Task<PaginationUtility<ExcludedProductDto>?> GetPaginationExcludedProductAsync_RFT(int pageNumber, int pageSize)
+        {
+            var result = new PaginationUtility<ExcludedProductDto>(null, 1, 1, 1, 1);
+            try
+            {
+                var pagination = new ExcludedProductAPI.Helpers.PaginationParam();
+                pagination.PageNumber = pageNumber;
+                pagination.PageSize = pageSize;
+
+                var search = new ExcludedProductAPI.DTOs.ExcludedProductParam();
+                search.Marketplace = "Etsy";
+
+                var data = await _serviceExcluded.GetAll(pagination, search);
+
+                result.Result = new List<ExcludedProductDto>();
+                foreach (var item in data.Result)
+                {
+                    var dto = _mapper.Map<ExcludedProductDto>(item);
+                    result.Result.Add(dto);
+                }
+
+                result.Pagination.PageNumber = data.Pagination.PageNumber;
+                result.Pagination.PageSize = data.Pagination.PageSize;
+                result.Pagination.TotalCount = data.Pagination.TotalCount;
+                result.Pagination.Skip = data.Pagination.Skip;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logService.CreateLogError($"Get product excluded failed with exception {ex.Message} at page {pageNumber}");
+                return result;
+            }
         }
     }
 }

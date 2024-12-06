@@ -65,6 +65,12 @@ namespace VsiriusApi.Helper.AutoMapper
 
             CreateMap<StullerOrderProcessAPI.Dtos.StullerOrderDTO, EbayCoreApi.Dtos.OrderStullerDto>();
             #endregion
+
+            #region Etsy
+            CreateMap<PimApi.Dtos.ProductDto, EtsyIntegrationDataAPI.Dtos.MapPIMToEtsyDB.ProductPIMDto>();
+
+            CreateMap<ExcludedProductAPI.DTOs.ExcludedProductDTO, EtsyIntegrationDataAPI.Dtos.MapPIMToEtsyDB.ExcludedProductDto>().ReverseMap();
+            #endregion
         }
     }
 }

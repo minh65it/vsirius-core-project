@@ -36,12 +36,12 @@ namespace VsiriusApi.DependencyInjection
             services.AddScoped<IStullerApiClient, EtsyIntegrationDataAPI.Helpers.OrderEtsy.StullerApiClient>();
             services.AddScoped<ITopOrderService, TopOrderService>();
             services.AddScoped<IPropertiesProductService, PropertiesProductService>();
-            
-            //services.AddUpdateJobs();
-            //services.AddTransient<MapPIMToEtsyDBController>();
-            //services.AddJob<Etsy_MapPIMToEtsyDB>();
-            //services.AddTransient<ListingController>();
-            //services.AddJob<Etsy_CreateListDraftAndPublishListing>();
+
+            services.AddUpdateJobs();
+            services.AddTransient<MapPIMToEtsyDBController>();
+            services.AddJob<Etsy_MapPIMToEtsyDB>();
+            services.AddTransient<ListingController>();
+            services.AddJob<Etsy_CreateListDraftAndPublishListing>();
             //services.AddTransient<ListingInventoryController>();
             //services.AddJob<Etsy_UpdateAllListingInventory>();
             //// update order
@@ -52,7 +52,7 @@ namespace VsiriusApi.DependencyInjection
             //// update Properties
             //services.AddTransient<PropertiesProductController>();
             //services.AddJob<Etsy_UpdateProperties>();
-            
+
         }
     }
 }
