@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VsiriusMAUI.MainPage"
+             Title="">
+
+    <VerticalStackLayout
+            Padding="40,30"
+            Spacing="25">
+        <Image
+                x:Name="ImageShow"
+                Margin="20"
+                Source="logo.png"
+                HeightRequest="185"
+                Aspect="AspectFit"
+                SemanticProperties.Description="dot net bot in a race car number eight" />
+        <Label Text="Login to your Account" FontSize="14" FontFamily="OpenSansSemibold"/>
+
+        <Entry Placeholder="Email" Style="{StaticResource vInput}"/>
+          
+        <Entry Placeholder="Password" IsPassword="True" Style="{StaticResource vInput}"/>
+        <!--<Grid>
+            --><!-- Entry --><!--
+            <Entry Placeholder="Password"
+               IsPassword="{Binding isPassword}" />
+
+            --><!-- Toggle Button --><!--
+            <Button Text="{Binding iconPassword}"
+                Command="{Binding TogglePasswordCommand}" 
+                BackgroundColor="Green"
+                VerticalOptions="Center" 
+                HorizontalOptions="End" />
+        </Grid>-->
+
+        <Button
+                x:Name="SignIn"
+                Text="Sign in" 
+                HorizontalOptions="Fill" BackgroundColor="#ff8e00" Style="{StaticResource loginButton}" Clicked="SLogin"/>
+    </VerticalStackLayout>
+</ContentPage>
