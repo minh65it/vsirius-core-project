@@ -18,14 +18,16 @@ namespace PackageApi._Services.Services
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly string? _collectionName = "";
+        private readonly VsiriusSystem._Services.Interfaces.ITextractAwsService _extractAwsService;
 
-        public ClaimService(IClaimRepository claimRepository, IMapper mapper, IConfiguration configuration, IAzureStorage azureStorage)
+        public ClaimService(IClaimRepository claimRepository, IMapper mapper, IConfiguration configuration, IAzureStorage azureStorage, VsiriusSystem._Services.Interfaces.ITextractAwsService extractAwsService)
         {
             _claimRepository = claimRepository;
             _mapper = mapper;
             _configuration = configuration;
             _collectionName = _configuration.GetSection("Connectionstrings:ClaimCollection").Value;
             _azureStorage = azureStorage;
+            _extractAwsService = extractAwsService;
         }
 
         public async Task<List<ClaimDTO>> GetAllByRMA(List<string> rma)
@@ -106,8 +108,7 @@ namespace PackageApi._Services.Services
                     foreach (var item in model.Images)
                     {
                         var tmp = await _azureStorage.UploadAsync(item, PackageCommon.RenameFile(item, DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + dataAdd.Id));
-                        //string textImg = await CallApiGetTextFromImage(item);
-                        string textImg = "";
+                        string textImg = await _extractAwsService.AmazoneScanForText(item);
                         listImg.Add(new ImageInfo()
                         {
                             Text = textImg,
