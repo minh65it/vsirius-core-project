@@ -16,9 +16,9 @@
                 SemanticProperties.Description="dot net bot in a race car number eight" />
         <Label Text="Login to your Account" FontSize="14" FontFamily="OpenSansSemibold"/>
 
-        <Entry Placeholder="Email" Style="{StaticResource vInput}"/>
+        <Entry x:Name="email" Placeholder="Email" Style="{StaticResource vInput}"/>
           
-        <Entry Placeholder="Password" IsPassword="True" Style="{StaticResource vInput}"/>
+        <Entry x:Name="password" Placeholder="Password" IsPassword="True" Style="{StaticResource vInput}"/>
         <!--<Grid>
             --><!-- Entry --><!--
             <Entry Placeholder="Password"
@@ -35,6 +35,6 @@
         <Button
                 x:Name="SignIn"
                 Text="Sign in" 
-                HorizontalOptions="Fill" BackgroundColor="#ff8e00" Style="{StaticResource loginButton}" Clicked="SLogin"/>
+                HorizontalOptions="Fill" BackgroundColor="#ff8e00" Style="{StaticResource loginButton}" Clicked="funcLogin"/>
     </VerticalStackLayout>
 </ContentPage>

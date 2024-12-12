@@ -1,4 +1,6 @@
-﻿using VsiriusMAUI.Pages;
+﻿using Newtonsoft.Json;
+using System.Text;
+using VsiriusMAUI.Pages;
 using VsiriusMAUI.ViewModels;
 
 namespace VsiriusMAUI
@@ -11,9 +13,57 @@ namespace VsiriusMAUI
 			BindingContext = vm;
 		}
 
-		private void SLogin(object sender, EventArgs e)
+		private async void funcLogin(object sender, EventArgs e)
 		{
-			Navigation.PushAsync(new UploadPage());
+			try
+			{
+				//string action = await DisplayActionSheet("Choose an option", "Cancel", null, "Camera", "Gallery");
+				//FileResult? photo = null;
+				//if (action == "Camera")
+				//{
+				//	photo = await MediaPicker.CapturePhotoAsync() ?? new FileResult("dotnet_bot.png");
+				//	photo.FileName = DateTime.UtcNow.ToString("ddMMyyyyHHmmss");
+
+				//}
+				//else if (action == "Gallery")
+				//{
+				//	photo = await MediaPicker.PickPhotoAsync() ?? new FileResult("dotnet_bot.png");
+				//	photo.FileName = DateTime.UtcNow.ToString("ddMMyyyyHHmmss");
+				//}
+
+				//var localFilePath = photo!.FullPath;
+
+
+				//var platform = DeviceInfo.Platform;
+				string url = "http://api.vsirius.com/identity/api/Auth/Login";
+
+				var rBody = new
+				{
+					email = email.Text,
+					password = password.Text,
+					rememberMe = true
+				};
+
+				using (var httpClient = new HttpClient())
+				{
+					var jsonContent = new StringContent(JsonConvert.SerializeObject(rBody), Encoding.UTF8, "application/json");
+					var response = await httpClient.PostAsync(url, jsonContent);
+
+					if (response.IsSuccessStatusCode)
+					{
+						await Navigation.PushAsync(new UploadPage());
+					}
+					else
+					{
+						await DisplayAlert("Error", "Fail", "Cancel");
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				await DisplayAlert("Error", ex.ToString(), "Cancel");
+				Console.WriteLine(ex.ToString());
+			}
 		}
 	}
 
