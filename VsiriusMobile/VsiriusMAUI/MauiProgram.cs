@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿
+using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
+using VsiriusMAUI.Pages;
+using VsiriusMAUI.ViewModels;
 
 namespace VsiriusMAUI
 {
@@ -9,11 +13,20 @@ namespace VsiriusMAUI
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                .ConfigureFonts(fonts =>
+                .UseMauiCommunityToolkitCamera()
+				.ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddSingleton<MainViewModel>();
+
+            builder.Services.AddTransient<ScanPage>();
+            builder.Services.AddTransient<ScanViewModel>();
+            
+            builder.Services.AddTransient<UploadPage>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

@@ -1,0 +1,119 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VsiriusMAUI.Pages.UploadPage"
+             xmlns:vm="clr-namespace:VsiriusMAUI.ViewModels">
+
+    <ContentPage.BindingContext>
+        <vm:UploadViewModel />
+    </ContentPage.BindingContext>
+    
+
+    <Grid Padding="40, 30" >
+        <StackLayout Grid.Row="0" Spacing="10">
+            <!--<Grid HorizontalOptions="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Frame x:Name="Frame1" Grid.Row="0" Grid.Column="0" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
+                    <Image x:Name="Image1" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image.Triggers>
+                            <DataTrigger TargetType="Image" Binding="{Binding Source, Source={x:Reference Image1}}" Value="{x:Null}">
+                                <Setter Property="Source" Value="addicon.png" />
+                            </DataTrigger>
+                        </Image.Triggers>
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="uploadImage" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+
+                <Frame x:Name="Frame2" Grid.Row="0" Grid.Column="1" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
+                    <Image Source="addicon.png" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="uploadImage" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+                <Frame x:Name="Frame3" Grid.Row="1" Grid.Column="0" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
+                    <Image Source="addicon.png" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="uploadImage" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+
+                <Frame x:Name="Frame4" Grid.Row="1" Grid.Column="1" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
+                    <Image Source="addicon.png" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="uploadImage" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+            </Grid>-->
+            <Grid HorizontalOptions="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Image 1 -->
+                <Frame x:Name="Frame1" Grid.Row="0" Grid.Column="0" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
+                    <Image Source="addicon.png" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="uploadImage" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+
+                <!-- Image 2 -->
+                <Frame x:Name="Frame2" Grid.Row="0" Grid.Column="1" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
+                    <Image Source="addicon.png" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="uploadImage" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+
+                <!-- Image 3 -->
+                <Frame x:Name="Frame3" Grid.Row="1" Grid.Column="0" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
+                    <Image Source="addicon.png" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="uploadImage" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+
+                <!-- Image 4 -->
+                <Frame x:Name="Frame4" Grid.Row="1" Grid.Column="1" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
+                    <Image Source="addicon.png" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="uploadImage" />
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Frame>
+            </Grid>
+
+
+
+            <Picker x:Name="DocumentType" ItemsSource="{Binding Options}" SelectedItem="{Binding SelectedOption}" Title="Select an option"  HeightRequest="70"/>
+            <Label Text="Notes" />
+            <Editor x:Name="Notes" Placeholder="Enter notes here" HeightRequest="200" />
+
+
+        </StackLayout>
+        <Button Text="Submit" HorizontalOptions="Fill" Background="#ff8e00" VerticalOptions="End"  Clicked="GetImageData"/>
+    </Grid>
+</ContentPage>
+
+    
+    
