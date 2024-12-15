@@ -1,17 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
-using System.Net.Http.Headers;
-using System.Net.Http;
 using VsiriusMAUI.ViewModels;
 
 namespace VsiriusMAUI.Pages;
 
 public partial class UploadPage : ContentPage
 {
-
-
-
-	
-
 	public UploadPage()
 	{
 		InitializeComponent();
@@ -69,11 +62,26 @@ public partial class UploadPage : ContentPage
 			{
 				tappedImage.Source = ImageSource.FromFile(localFilePath);
 			}
+
 		}
 		catch (Exception ex)
 		{
+			loadingPageClicked(false);
 			await DisplayAlert("Error", ex.ToString(), "Cancel");
 			Console.WriteLine(ex.ToString());
+		}
+	}
+
+	private void loadingPageClicked(bool b)
+	{
+
+		if (b)
+		{
+			LoadingPage.turnOnLoadingPage();
+		}
+		else
+		{
+			LoadingPage.turnOffLoadingPage();
 		}
 	}
 
@@ -81,7 +89,7 @@ public partial class UploadPage : ContentPage
 	{
 		var frames = new List<Frame> { Frame1, Frame2, Frame3, Frame4 };
 		var fileStreams = new List<FileStream>();
-
+		loadingPageClicked(true);
 		using (var httpClient = new HttpClient())
 		{
 			try
@@ -127,7 +135,7 @@ public partial class UploadPage : ContentPage
 				requestContent.Add(new StringContent(test), "DocumentType");
 				requestContent.Add(new StringContent(Notes.Text), "Notes");
 
-				var url = "http://192.168.1.98:5200/api/Claim";
+				var url = "http://118.69.37.20:5200/api/Claim";
 				var response = await httpClient.PostAsync(url, requestContent);
 				var responseContent = await response.Content.ReadAsStringAsync();
 
@@ -142,26 +150,41 @@ public partial class UploadPage : ContentPage
 							image.Source = "addicon.png"; 
 						}
 					}
-					await DisplayAlert("Thành công", jsonResponse["message"]!.ToString(), "OK");
+					loadingPageClicked(false);
+					ShowCustomAlert("Notification", "Success");
 				}
 				else
 				{
-					await DisplayAlert("Lỗi", "Không thể tải lên hình ảnh: " + response.ReasonPhrase, "OK");
+					loadingPageClicked(false);
+					ShowCustomAlert("Notification", "Unable to upload the image");
 				}
 			}
-			catch (Exception ex)
+			catch 
 			{
-				await DisplayAlert("Lỗi", "Đã xảy ra lỗi khi tải lên hình ảnh: " + ex.Message, "OK");
+				loadingPageClicked(false);
+				ShowCustomAlert("Notification", "Unable to upload the image");
 			}
 			finally
 			{
-				// Đóng tất cả file streams
 				foreach (var stream in fileStreams)
 				{
 					stream.Dispose();
 				}
 			}
 		}
+	}
+
+	private void ShowCustomAlert(string title, string message)
+	{
+		CustomAlert.IsVisible = true;
+
+		NotiText.Text = message;
+		NotiTitle.Text = title;
+	}
+
+	private void OnAlertOkClicked(object sender, EventArgs e)
+	{
+		CustomAlert.IsVisible = false;
 	}
 
 	private string transEnumtoNumber(string s)

@@ -2,39 +2,59 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="VsiriusMAUI.MainPage"
+             xmlns:controls="clr-namespace:VsiriusMAUI.Pages.common"
              Title="">
+    <Grid>
+        <VerticalStackLayout
+                Padding="40,30"
+                Spacing="25">
+            <Image
+                    x:Name="ImageShow"
+                    Margin="20"
+                    Source="logo.png"
+                    HeightRequest="185"
+                    Aspect="AspectFit"
+                    SemanticProperties.Description="dot net bot in a race car number eight" />
+            <Label Text="Login to your Account" FontSize="14" FontFamily="OpenSansSemibold"/>
 
-    <VerticalStackLayout
-            Padding="40,30"
-            Spacing="25">
-        <Image
-                x:Name="ImageShow"
-                Margin="20"
-                Source="logo.png"
-                HeightRequest="185"
-                Aspect="AspectFit"
-                SemanticProperties.Description="dot net bot in a race car number eight" />
-        <Label Text="Login to your Account" FontSize="14" FontFamily="OpenSansSemibold"/>
+            <Entry x:Name="email" Placeholder="Email" Style="{StaticResource vInput}"/>
 
-        <Entry x:Name="email" Placeholder="Email" Style="{StaticResource vInput}"/>
-          
-        <Entry x:Name="password" Placeholder="Password" IsPassword="True" Style="{StaticResource vInput}"/>
-        <!--<Grid>
-            --><!-- Entry --><!--
-            <Entry Placeholder="Password"
-               IsPassword="{Binding isPassword}" />
+            <Entry x:Name="password" Placeholder="Password" IsPassword="True" Style="{StaticResource vInput}"/>
 
-            --><!-- Toggle Button --><!--
-            <Button Text="{Binding iconPassword}"
-                Command="{Binding TogglePasswordCommand}" 
-                BackgroundColor="Green"
-                VerticalOptions="Center" 
-                HorizontalOptions="End" />
-        </Grid>-->
+            <Grid VerticalOptions="Center" HorizontalOptions="Start" ColumnDefinitions="Auto, *" Padding="0" Margin="0">
 
-        <Button
-                x:Name="SignIn"
-                Text="Sign in" 
-                HorizontalOptions="Fill" BackgroundColor="#ff8e00" Style="{StaticResource loginButton}" Clicked="funcLogin"/>
-    </VerticalStackLayout>
+                <CheckBox x:Name="CheckboxShowpassword"  Grid.Column="0" Margin="0" IsChecked="False" CheckedChanged="CheckboxCheckedChanged" />
+
+                <Label Grid.Column="1" Text="Show password" VerticalOptions="Center" HorizontalOptions="Start" Margin="0" />
+            </Grid>
+
+            <Button  x:Name="SignIn" Text="Sign in" HorizontalOptions="Fill" BackgroundColor="#ff8e00" Style="{StaticResource loginButton}" Clicked="funcLogin"/>
+        </VerticalStackLayout>
+
+        <Grid x:Name="CustomAlert"
+              IsVisible="False"
+              BackgroundColor="#80000000" 
+              VerticalOptions="FillAndExpand"
+              HorizontalOptions="FillAndExpand">
+            <Frame VerticalOptions="Center"
+                   HorizontalOptions="Center"
+                   Padding="20"
+                   BackgroundColor="White"
+                   CornerRadius="15"
+                   WidthRequest="300"
+                   HasShadow="True">
+                <StackLayout>
+                    <Label x:Name="NotiTitle" 
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center" />
+                    <Label x:Name="NotiText"
+                           HorizontalOptions="Center"
+                           Margin="0,10,0,10" />
+                    <Button BackgroundColor="#ff8e00" Text="Close" Clicked="OnAlertOkClicked" />
+                </StackLayout>
+            </Frame>
+        </Grid>
+        <controls:LoadingPage x:Name="LoadingPage"/>
+    </Grid>
 </ContentPage>

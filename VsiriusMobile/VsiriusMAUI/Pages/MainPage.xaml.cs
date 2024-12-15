@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Text;
 using VsiriusMAUI.Pages;
+using VsiriusMAUI.Pages.common;
 using VsiriusMAUI.ViewModels;
 
 namespace VsiriusMAUI
@@ -13,28 +14,22 @@ namespace VsiriusMAUI
 			BindingContext = vm;
 		}
 
+		//private void OnTogglePasswordVisibilityClicked(object sender, EventArgs e)
+		//{
+		//	password.IsPassword = !password.IsPassword;
+		//	togglePasswordVisibility.Text = password.IsPassword ? "👁️" : "🚫";
+		//}
+
+		private void CheckboxCheckedChanged(object sender, EventArgs e)
+		{
+			password.IsPassword = !password.IsPassword;
+		}
+
 		private async void funcLogin(object sender, EventArgs e)
 		{
 			try
 			{
-				//string action = await DisplayActionSheet("Choose an option", "Cancel", null, "Camera", "Gallery");
-				//FileResult? photo = null;
-				//if (action == "Camera")
-				//{
-				//	photo = await MediaPicker.CapturePhotoAsync() ?? new FileResult("dotnet_bot.png");
-				//	photo.FileName = DateTime.UtcNow.ToString("ddMMyyyyHHmmss");
-
-				//}
-				//else if (action == "Gallery")
-				//{
-				//	photo = await MediaPicker.PickPhotoAsync() ?? new FileResult("dotnet_bot.png");
-				//	photo.FileName = DateTime.UtcNow.ToString("ddMMyyyyHHmmss");
-				//}
-
-				//var localFilePath = photo!.FullPath;
-
-
-				//var platform = DeviceInfo.Platform;
+				loadingPageClicked(true);
 				string url = "http://api.vsirius.com/identity/api/Auth/Login";
 
 				var rBody = new
@@ -51,11 +46,13 @@ namespace VsiriusMAUI
 
 					if (response.IsSuccessStatusCode)
 					{
+						loadingPageClicked(false);
 						await Navigation.PushAsync(new UploadPage());
 					}
 					else
 					{
-						await DisplayAlert("Error", "Fail", "Cancel");
+						loadingPageClicked(false);
+						ShowCustomAlert("Notification", "Email or password is incorrect");
 					}
 				}
 			}
@@ -64,6 +61,31 @@ namespace VsiriusMAUI
 				await DisplayAlert("Error", ex.ToString(), "Cancel");
 				Console.WriteLine(ex.ToString());
 			}
+		}
+
+		private void loadingPageClicked(bool b)
+		{
+
+			if (b)
+			{
+				LoadingPage.turnOnLoadingPage();
+			} else
+			{
+				LoadingPage.turnOffLoadingPage();
+			}
+		}
+
+		private void ShowCustomAlert(string title, string message)
+		{
+			CustomAlert.IsVisible = true;
+
+			NotiText.Text = message;
+			NotiTitle.Text = title;
+		}
+
+		private void OnAlertOkClicked(object sender, EventArgs e)
+		{
+			CustomAlert.IsVisible = false;
 		}
 	}
 
