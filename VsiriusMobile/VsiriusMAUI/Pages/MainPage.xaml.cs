@@ -39,8 +39,15 @@ namespace VsiriusMAUI
 					rememberMe = true
 				};
 
-				using (var httpClient = new HttpClient())
+				var handler = new HttpClientHandler
 				{
+					
+					ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+				};
+
+				using (var httpClient = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(30)})
+				{
+					
 					var jsonContent = new StringContent(JsonConvert.SerializeObject(rBody), Encoding.UTF8, "application/json");
 					var response = await httpClient.PostAsync(url, jsonContent);
 
@@ -52,7 +59,7 @@ namespace VsiriusMAUI
 					else
 					{
 						loadingPageClicked(false);
-						ShowCustomAlert("Notification", "Email or password is incorrect");
+						ShowCustomAlert("Notification", "Email or password is incorrect");	
 					}
 				}
 			}
