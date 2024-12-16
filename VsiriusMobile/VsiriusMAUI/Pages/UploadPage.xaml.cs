@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Maui.Controls;
+using Newtonsoft.Json.Linq;
 using VsiriusMAUI.ViewModels;
 
 namespace VsiriusMAUI.Pages;
@@ -104,6 +105,8 @@ public partial class UploadPage : ContentPage
 						{
 							if (File.Exists(path))
 							{
+								var actualPath = path.File;
+								Console.WriteLine($"File not found: {actualPath}");
 								if (Path.GetExtension(path) != "addicon.png")
 								{
 									var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
@@ -159,10 +162,10 @@ public partial class UploadPage : ContentPage
 					ShowCustomAlert("Notification", "Unable to upload the image");
 				}
 			}
-			catch 
+			catch (Exception ex)
 			{
 				loadingPageClicked(false);
-				ShowCustomAlert("Notification", "Unable to upload the image");
+				ShowCustomAlert($"Notification", $"Something:{ex.Message}");
 			}
 			finally
 			{
