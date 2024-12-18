@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace VsiriusMAUI.ViewModels
 {
-	public partial class UploadViewModel: INotifyPropertyChanged
+	public partial class UploadViewModel: ObservableObject
 	{
 		public ObservableCollection<string> Images { get; set; } = new ObservableCollection<string>();
 		public ObservableCollection<string> Options { get; set; }
@@ -34,7 +30,7 @@ namespace VsiriusMAUI.ViewModels
 
 		public UploadViewModel()
 		{
-			// Initialize Options
+
 			Options = new ObservableCollection<string>
 			{
 				"Return Package",
@@ -52,12 +48,6 @@ namespace VsiriusMAUI.ViewModels
 			{
 				Images.Add(result.FullPath);
 			}
-		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected virtual void OnPropertyChanged(string propertyName)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }

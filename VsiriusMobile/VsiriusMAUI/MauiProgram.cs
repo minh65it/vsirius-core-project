@@ -1,6 +1,8 @@
 ﻿
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using VsiriusMAUI.Common._Service.Interface;
+using VsiriusMAUI.Common._Service.Service;
 using VsiriusMAUI.Pages;
 using VsiriusMAUI.ViewModels;
 
@@ -26,14 +28,17 @@ namespace VsiriusMAUI
 
             builder.Services.AddTransient<ScanPage>();
             builder.Services.AddTransient<ScanViewModel>();
-            
+
             builder.Services.AddTransient<UploadPage>();
+
+			builder.Services.AddSingleton<IAlertService, AlertService>();
+
 
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif
 
-            return builder.Build();
+			return builder.Build();
         }
     }
 }

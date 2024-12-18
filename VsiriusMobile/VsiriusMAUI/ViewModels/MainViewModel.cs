@@ -1,29 +1,89 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.ComponentModel;
+using Newtonsoft.Json;
+using System.Text;
 using System.Windows.Input;
+using VsiriusMAUI.Common._Service.Interface;
+using VsiriusMAUI.Pages;
 
 namespace VsiriusMAUI.ViewModels
 {
 	public partial class MainViewModel: ObservableObject
 	{
-		[ObservableProperty]
-		public bool isPassword = true;
 
-		[ObservableProperty]
-		public string iconPassword = "Hide";
+		private readonly IAlertService _alertService;
 
-		public ICommand TogglePasswordCommand { get; }
+		private string _email = string.Empty;
+		private string _password = string.Empty;
 
-
-		public MainViewModel()
+		public string Email
 		{
-			TogglePasswordCommand = new Command(OnCick);
+			get => _email;
+			set => SetProperty(ref _email, value);
 		}
 
-		private void OnCick()
+		public string Password
 		{
-			IsPassword = !IsPassword;
-			IconPassword = IsPassword ? "Hide" : "Show";
+			get => _password;
+			set => SetProperty(ref _password, value);
+		}
+
+
+		public ICommand Loggin { get; }
+
+		public MainViewModel(IAlertService alertService)
+		{
+			Loggin = new Command(() => _loggin());
+
+			_alertService = alertService;
+		}
+
+		private async void _loggin()
+		{
+			try
+			{
+				// loadingPageClicked(true);
+				string url = "http://api.vsirius.com/identity/api/Auth/Login";
+
+				var rBody = new
+				{
+					email = Email,
+					password = Password.Replace(" ", ""),
+					rememberMe = true
+				};
+
+				var handler = new HttpClientHandler
+				{
+
+					ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+				};
+
+				using (var httpClient = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(30) })
+				{
+
+					var jsonContent = new StringContent(JsonConvert.SerializeObject(rBody), Encoding.UTF8, "application/json");
+					var response = await httpClient.PostAsync(url, jsonContent);
+
+					if (response.IsSuccessStatusCode)
+					{
+						// loadingPageClicked(false);
+
+						await Shell.Current.GoToAsync(nameof(UploadPage));
+					}
+					else
+					{
+						await _alertService.DisplayAlertAsync("Notification", "Email or password is incorrect", "Close");
+						//loadingPageClicked(false);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				await _alertService.DisplayAlertAsync("Error", ex.ToString(), "Close");
+			}
+			finally
+			{
+				// loadingPageClicked(false); 
+			}
 		}
 
 	}
