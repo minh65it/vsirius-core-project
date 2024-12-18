@@ -30,6 +30,7 @@ namespace VsiriusMAUI
             builder.Services.AddTransient<ScanViewModel>();
 
             builder.Services.AddTransient<UploadPage>();
+            builder.Services.AddTransient<UploadViewModel>();
 
 			builder.Services.AddSingleton<IAlertService, AlertService>();
 
