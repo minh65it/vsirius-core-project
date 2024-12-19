@@ -78,10 +78,10 @@
                     </StackLayout>
                 </Frame>
             </Grid>
-
-            <Picker x:Name="DocumentType" ItemsSource="{Binding Options}" SelectedItem="{Binding SelectedOption}" HeightRequest="55"/>
-            <Label Text="{Binding Note}" />
-            <Editor x:Name="Notes" Placeholder="Enter notes here" HeightRequest="200" />
+            <Label Text="Document type" />
+            <Picker ItemsSource="{Binding Options}" SelectedItem="{Binding SelectedOption}" HeightRequest="55"/>
+            <Label Text="Notes" />
+            <Editor Text="{Binding Note}" Placeholder="Enter notes here" HeightRequest="200" />
         </StackLayout>
 
         <Button Text="Submit" HorizontalOptions="Fill" Background="#ff8e00" VerticalOptions="End" Command="{Binding ScanImage}"/>

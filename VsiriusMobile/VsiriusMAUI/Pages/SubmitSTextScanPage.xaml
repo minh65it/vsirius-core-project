@@ -4,11 +4,13 @@
              x:Class="VsiriusMAUI.Pages.SubmitSTextScanPage"
              xmlns:vm="clr-namespace:VsiriusMAUI.ViewModels"
              x:DataType="vm:SubmitTextScanViewModel"
-             Title="SubmitSTextScanPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="ádsad"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="">
+    <Editor Text="{Binding .}" HeightRequest="200" />
+    <CollectionView ItemsSource="{Binding ListDescription}">
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Editor Text="{Binding .}" HeightRequest="200" />
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
 </ContentPage>
