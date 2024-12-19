@@ -17,6 +17,9 @@ namespace VsiriusMAUI.Configurations
 
 			services.AddTransient<UploadPage>();
 			services.AddTransient<UploadViewModel>();
+
+			services.AddTransient<SubmitTextScanViewModel>();
+			services.AddTransient<SubmitSTextScanPage>();
 		}
 	}
 }

@@ -8,6 +8,8 @@ namespace VsiriusMAUI
         {
             InitializeComponent();
             Routing.RegisterRoute(nameof(UploadPage), typeof(UploadPage));
-        }
+			Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
+			Routing.RegisterRoute(nameof(SubmitSTextScanPage), typeof(SubmitSTextScanPage));
+		}
     }
 }

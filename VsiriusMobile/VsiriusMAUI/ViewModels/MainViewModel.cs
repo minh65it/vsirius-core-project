@@ -71,6 +71,7 @@ namespace VsiriusMAUI.ViewModels
 						// loadingPageClicked(false);
 
 						await Shell.Current.GoToAsync(nameof(UploadPage));
+						
 					}
 					else
 					{

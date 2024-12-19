@@ -8,8 +8,10 @@ using Microsoft.Maui.Controls;
 using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Text.Json;
 using System.Windows.Input;
 using VsiriusMAUI.Common._Service.Interface;
+using VsiriusMAUI.Pages;
 
 namespace VsiriusMAUI.ViewModels
 {
@@ -63,8 +65,6 @@ namespace VsiriusMAUI.ViewModels
 		public bool IsImageNull2 => GetIsImageNull(1);
 		public bool IsImageNull3 => GetIsImageNull(2);
 		public bool IsImageNull4 => GetIsImageNull(3);
-
-		public ICommand Image2Text { get; }
 		public ICommand ScanImage { get; }
 		public ICommand UploadImage { get; }
 		
@@ -80,7 +80,6 @@ namespace VsiriusMAUI.ViewModels
 				"Shipped Package"
 			};
 
-			Image2Text = new Command<string>(async (path) => await _image2Text(path));
 			ScanImage = new Command(async () => await _scanImage());
 			UploadImage = new Command<string>(async (index) => await _UploadImage(index));
 		}
@@ -144,20 +143,30 @@ namespace VsiriusMAUI.ViewModels
 			}
 		}
 
-		private async Task<List<string>> _scanImage()
+		private async Task _scanImage()
 		{
-			var paths = new List<string> { Path1, Path2, Path3, Path4 };
-
-			var results = new List<string>();
-
-			foreach(var path in paths)
+			try
 			{
-				if(string.IsNullOrEmpty(path)) continue;
-				var result = await _image2Text(path);
-				results.Add(result);
-			}
+				var paths = new List<string> { Path1, Path2, Path3, Path4 };
 
-			return results;
+				var results = new List<string>();
+
+				foreach (var path in paths)
+				{
+					if (string.IsNullOrEmpty(path)) continue;
+					var result = await Image2Text(path);
+					results.Add(result);
+				}
+
+				var jsonList = JsonSerializer.Serialize(results);
+
+				await Shell.Current.GoToAsync($"{nameof(SubmitSTextScanPage)}?JsonList={jsonList}");
+			}
+			catch (Exception ex)
+			{
+				await _alertService.DisplayAlertAsync("Error", $"{ex.ToString}", "Close");
+			}
+			
 
 		}
 
@@ -264,11 +273,13 @@ namespace VsiriusMAUI.ViewModels
 			}
 		}
 
-		private async Task<string> _image2Text(string path)
+		private async Task<string> Image2Text(string path)
 		{
 			try
 			{
-				var credentials = new BasicAWSCredentials(_configuration["AccessKey"]!, _configuration["SecretKey"]!);
+				var accessKey = _configuration["AmazonKey:AccessKey"]!;
+				var secretKey = _configuration["AmazonKey:SecretKey"]!;
+				var credentials = new BasicAWSCredentials(accessKey, secretKey);
 				StringBuilder sb = new();
 
 				MemoryStream stream = await Common.Utilities.Common.ReadFile(path);
