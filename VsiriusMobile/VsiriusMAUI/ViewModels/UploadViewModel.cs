@@ -78,6 +78,7 @@ namespace VsiriusMAUI.ViewModels
 		public ICommand AddImageCommand { get; }
 		public ICommand Image2Text { get; }
 		public ICommand ScanImage { get; }
+		public ICommand UploadImage { get; }
 
 		public UploadViewModel(IAlertService alertService)
 		{
@@ -93,6 +94,66 @@ namespace VsiriusMAUI.ViewModels
 			AddImageCommand = new Command(async () => await OnAddImage());
 			Image2Text = new Command<string>(async (path) => await _image2Text(path));
 			ScanImage = new Command(async () => await _scanImage());
+			UploadImage = new Command<int>(async (index) => await _UploadImage(index));
+		}
+
+		private async Task _UploadImage(int index)
+		{
+			try
+			{
+				var action = await _alertService.DisplayActionSheet(new List<string> { "Camera", "Gallery" });
+				FileResult? photo = null;
+
+				if (action == "Camera")
+				{
+					var capturedPhoto = await MediaPicker.CapturePhotoAsync();
+					if (capturedPhoto != null)
+					{
+						photo = capturedPhoto;
+						photo.FileName = DateTime.UtcNow.ToString("ddMMyyyyHHmmss");
+					}
+					else
+					{
+						photo = null;
+					}
+				}
+				else if (action == "Gallery")
+				{
+					var pickedPhoto = await MediaPicker.PickPhotoAsync();
+					if (pickedPhoto != null)
+					{
+						photo = pickedPhoto;
+						photo.FileName = DateTime.UtcNow.ToString("ddMMyyyyHHmmss");
+					}
+					else
+					{
+						photo = null;
+					}
+				}
+				else if (action == "Cancel")
+				{
+					photo = null;
+					return;
+				}
+
+				if (photo == null)
+				{
+					return;
+				}
+
+
+				var localFilePath = photo!.FullPath;
+
+				SetPath(index, localFilePath);
+
+			}
+			catch (Exception ex)
+			{
+				// loadingPageClicked(false);
+				// await DisplayAlert("Error", ex.ToString(), "Cancel");
+				await _alertService.DisplayAlertAsync("Error", $"{ex.ToString()}", "Close");
+				Console.WriteLine(ex.ToString());
+			}
 		}
 
 		private async Task<List<string>> _scanImage()

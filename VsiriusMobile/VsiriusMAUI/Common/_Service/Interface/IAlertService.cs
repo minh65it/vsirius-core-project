@@ -9,5 +9,7 @@ namespace VsiriusMAUI.Common._Service.Interface
 	public interface IAlertService
 	{
 		Task DisplayAlertAsync(string title, string message, string cancel);
+		Task<string> DisplayActionSheet(List<string> action);
+
 	}
 }
