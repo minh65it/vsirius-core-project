@@ -21,12 +21,12 @@
 
                     <Frame x:Name="Frame1" Grid.Row="0" Grid.Column="0" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
                         <StackLayout>
-                            <Image Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image x:Name="displayf1" Source="{Binding Path1}" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="uploadImage" />
                                 </Image.GestureRecognizers>
                             </Image>
-                            <Image Source="addicon.png" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="addicon.png" Aspect="AspectFill" IsVisible="{Binding IsImageNull1}" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="uploadImage" />
                                 </Image.GestureRecognizers>
@@ -36,12 +36,12 @@
 
                     <Frame x:Name="Frame2" Grid.Row="0" Grid.Column="1" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
                         <StackLayout>
-                            <Image Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="{Binding Path2}" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="uploadImage" />
                                 </Image.GestureRecognizers>
                             </Image>
-                            <Image Source="addicon.png" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="addicon.png" Aspect="AspectFill" IsVisible="{Binding IsImageNull2}" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="uploadImage" />
                                 </Image.GestureRecognizers>
@@ -51,12 +51,12 @@
 
                     <Frame x:Name="Frame3" Grid.Row="1" Grid.Column="0" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
                         <StackLayout>
-                            <Image Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="{Binding Path3}" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="uploadImage" />
                                 </Image.GestureRecognizers>
                             </Image>
-                            <Image Source="addicon.png" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="addicon.png" Aspect="AspectFill" IsVisible="{Binding IsImageNull3}" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="uploadImage" />
                                 </Image.GestureRecognizers>
@@ -66,12 +66,12 @@
 
                     <Frame x:Name="Frame4" Grid.Row="1" Grid.Column="1" WidthRequest="110" HeightRequest="110" Margin="10" Padding="0">
                         <StackLayout>
-                            <Image Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="{Binding Path4}" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="uploadImage" />
                                 </Image.GestureRecognizers>
                             </Image>
-                            <Image Source="addicon.png" Aspect="AspectFill" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="addicon.png" Aspect="AspectFill" IsVisible="{Binding IsImageNull4}" HorizontalOptions="Center" VerticalOptions="Center">
                                 <Image.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="uploadImage" />
                                 </Image.GestureRecognizers>

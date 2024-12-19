@@ -25,14 +25,12 @@ namespace VsiriusMAUI.ViewModels
 		public string KeyorPath
 		{
 			get => _keyorPath;
-			set => SetProperty(ref _keyorPath, value);
 		}
 
 		private string _secretKey = "eMiQIRN8j4srfwbpdOBTGeUr81j2TUUu894fvOiD";
 		public string SecretKey
 		{
 			get => _secretKey;
-			set => SetProperty(ref _secretKey, value);
 		}
 
 		private string _note = string.Empty;
@@ -51,34 +49,31 @@ namespace VsiriusMAUI.ViewModels
 			set => SetProperty(ref _selectedOption, value);
 		}
 
+		private readonly string[] _paths = new string[4];
 
-		private string _path1 = string.Empty;
-		public string Path1
+		public string GetPath(int index) => _paths[index];
+
+		public void SetPath(int index, string value)
 		{
-			get => _path1;
-			set => SetProperty(ref _path1, value);
+			if (index >= 0 && index < _paths.Length)
+			{
+				_paths[index] = value;
+				OnPropertyChanged($"Path{index + 1}");
+				OnPropertyChanged($"IsImageNull{index + 1}");
+			}
 		}
 
-		private string _path2 = string.Empty;
-		public string Path2
-		{
-			get => _path2;
-			set => SetProperty(ref _path2, value);
-		}
+		public bool GetIsImageNull(int index) => string.IsNullOrEmpty(GetPath(index));
 
-		private string _path3 = string.Empty;
-		public string Path3
-		{
-			get => _path3;
-			set => SetProperty(ref _path3, value);
-		}
+		public string Path1 => GetPath(0);
+		public string Path2 => GetPath(1);
+		public string Path3 => GetPath(2);
+		public string Path4 => GetPath(3);
 
-		private string _path4 = string.Empty;
-		public string Path4
-		{
-			get => _path4;
-			set => SetProperty(ref _path4, value);
-		}
+		public bool IsImageNull1 => GetIsImageNull(0);
+		public bool IsImageNull2 => GetIsImageNull(1);
+		public bool IsImageNull3 => GetIsImageNull(2);
+		public bool IsImageNull4 => GetIsImageNull(3);
 
 		public ICommand AddImageCommand { get; }
 		public ICommand Image2Text { get; }
