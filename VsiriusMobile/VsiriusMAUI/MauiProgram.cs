@@ -1,10 +1,7 @@
-﻿
-using CommunityToolkit.Maui;
-using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Maui;
 using VsiriusMAUI.Common._Service.Interface;
 using VsiriusMAUI.Common._Service.Service;
-using VsiriusMAUI.Pages;
-using VsiriusMAUI.ViewModels;
+using VsiriusMAUI.Configurations;
 
 namespace VsiriusMAUI
 {
@@ -23,17 +20,8 @@ namespace VsiriusMAUI
 					fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddSingleton<MainViewModel>();
-
-            builder.Services.AddTransient<ScanPage>();
-            builder.Services.AddTransient<ScanViewModel>();
-
-            builder.Services.AddTransient<UploadPage>();
-            builder.Services.AddTransient<UploadViewModel>();
-
-			builder.Services.AddSingleton<IAlertService, AlertService>();
-
+            DIServiceRegistry.RegisterDIService(builder.Services);
+            PageRegistry.RegisterPage(builder.Services);
 
 #if DEBUG
     		builder.Logging.AddDebug();
