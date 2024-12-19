@@ -146,6 +146,63 @@ namespace PackageApi._Services.Services
             }
         }
 
+        public async Task<OperationResult> SaveTextFromImage(ClaimTextParam model)
+        {
+            try
+            {
+                if (model.DocumentType == null)
+                {
+                    return new OperationResult() { Success = false, Message = "Error created, DocumentType is not null", };
+                }
+
+                Claim dataAdd = new Claim();
+                dataAdd.Notes = _mapper.Map<List<string>>(model.Notes);
+                dataAdd.DocumentType = model.DocumentType?.ToString();
+                dataAdd.Id = Guid.NewGuid().ToString();
+                dataAdd.ScanDate = DateTime.Now;
+                var listImg = new List<ImageInfo>() { };
+
+                if (model.Images != null)
+                {
+                    foreach (var item in model.Images)
+                    {                      
+                        string textImg = await _extractAwsService.AmazoneScanForText(item);
+                        listImg.Add(new ImageInfo()
+                        {
+                            Text = item.Text,
+                            Url = item.Url,
+                        });
+                        if (string.IsNullOrWhiteSpace(dataAdd.Marketplace)
+                            || string.IsNullOrWhiteSpace(dataAdd.RMA)
+                            || string.IsNullOrWhiteSpace(dataAdd.MarketplaceOrderId))
+                        {
+                            if (textImg.Contains("Walmart Returns"))
+                            {
+                                dataAdd.Marketplace = "Walmart";
+                                dataAdd.MarketplaceOrderId = PackageCommon.GetMarketplaceOrderId(item.Text);
+                                dataAdd.RMA = PackageCommon.GetRMA(item.Text);
+                            }
+                            if (textImg.Contains("Amazon Return ID"))
+                            {
+                                dataAdd.Marketplace = "Amazon";
+                                dataAdd.MarketplaceOrderId = PackageCommon.GetMarketplaceOrderId(item.Text);
+                                dataAdd.RMA = PackageCommon.GetRMA(item.Text);
+                            }
+                        }
+
+                    }
+                }
+                dataAdd.Images = listImg;
+                await _claimRepository.InsertOne(dataAdd, _collectionName);
+                return new OperationResult() { Success = true, Message = "Successfully created", Data = dataAdd };
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         private async Task<string> CallApiGetTextFromImage(IFormFile item)
         {
             var httpClient = new HttpClient();
