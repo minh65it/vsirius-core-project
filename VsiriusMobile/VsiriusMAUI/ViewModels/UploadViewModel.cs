@@ -3,6 +3,7 @@ using Amazon.Runtime;
 using Amazon.Textract;
 using Amazon.Textract.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Maui.Controls;
 using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
@@ -15,13 +16,11 @@ namespace VsiriusMAUI.ViewModels
 	public partial class UploadViewModel: ObservableObject
 	{
 		private readonly IAlertService _alertService;
+		private readonly IConfiguration _configuration;
 
 		public ObservableCollection<string> Images { get; set; } = new ObservableCollection<string>();
 
 		public ObservableCollection<string> Options { get; set; }
-
-		public string KeyorPath { get; set; } = "REMOVED_AWS_KEY";
-		public string SecretKey { get; set; } = "0WkCMked5LQGCZAU58X66T/9B4+6nnxdzJc6MeKj";
 
 		private string _note = string.Empty;
 
@@ -65,14 +64,14 @@ namespace VsiriusMAUI.ViewModels
 		public bool IsImageNull3 => GetIsImageNull(2);
 		public bool IsImageNull4 => GetIsImageNull(3);
 
-		public ICommand AddImageCommand { get; }
 		public ICommand Image2Text { get; }
 		public ICommand ScanImage { get; }
 		public ICommand UploadImage { get; }
 		
-		public UploadViewModel(IAlertService alertService)
+		public UploadViewModel(IAlertService alertService, IConfiguration configuration)
 		{
 			_alertService = alertService;
+			_configuration = configuration;
 			Options = new ObservableCollection<string>
 			{
 				"-- Select an option --",
@@ -81,7 +80,6 @@ namespace VsiriusMAUI.ViewModels
 				"Shipped Package"
 			};
 
-			AddImageCommand = new Command(async () => await OnAddImage());
 			Image2Text = new Command<string>(async (path) => await _image2Text(path));
 			ScanImage = new Command(async () => await _scanImage());
 			UploadImage = new Command<string>(async (index) => await _UploadImage(index));
@@ -270,7 +268,7 @@ namespace VsiriusMAUI.ViewModels
 		{
 			try
 			{
-				var credentials = new BasicAWSCredentials(KeyorPath, SecretKey);
+				var credentials = new BasicAWSCredentials(_configuration["AccessKey"]!, _configuration["SecretKey"]!);
 				StringBuilder sb = new();
 
 				MemoryStream stream = await Common.Utilities.Common.ReadFile(path);
@@ -299,15 +297,6 @@ namespace VsiriusMAUI.ViewModels
 			}
 			catch { return string.Empty; }
 
-		}
-
-		private async Task OnAddImage()
-		{
-			var result = await MediaPicker.PickPhotoAsync();
-			if (result != null)
-			{
-				Images.Add(result.FullPath);
-			}
 		}
 	}
 }

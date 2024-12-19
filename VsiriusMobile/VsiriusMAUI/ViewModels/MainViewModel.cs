@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Text;
 using System.Windows.Input;
@@ -11,6 +12,7 @@ namespace VsiriusMAUI.ViewModels
 	{
 
 		private readonly IAlertService _alertService;
+		private readonly IConfiguration _configuration;
 
 		private string _email = string.Empty;
 		private string _password = string.Empty;
@@ -30,11 +32,12 @@ namespace VsiriusMAUI.ViewModels
 
 		public ICommand Loggin { get; }
 
-		public MainViewModel(IAlertService alertService)
+		public MainViewModel(IAlertService alertService, IConfiguration configuration)
 		{
 			Loggin = new Command(() => _loggin());
 
 			_alertService = alertService;
+			_configuration = configuration;
 		}
 
 		private async void _loggin()
@@ -42,7 +45,7 @@ namespace VsiriusMAUI.ViewModels
 			try
 			{
 				// loadingPageClicked(true);
-				string url = "http://api.vsirius.com/identity/api/Auth/Login";
+				string url = _configuration["LoginApi"]!;
 
 				var rBody = new
 				{
