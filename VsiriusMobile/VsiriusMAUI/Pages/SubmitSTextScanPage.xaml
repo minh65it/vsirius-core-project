@@ -5,12 +5,16 @@
              xmlns:vm="clr-namespace:VsiriusMAUI.ViewModels"
              x:DataType="vm:SubmitTextScanViewModel"
              Title="">
-    <Editor Text="{Binding .}" HeightRequest="200" />
-    <CollectionView ItemsSource="{Binding ListDescription}">
-        <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <Editor Text="{Binding .}" HeightRequest="200" />
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
+    <Grid>
+        <Editor Text="{Binding .}" HeightRequest="200" />
+        <ScrollView>
+            <CollectionView ItemsSource="{Binding ListDescription}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Editor Text="{Binding .}" HeightRequest="200" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+    </Grid>
 </ContentPage>

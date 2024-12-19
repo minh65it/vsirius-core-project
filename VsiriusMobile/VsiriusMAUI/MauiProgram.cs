@@ -34,6 +34,8 @@ namespace VsiriusMAUI
             DIServiceRegistry.RegisterDIService(builder.Services);
             PageRegistry.RegisterPage(builder.Services);
 
+            builder.Services.AddSingleton<LoadingService>();
+
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="VsiriusMAUI.MainPage"
              xmlns:vm="clr-namespace:VsiriusMAUI.ViewModels"
+             xmlns:controls="clr-namespace:VsiriusMAUI.Pages.common"
              x:DataType="vm:MainViewModel"
              Title="">
     <Grid>
@@ -31,34 +32,8 @@
 
             <Button  x:Name="SignIn" Text="Sign in" HorizontalOptions="Fill" BackgroundColor="#ff8e00" Style="{StaticResource loginButton}" Command="{Binding Loggin}"/>
         </VerticalStackLayout>
+        <controls:LoadingPage x:Name="LoadingPage"/>
     </Grid>
 </ContentPage>
 
 
-
-
-<!--<Grid x:Name="CustomAlert"
-              IsVisible="False"
-              BackgroundColor="#80000000" 
-              VerticalOptions="FillAndExpand"
-              HorizontalOptions="FillAndExpand">
-            <Frame VerticalOptions="Center"
-                   HorizontalOptions="Center"
-                   Padding="20"
-                   BackgroundColor="White"
-                   CornerRadius="15"
-                   WidthRequest="300"
-                   HasShadow="True">
-                <StackLayout>
-                    <Label x:Name="NotiTitle" 
-                           FontSize="20"
-                           FontAttributes="Bold"
-                           HorizontalOptions="Center" />
-                    <Label x:Name="NotiText"
-                           HorizontalOptions="Center"
-                           Margin="0,10,0,10" />
-                    <Button BackgroundColor="#ff8e00" Text="Close" Clicked="OnAlertOkClicked" />
-                </StackLayout>
-            </Frame>
-        </Grid>
-        <controls:LoadingPage x:Name="LoadingPage"/>-->
