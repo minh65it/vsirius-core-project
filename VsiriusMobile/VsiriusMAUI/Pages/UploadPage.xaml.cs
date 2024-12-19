@@ -1,6 +1,4 @@
-﻿using Microsoft.Maui.Controls;
-using Newtonsoft.Json.Linq;
-using VsiriusMAUI.ViewModels;
+﻿using VsiriusMAUI.ViewModels;
 
 namespace VsiriusMAUI.Pages;
 
@@ -11,80 +9,6 @@ public partial class UploadPage : ContentPage
 		InitializeComponent();
 		BindingContext = vm;
 	}
-
-	private async void uploadImage(object sender, EventArgs e)
-	{
-		try
-		{
-			string action = await DisplayActionSheet("Choose an option", "Cancel", null, "Camera", "Gallery");
-			FileResult? photo = null;
-
-			if (action == "Camera")
-			{
-				var capturedPhoto = await MediaPicker.CapturePhotoAsync();
-				if (capturedPhoto != null)
-				{
-					photo = capturedPhoto;
-					photo.FileName = DateTime.UtcNow.ToString("ddMMyyyyHHmmss");
-				}
-				else
-				{
-					photo = null;
-				}
-			}
-			else if (action == "Gallery")
-			{
-				var pickedPhoto = await MediaPicker.PickPhotoAsync();
-				if (pickedPhoto != null)
-				{
-					photo = pickedPhoto;
-					photo.FileName = DateTime.UtcNow.ToString("ddMMyyyyHHmmss");
-				}
-				else
-				{
-					photo = null;
-				}
-			}
-			else if (action == "Cancel")
-			{
-				photo = null;
-				return;
-			}
-
-			if (photo == null)
-			{
-				return;
-			}
-
-
-			var localFilePath = photo!.FullPath;
-
-			if (sender is Image tappedImage)
-			{
-				tappedImage.Source = ImageSource.FromFile(localFilePath);
-			}
-
-		}
-		catch (Exception ex)
-		{
-			// loadingPageClicked(false);
-			await DisplayAlert("Error", ex.ToString(), "Cancel");
-			Console.WriteLine(ex.ToString());
-		}
-	}
-
-	//private void loadingPageClicked(bool b)
-	//{
-
-	//	if (b)
-	//	{
-	//		LoadingPage.turnOnLoadingPage();
-	//	}
-	//	else
-	//	{
-	//		LoadingPage.turnOffLoadingPage();
-	//	}
-	//}
 
 	//private async void GetImageData(object sender, EventArgs e)
 	//{
@@ -175,19 +99,6 @@ public partial class UploadPage : ContentPage
 	//			}
 	//		}
 	//	}
-	//}
-
-	//private void ShowCustomAlert(string title, string message)
-	//{
-	//	CustomAlert.IsVisible = true;
-
-	//	NotiText.Text = message;
-	//	NotiTitle.Text = title;
-	//}
-
-	//private void OnAlertOkClicked(object sender, EventArgs e)
-	//{
-	//	CustomAlert.IsVisible = false;
 	//}
 
 	//private string transEnumtoNumber(string s)

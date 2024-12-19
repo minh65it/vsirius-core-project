@@ -20,18 +20,8 @@ namespace VsiriusMAUI.ViewModels
 
 		public ObservableCollection<string> Options { get; set; }
 
-		private string _keyorPath = "REMOVED_AWS_KEY";
-		
-		public string KeyorPath
-		{
-			get => _keyorPath;
-		}
-
-		private string _secretKey = "eMiQIRN8j4srfwbpdOBTGeUr81j2TUUu894fvOiD";
-		public string SecretKey
-		{
-			get => _secretKey;
-		}
+		public string KeyorPath { get; set; } = "REMOVED_AWS_KEY";
+		public string SecretKey { get; set; } = "0WkCMked5LQGCZAU58X66T/9B4+6nnxdzJc6MeKj";
 
 		private string _note = string.Empty;
 
@@ -79,13 +69,13 @@ namespace VsiriusMAUI.ViewModels
 		public ICommand Image2Text { get; }
 		public ICommand ScanImage { get; }
 		public ICommand UploadImage { get; }
-
+		
 		public UploadViewModel(IAlertService alertService)
 		{
 			_alertService = alertService;
 			Options = new ObservableCollection<string>
 			{
-				"Select an option",
+				"-- Select an option --",
 				"Return Package",
 				"Order Documents",
 				"Shipped Package"
@@ -94,10 +84,10 @@ namespace VsiriusMAUI.ViewModels
 			AddImageCommand = new Command(async () => await OnAddImage());
 			Image2Text = new Command<string>(async (path) => await _image2Text(path));
 			ScanImage = new Command(async () => await _scanImage());
-			UploadImage = new Command<int>(async (index) => await _UploadImage(index));
+			UploadImage = new Command<string>(async (index) => await _UploadImage(index));
 		}
 
-		private async Task _UploadImage(int index)
+		private async Task _UploadImage(string index)
 		{
 			try
 			{
@@ -144,7 +134,7 @@ namespace VsiriusMAUI.ViewModels
 
 				var localFilePath = photo!.FullPath;
 
-				SetPath(index, localFilePath);
+				SetPath(int.Parse(index), localFilePath);
 
 			}
 			catch (Exception ex)
@@ -164,6 +154,7 @@ namespace VsiriusMAUI.ViewModels
 
 			foreach(var path in paths)
 			{
+				if(string.IsNullOrEmpty(path)) continue;
 				var result = await _image2Text(path);
 				results.Add(result);
 			}
