@@ -146,6 +146,63 @@ namespace PackageApi._Services.Services
             }
         }
 
+        public async Task<OperationResult> SaveTextFromImage(ClaimTextParam model)
+        {
+            try
+            {
+                if (model.DocumentType == null)
+                {
+                    return new OperationResult() { Success = false, Message = "Error created, DocumentType is not null", };
+                }
+
+                Claim dataAdd = new Claim();
+                dataAdd.Notes = _mapper.Map<List<string>>(model.Notes);
+                dataAdd.DocumentType = model.DocumentType?.ToString();
+                dataAdd.Id = Guid.NewGuid().ToString();
+                dataAdd.ScanDate = DateTime.Now;
+                var listImg = new List<ImageInfo>() { };
+
+                if (model.ImageInfo != null)
+                {
+                    foreach (var item in model.ImageInfo)
+                    {
+                        var tmp = await _azureStorage.UploadAsync(item.Image, PackageCommon.RenameFile(item.Image, DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + dataAdd.Id));
+                        listImg.Add(new ImageInfo()
+                        {
+                            Text = item.TextExtract,
+                            Url = tmp.Blob.Uri,
+                        });
+                        if (string.IsNullOrWhiteSpace(dataAdd.Marketplace)
+                            || string.IsNullOrWhiteSpace(dataAdd.RMA)
+                            || string.IsNullOrWhiteSpace(dataAdd.MarketplaceOrderId))
+                        {
+                            if (item.TextExtract.Contains("Walmart Returns"))
+                            {
+                                dataAdd.Marketplace = "Walmart";
+                                dataAdd.MarketplaceOrderId = PackageCommon.GetMarketplaceOrderId(item.TextExtract);
+                                dataAdd.RMA = PackageCommon.GetRMA(item.TextExtract);
+                            }
+                            if (item.TextExtract.Contains("Amazon Return ID"))
+                            {
+                                dataAdd.Marketplace = "Amazon";
+                                dataAdd.MarketplaceOrderId = PackageCommon.GetMarketplaceOrderId(item.TextExtract);
+                                dataAdd.RMA = PackageCommon.GetRMA(item.TextExtract);
+                            }
+                        }
+
+                    }
+                }
+                dataAdd.Images = listImg;
+                await _claimRepository.InsertOne(dataAdd, _collectionName);
+                return new OperationResult() { Success = true, Message = "Successfully created", Data = dataAdd };
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         private async Task<string> CallApiGetTextFromImage(IFormFile item)
         {
             var httpClient = new HttpClient();

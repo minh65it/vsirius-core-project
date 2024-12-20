@@ -49,6 +49,20 @@ namespace VsiriusApi.Controllers.PackageApi
             return Ok(await _claimService.Submit(model));
         }
 
+        /// <summary>
+        /// Submit 1 Claim Only Mobile
+        /// </summary>
+        /// <remarks>
+        /// 0: ReturnPackage; 1: OrderDocuments; 3: ShippedPackage
+        /// </remarks>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("SubmitInfoOrder")]
+        public async Task<IActionResult> SubmitInfoOrder([FromForm] ClaimTextParam model)
+        {
+            return Ok(await _claimService.SaveTextFromImage(model));
+        }
+
         [HttpGet("detail")]
         public async Task<IActionResult> Detail(string id)
         {
