@@ -162,31 +162,31 @@ namespace PackageApi._Services.Services
                 dataAdd.ScanDate = DateTime.Now;
                 var listImg = new List<ImageInfo>() { };
 
-                if (model.Images != null)
+                if (model.ImageInfo != null)
                 {
-                    foreach (var item in model.Images)
-                    {                      
-                        string textImg = await _extractAwsService.AmazoneScanForText(item);
+                    foreach (var item in model.ImageInfo)
+                    {
+                        var tmp = await _azureStorage.UploadAsync(item.Image, PackageCommon.RenameFile(item.Image, DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss_fff_") + dataAdd.Id));
                         listImg.Add(new ImageInfo()
                         {
-                            Text = item.Text,
-                            Url = item.Url,
+                            Text = item.TextExtract,
+                            Url = tmp.Blob.Uri,
                         });
                         if (string.IsNullOrWhiteSpace(dataAdd.Marketplace)
                             || string.IsNullOrWhiteSpace(dataAdd.RMA)
                             || string.IsNullOrWhiteSpace(dataAdd.MarketplaceOrderId))
                         {
-                            if (textImg.Contains("Walmart Returns"))
+                            if (item.TextExtract.Contains("Walmart Returns"))
                             {
                                 dataAdd.Marketplace = "Walmart";
-                                dataAdd.MarketplaceOrderId = PackageCommon.GetMarketplaceOrderId(item.Text);
-                                dataAdd.RMA = PackageCommon.GetRMA(item.Text);
+                                dataAdd.MarketplaceOrderId = PackageCommon.GetMarketplaceOrderId(item.TextExtract);
+                                dataAdd.RMA = PackageCommon.GetRMA(item.TextExtract);
                             }
-                            if (textImg.Contains("Amazon Return ID"))
+                            if (item.TextExtract.Contains("Amazon Return ID"))
                             {
                                 dataAdd.Marketplace = "Amazon";
-                                dataAdd.MarketplaceOrderId = PackageCommon.GetMarketplaceOrderId(item.Text);
-                                dataAdd.RMA = PackageCommon.GetRMA(item.Text);
+                                dataAdd.MarketplaceOrderId = PackageCommon.GetMarketplaceOrderId(item.TextExtract);
+                                dataAdd.RMA = PackageCommon.GetRMA(item.TextExtract);
                             }
                         }
 

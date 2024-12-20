@@ -21,7 +21,13 @@ namespace PackageApi.Dtos.Claim
         /// </summary>
         public DocumentTypeDto? DocumentType { get; set; }
         public List<string>? Notes { get; set; }
-        public List<ImageInfo>? Images { get; set; }
+        public List<ImageTextInfo>? ImageInfo { get; set; }
+    }
+
+    public class ImageTextInfo
+    {
+        public IFormFile Image { get; set; }
+        public string TextExtract { get; set; }
     }
     public enum DocumentTypeDto
     {
