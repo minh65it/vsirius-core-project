@@ -6,15 +6,14 @@
              x:DataType="vm:SubmitTextScanViewModel"
              Title="">
     <Grid>
-        <Editor Text="{Binding .}" HeightRequest="200" />
-        <ScrollView>
-            <CollectionView ItemsSource="{Binding ListDescription}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Editor Text="{Binding .}" HeightRequest="200" />
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </ScrollView>
+        <CollectionView ItemsSource="{Binding ListDescription}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Editor Text="{Binding .}" HeightRequest="200" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Text="Check info" Command="{Binding CheckInfo}"/>
     </Grid>
 </ContentPage>

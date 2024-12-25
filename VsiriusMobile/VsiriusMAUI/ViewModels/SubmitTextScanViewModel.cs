@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Text.Json;
+using System.Windows.Input;
 
 namespace VsiriusMAUI.ViewModels
 {
@@ -24,6 +25,18 @@ namespace VsiriusMAUI.ViewModels
 			{
 				_listDescription = JsonSerializer.Deserialize<List<string>>(JsonList);
 			}
+		}
+
+		public ICommand CheckInfo { get; }
+		public SubmitTextScanViewModel()
+		{
+			CheckInfo = new Command(() => _CheckInfo());
+		}
+
+
+		private void _CheckInfo()
+		{
+			var test = ListDescription;
 		}
 	}
 }

@@ -4,21 +4,24 @@ using Amazon.Textract;
 using Amazon.Textract.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Maui.Controls;
 using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Input;
 using VsiriusMAUI.Common._Service.Interface;
-using VsiriusMAUI.Pages;
+using VsiriusMAUI.Dtos.ScanImage;
 
 namespace VsiriusMAUI.ViewModels
 {
-	public partial class UploadViewModel: ObservableObject
+	public partial class UploadViewModel : ObservableObject
 	{
 		private readonly IAlertService _alertService;
 		private readonly IConfiguration _configuration;
+
+		#region Property
 
 		public ObservableCollection<string> Images { get; set; } = new ObservableCollection<string>();
 
@@ -32,7 +35,7 @@ namespace VsiriusMAUI.ViewModels
 			set => SetProperty(ref _note, value);
 		}
 
-		private string _selectedOption = "Select an option";
+		private string _selectedOption = "-- Select an option --";
 
 		public string SelectedOption
 		{
@@ -54,6 +57,13 @@ namespace VsiriusMAUI.ViewModels
 			}
 		}
 
+		private bool _isVisibleLoadingPage = false;
+		public bool IsVisibleLoadingPage
+		{
+			get => _isVisibleLoadingPage;
+			set => SetProperty(ref _isVisibleLoadingPage, value);
+		}
+
 		public bool GetIsImageNull(int index) => string.IsNullOrEmpty(GetPath(index));
 
 		public string Path1 => GetPath(0);
@@ -67,7 +77,10 @@ namespace VsiriusMAUI.ViewModels
 		public bool IsImageNull4 => GetIsImageNull(3);
 		public ICommand ScanImage { get; }
 		public ICommand UploadImage { get; }
-		
+		public ICommand UploadData { get; }
+
+		#endregion
+
 		public UploadViewModel(IAlertService alertService, IConfiguration configuration)
 		{
 			_alertService = alertService;
@@ -80,6 +93,7 @@ namespace VsiriusMAUI.ViewModels
 				"Shipped Package"
 			};
 
+			UploadData = new Command(async () => await _UploadData());
 			ScanImage = new Command(async () => await _scanImage());
 			UploadImage = new Command<string>(async (index) => await _UploadImage(index));
 		}
@@ -136,10 +150,7 @@ namespace VsiriusMAUI.ViewModels
 			}
 			catch (Exception ex)
 			{
-				// loadingPageClicked(false);
-				// await DisplayAlert("Error", ex.ToString(), "Cancel");
 				await _alertService.DisplayAlertAsync("Error", $"{ex.ToString()}", "Close");
-				Console.WriteLine(ex.ToString());
 			}
 		}
 
@@ -147,6 +158,7 @@ namespace VsiriusMAUI.ViewModels
 		{
 			try
 			{
+				IsVisibleLoadingPage = true;
 				var paths = new List<string> { Path1, Path2, Path3, Path4 };
 
 				var results = new List<string>();
@@ -160,116 +172,147 @@ namespace VsiriusMAUI.ViewModels
 
 				var jsonList = JsonSerializer.Serialize(results);
 
-				await Shell.Current.GoToAsync($"{nameof(SubmitSTextScanPage)}?JsonList={jsonList}");
+				IsVisibleLoadingPage = false;
+
+				// await Shell.Current.GoToAsync($"{nameof(SubmitSTextScanPage)}?JsonList={jsonList}");
+
 			}
 			catch (Exception ex)
 			{
+				IsVisibleLoadingPage = false;
 				await _alertService.DisplayAlertAsync("Error", $"{ex.ToString}", "Close");
 			}
-			
+
 
 		}
 
-		//private async void GetImageData(object sender, EventArgs e)
-		//{
-		//	var frames = new List<string> { Path1, Path2, Path3, Path4 };
-		//	var fileStreams = new List<FileStream>();
-		//	// loadingPageClicked(true);
-		//	using (var httpClient = new HttpClient())
-		//	{
-		//		try
-		//		{
-		//			var requestContent = new MultipartFormDataContent();
+		private async Task _UploadData()
+		{
+			IsVisibleLoadingPage = true;
+			var paths = new List<string> { Path1, Path2, Path3, Path4 };
+			// List<StreamContent> lstClaimTextParam = new List<StreamContent>();
+			var fileStreams = new List<FileStream>();
+			using (var httpClient = new HttpClient())
+			{
+				try
+				{
+					var requestContent = new MultipartFormDataContent();
 
-		//			foreach (var frame in frames)
-		//			{
-		//				if (frame.Content is Image image && image.Source is FileImageSource path)
-		//				{
-		//					if (!string.IsNullOrEmpty(path))
-		//					{
-		//						if (File.Exists(path))
-		//						{
-		//							var actualPath = path.File;
-		//							Console.WriteLine($"File not found: {actualPath}");
-		//							if (Path.GetExtension(path) != "addicon.png")
-		//							{
-		//								var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-		//								fileStreams.Add(fileStream);
-		//								var fileContent = new StreamContent(fileStream);
-		//								requestContent.Add(fileContent, "Images", Path.GetFileName(path));
-		//							}
-		//						}
-		//					}
-		//				}
-		//			}
+					//foreach (var path in paths)
+					//{
+					//	if (!string.IsNullOrEmpty(path))
+					//	{
 
-		//			var documentType = SelectedOption;
-		//			if (string.IsNullOrEmpty(documentType))
-		//			{
-		//				await _alertService.DisplayAlertAsync("Notification", "Document type is required", "Close");
-		//				return;
-		//			}
-
-		//			if (string.IsNullOrEmpty(Note))
-		//			{
-		//				await _alertService.DisplayAlertAsync("Notification", "Note type is required", "Close");
-		//				return;
-		//			}
-
-		//			string test = transEnumtoNumber(documentType);
+					//		using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+					//		{
+					//			lstClaimTextParam.Add(new StreamContent(fileStream));
+					//		}
+					//	}
+					//}
 
 
-		//			requestContent.Add(new StringContent(test), "DocumentType");
-		//			requestContent.Add(new StringContent(Note), "Notes");
+					//if (!string.IsNullOrEmpty(paths[0]))
+					//{
 
-		//			var url = "http://118.69.37.20:5200/api/Claim";
-		//			var response = await httpClient.PostAsync(url, requestContent);
-		//			var responseContent = await response.Content.ReadAsStringAsync();
+					//	using (var fileStream = new FileStream(paths[0], FileMode.Open, FileAccess.Read))
+					//	{
+					//		lstClaimTextParam.Add(new StreamContent(fileStream));
+					//	}
+					//}
 
-		//			if (response.IsSuccessStatusCode)
-		//			{
-		//				var jsonResponse = JObject.Parse(responseContent);
-		//				Note = string.Empty;
-		//				foreach (var frame in frames)
-		//				{
-		//					if (frame.Content is Image image)
-		//					{
-		//						image.Source = "addicon.png";
-		//					}
-		//				}
-		//				// loadingPageClicked(false);
-		//				// ShowCustomAlert("Notification", "Success");
-		//				await _alertService.DisplayAlertAsync("Notification", "Success", "Close");
-		//			}
-		//			else
-		//			{
-		//				// loadingPageClicked(false);
-		//				// ShowCustomAlert("Notification", "Unable to upload the image");
-		//			}
-		//		}
-		//		catch (Exception ex)
-		//		{
-		//			// loadingPageClicked(false);
-		//			await _alertService.DisplayAlertAsync("Error", $"{ex.ToString()}", "Close");
-		//		}
-		//		finally
-		//		{
-		//			foreach (var stream in fileStreams)
-		//			{
-		//				stream.Dispose();
-		//			}
-		//		}
-		//	}
-		//}
 
-		private string transEnumtoNumber(string s)
+
+					var documentType = SelectedOption;
+					if (string.IsNullOrEmpty(documentType) || documentType == "-- Select an option --")
+					{
+						await _alertService.DisplayAlertAsync("Notification", "Document type is required", "Close");
+						return;
+					}
+
+					if (string.IsNullOrEmpty(Note))
+					{
+						await _alertService.DisplayAlertAsync("Notification", "Note type is required", "Close");
+						return;
+					}
+
+
+					requestContent.Add(new StringContent(transEnumtoNumber(documentType).ToString()), "DocumentType");
+					requestContent.Add(new StringContent(Note), "Notes");
+
+					//foreach (var imageInfo in lstClaimTextParam)
+					//{
+					//	if (imageInfo!= null)
+					//	{
+					//		var stream = await imageInfo.ReadAsStreamAsync();
+					//		var memoryStream = new MemoryStream();
+					//		await stream.CopyToAsync(memoryStream);
+					//		memoryStream.Position = 0;
+
+					//		var streamContent = new StreamContent(memoryStream);
+					//		streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+
+					//		requestContent.Add(streamContent, "Images", DateTime.Now.ToString()); 
+					//	}
+					//}
+
+					var fileStream = new FileStream(paths[0], FileMode.Open, FileAccess.Read);
+					
+						var fileName = Path.GetFileName(paths[0]);
+						var fileContent = new StreamContent(fileStream);
+						fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
+						requestContent.Add(fileContent, "Images", fileName);
+					
+
+
+
+					var url = _configuration["UploadImageApi"];
+
+					var response = await httpClient.PostAsync(url, requestContent);
+					var responseContent = await response.Content.ReadAsStringAsync();
+
+					if (response.IsSuccessStatusCode)
+					{
+						var jsonResponse = JObject.Parse(responseContent);
+						Note = string.Empty;
+						SelectedOption = "-- Select an option --";
+						//for (int i = 0; i < paths.Count; i++)
+						//{
+						//	SetPath(i, string.Empty);
+						//}
+						SetPath(0, string.Empty);
+						IsVisibleLoadingPage = false;
+						await _alertService.DisplayAlertAsync("Notification", "Success", "Close");
+					}
+					else
+					{
+						IsVisibleLoadingPage = false;
+						await _alertService.DisplayAlertAsync("Notification", $"{response.RequestMessage}", "Close");
+					}
+				}
+				catch (Exception ex)
+				{
+					IsVisibleLoadingPage = false;
+					await _alertService.DisplayAlertAsync("Error", $"{ex.ToString()}", "Close");
+				}
+				finally
+				{
+					IsVisibleLoadingPage = false;
+					foreach (var stream in fileStreams)
+					{
+						stream.Dispose();
+					}
+				}
+			}
+		}
+
+		private DocumentTypeDto transEnumtoNumber(string s)
 		{
 			switch (s)
 			{
-				case "Return Package": return "0";
-				case "Order Documents": return "1";
-				case "Shipped Package": return "2";
-				default: return "";
+				case "Return Package": return DocumentTypeDto.ReturnPackage;
+				case "Order Documents": return DocumentTypeDto.OrderDocuments;
+				case "Shipped Package": return DocumentTypeDto.ShippedPackage;
+				default: return DocumentTypeDto.None;
 			}
 		}
 

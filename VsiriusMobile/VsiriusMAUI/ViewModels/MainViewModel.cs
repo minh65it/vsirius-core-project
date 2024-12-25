@@ -15,7 +15,6 @@ namespace VsiriusMAUI.ViewModels
 		private readonly IConfiguration _configuration;
 
 		private string _email = string.Empty;
-		private string _password = string.Empty;
 
 		public string Email
 		{
@@ -23,12 +22,20 @@ namespace VsiriusMAUI.ViewModels
 			set => SetProperty(ref _email, value);
 		}
 
+		private string _password = string.Empty;
 		public string Password
 		{
 			get => _password;
 			set => SetProperty(ref _password, value);
 		}
 
+
+		private bool _isVisibleLoadingPage = false;
+		public bool IsVisibleLoadingPage
+		{
+			get => _isVisibleLoadingPage;
+			set => SetProperty(ref _isVisibleLoadingPage, value);	
+		}
 
 		public ICommand Loggin { get; }
 
@@ -44,7 +51,7 @@ namespace VsiriusMAUI.ViewModels
 		{
 			try
 			{
-				// loadingPageClicked(true);
+				IsVisibleLoadingPage = true;
 				string url = _configuration["LoginApi"]!;
 
 				var rBody = new
@@ -68,7 +75,7 @@ namespace VsiriusMAUI.ViewModels
 
 					if (response.IsSuccessStatusCode)
 					{
-						// loadingPageClicked(false);
+						IsVisibleLoadingPage = false;
 
 						await Shell.Current.GoToAsync(nameof(UploadPage));
 						
@@ -76,17 +83,18 @@ namespace VsiriusMAUI.ViewModels
 					else
 					{
 						await _alertService.DisplayAlertAsync("Notification", "Email or password is incorrect", "Close");
-						//loadingPageClicked(false);
+						IsVisibleLoadingPage = false;
 					}
 				}
 			}
 			catch (Exception ex)
 			{
+				IsVisibleLoadingPage = false;
 				await _alertService.DisplayAlertAsync("Error", ex.ToString(), "Close");
 			}
 			finally
 			{
-				// loadingPageClicked(false); 
+				IsVisibleLoadingPage = false;
 			}
 		}
 

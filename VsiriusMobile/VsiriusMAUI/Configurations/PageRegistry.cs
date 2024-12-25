@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VsiriusMAUI.Pages;
+using VsiriusMAUI.Pages.common;
 using VsiriusMAUI.ViewModels;
+
 
 namespace VsiriusMAUI.Configurations
 {
@@ -20,6 +22,8 @@ namespace VsiriusMAUI.Configurations
 
 			services.AddTransient<SubmitTextScanViewModel>();
 			services.AddTransient<SubmitSTextScanPage>();
+
+			services.AddSingleton<LoadingPage>();
 		}
 	}
 }

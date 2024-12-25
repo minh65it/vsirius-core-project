@@ -24,15 +24,13 @@
             <Entry x:Name="password" Text="{Binding Password}" Placeholder="Password" IsPassword="True" Style="{StaticResource vInput}"/>
 
             <Grid VerticalOptions="Center" HorizontalOptions="Start" ColumnDefinitions="Auto, *" Padding="0" Margin="0">
-
                 <CheckBox x:Name="CheckboxShowpassword"   Grid.Column="0"  Margin="0" CheckedChanged="CheckedCheckBox"/>
-
                 <Label Grid.Column="1" Text="Show password" VerticalOptions="Center" HorizontalOptions="Start" Margin="0" />
             </Grid>
 
             <Button  x:Name="SignIn" Text="Sign in" HorizontalOptions="Fill" BackgroundColor="#ff8e00" Style="{StaticResource loginButton}" Command="{Binding Loggin}"/>
         </VerticalStackLayout>
-        <controls:LoadingPage x:Name="LoadingPage"/>
+        <controls:LoadingPage IsVisible="{Binding IsVisibleLoadingPage}" />
     </Grid>
 </ContentPage>
 
