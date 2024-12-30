@@ -2,39 +2,36 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="VsiriusMAUI.MainPage"
+             xmlns:vm="clr-namespace:VsiriusMAUI.ViewModels"
+             xmlns:controls="clr-namespace:VsiriusMAUI.Pages.common"
+             x:DataType="vm:MainViewModel"
              Title="">
+    <Grid>
+        <VerticalStackLayout
+                Padding="40,30"
+                Spacing="25">
+            <Image
+                    x:Name="ImageShow"
+                    Margin="20"
+                    Source="logo.png"
+                    HeightRequest="185"
+                    Aspect="AspectFit"
+                    SemanticProperties.Description="dot net bot in a race car number eight" />
+            <Label Text="Login to your Account" FontSize="14" FontFamily="OpenSansSemibold"/>
 
-    <VerticalStackLayout
-            Padding="40,30"
-            Spacing="25">
-        <Image
-                x:Name="ImageShow"
-                Margin="20"
-                Source="logo.png"
-                HeightRequest="185"
-                Aspect="AspectFit"
-                SemanticProperties.Description="dot net bot in a race car number eight" />
-        <Label Text="Login to your Account" FontSize="14" FontFamily="OpenSansSemibold"/>
+            <Entry x:Name="email" Text="{Binding Email}" Placeholder="Email" Style="{StaticResource vInput}"/>
 
-        <Entry x:Name="email" Placeholder="Email" Style="{StaticResource vInput}"/>
-          
-        <Entry x:Name="password" Placeholder="Password" IsPassword="True" Style="{StaticResource vInput}"/>
-        <!--<Grid>
-            --><!-- Entry --><!--
-            <Entry Placeholder="Password"
-               IsPassword="{Binding isPassword}" />
+            <Entry x:Name="password" Text="{Binding Password}" Placeholder="Password" IsPassword="True" Style="{StaticResource vInput}"/>
 
-            --><!-- Toggle Button --><!--
-            <Button Text="{Binding iconPassword}"
-                Command="{Binding TogglePasswordCommand}" 
-                BackgroundColor="Green"
-                VerticalOptions="Center" 
-                HorizontalOptions="End" />
-        </Grid>-->
+            <Grid VerticalOptions="Center" HorizontalOptions="Start" ColumnDefinitions="Auto, *" Padding="0" Margin="0">
+                <CheckBox x:Name="CheckboxShowpassword"   Grid.Column="0"  Margin="0" CheckedChanged="CheckedCheckBox"/>
+                <Label Grid.Column="1" Text="Show password" VerticalOptions="Center" HorizontalOptions="Start" Margin="0" />
+            </Grid>
 
-        <Button
-                x:Name="SignIn"
-                Text="Sign in" 
-                HorizontalOptions="Fill" BackgroundColor="#ff8e00" Style="{StaticResource loginButton}" Clicked="funcLogin"/>
-    </VerticalStackLayout>
+            <Button  x:Name="SignIn" Text="Sign in" HorizontalOptions="Fill" BackgroundColor="#ff8e00" Style="{StaticResource loginButton}" Command="{Binding Loggin}"/>
+        </VerticalStackLayout>
+        <controls:LoadingPage IsVisible="{Binding IsVisibleLoadingPage}" />
+    </Grid>
 </ContentPage>
+
+
