@@ -25,7 +25,7 @@ namespace StullerDataApi.Controllers
             else
             {
                 IsRunning = true;
-                await _mapStullerDBToVsiriusDB.MapToVsiriusDB();
+                await _mapStullerDBToVsiriusDB.MapToVsiriusDB_RFT();
                 IsRunning = false;
                 return Ok("MapToVsiriusDB is done");
 

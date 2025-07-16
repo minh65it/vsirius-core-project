@@ -37,7 +37,7 @@ namespace QgoldIntegrationDataApi.Helpers.AutoMapper
                 vsirius.item_length_numeric_unit_of_measure = ultilitiesMapper3.GetValueLengthNumeric(qgold.Length, qgold.Item_Type, qgold.CategoriesText, true);
                 vsirius.main_image_url = ultilitiesMapper3.GetImage(qgold.Image1Link, vsirius.item_sku, 1);
                 vsirius.target_gender = ultilitiesMapper3.GetValueGender(qgold.ListOfSpecsText);
-                vsirius.quantity = "0";// qgold.Qty_Avail;
+                vsirius.quantity = qgold.Qty_Avail;
                 vsirius.standard_price = ultilitiesMapper3.GetValuePrice(qgold.Price);
                 var item_type = ultilitiesMapper3.GetItemType(qgold.Item_Type, qgold.CategoriesText, qgold.ListOfSpecsText, qgold.Description);
                 vsirius.item_type = string.IsNullOrEmpty(item_type) ? ultilitiesMapper3.GetItemType(qgold.Item_Type, qgold.CategoriesText) : item_type;

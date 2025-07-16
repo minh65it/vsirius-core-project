@@ -33,13 +33,13 @@ namespace VsiriusApi.DependencyInjection
             services.AddScoped<IExportDataVsirius, ExportDataVsirius>();
             services.AddScoped<ICallAPIVSiriusWeb, CallAPIVSiriusWeb>();
             services.AddScoped<IUtilitiesStorageBlobs, UtilitiesStorageBlobs>();
-            /*
+
             services.AddUpdateJobs();
             services.AddJob<Stuller_PullDataStuller>();
             services.AddTransient<PullStullerController>();
             services.AddJob<Stuller_MapStullerToPIM>();
             services.AddTransient<MapStullerDBToVsiriusDBController>();
-            */
+
         }
     }
 }

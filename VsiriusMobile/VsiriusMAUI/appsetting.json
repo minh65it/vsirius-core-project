@@ -1,0 +1,8 @@
+{
+  "AmazonKey": {
+    "AccessKey": "REMOVED_AWS_KEY",
+    "SecretKey": "0WkCMked5LQGCZAU58X66T/9B4+6nnxdzJc6MeKj"
+  },
+  "LoginApi": "http://api.vsirius.com/identity/api/Auth/Login",
+  "UploadImageApi": "http://118.69.37.20:5200/api/Claim"
+}

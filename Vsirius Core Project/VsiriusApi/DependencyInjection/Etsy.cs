@@ -36,7 +36,7 @@ namespace VsiriusApi.DependencyInjection
             services.AddScoped<IStullerApiClient, EtsyIntegrationDataAPI.Helpers.OrderEtsy.StullerApiClient>();
             services.AddScoped<ITopOrderService, TopOrderService>();
             services.AddScoped<IPropertiesProductService, PropertiesProductService>();
-            
+
             //services.AddUpdateJobs();
             //services.AddTransient<MapPIMToEtsyDBController>();
             //services.AddJob<Etsy_MapPIMToEtsyDB>();
@@ -52,7 +52,7 @@ namespace VsiriusApi.DependencyInjection
             //// update Properties
             //services.AddTransient<PropertiesProductController>();
             //services.AddJob<Etsy_UpdateProperties>();
-            
+
         }
     }
 }

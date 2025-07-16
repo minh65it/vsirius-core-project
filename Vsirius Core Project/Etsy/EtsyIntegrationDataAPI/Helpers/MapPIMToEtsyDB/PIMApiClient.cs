@@ -1,4 +1,6 @@
-﻿using EtsyIntegrationDataAPI.Dtos.MapPIMToEtsyDB;
+﻿using AutoMapper;
+using Azure;
+using EtsyIntegrationDataAPI.Dtos.MapPIMToEtsyDB;
 using EtsyIntegrationDataAPI.Utilities;
 using Newtonsoft.Json;
 using System.Text;
@@ -9,6 +11,7 @@ namespace EtsyIntegrationDataAPI.Helpers.MapPIMToEtsyDB
     public interface IPIMApiClient
     {
         public Task<PaginationUtility<ProductPIMDto>> GetPaginationResult(int pageNumber, int pageSize, SemaphoreSlim semaphore);
+        public Task<PaginationUtility<ProductPIMDto>> GetPaginationResult_RFT(int pageNumber, int pageSize, SemaphoreSlim semaphore);
         public Task<PaginationUtility<ProductPIMDto>> GetProductTopPaginationResult(int pageNumber, int pageSize, SemaphoreSlim semaphore);
     }
     public class PIMApiClient : IPIMApiClient
@@ -17,13 +20,17 @@ namespace EtsyIntegrationDataAPI.Helpers.MapPIMToEtsyDB
         private ILoggerCustom _logService;
         private string url;
         private string urlTopProduct;
+        private readonly PimApi._Services.Interfaces.IProductService _servicePim;
+        private readonly IMapper _mapper;
 
-        public PIMApiClient(IConfiguration configuration, ILoggerCustom logService)
+        public PIMApiClient(IConfiguration configuration, ILoggerCustom logService, PimApi._Services.Interfaces.IProductService servicePim, IMapper mapper)
         {
             _configuration = configuration;
             url = _configuration.GetSection("PIM:UrlGetAllData").Value!;
             urlTopProduct = _configuration.GetSection("PIM:UrlGetTopProduct").Value!;
             _logService = logService;
+            _servicePim = servicePim;
+            _mapper = mapper;
         }
 
         public async Task<PaginationUtility<ProductPIMDto>> GetPaginationResult(int pageNumber, int pageSize, SemaphoreSlim semaphore)
@@ -58,6 +65,40 @@ namespace EtsyIntegrationDataAPI.Helpers.MapPIMToEtsyDB
             finally
             {
                 semaphore.Release();
+            }
+        }
+
+        public async Task<PaginationUtility<ProductPIMDto>> GetPaginationResult_RFT(int pageNumber, int pageSize, SemaphoreSlim semaphore)
+        {
+            await semaphore.WaitAsync();
+            PaginationUtility<ProductPIMDto> result = new PaginationUtility<ProductPIMDto>(null, 1, 1, 1, 1);
+            try
+            {
+                var pagination = new PimApi.Helpers.Utilities.PaginationParam();
+                pagination.PageNumber = pageNumber;
+                pagination.PageSize = pageSize;
+
+                var search = new PimApi.Dtos.SearchParams();
+                var data = await _servicePim.GetData(pagination, search, true);
+
+                result.Result = new List<ProductPIMDto>();
+                foreach (var item in data.Result)
+                {
+                    var dto = _mapper.Map<ProductPIMDto>(item);
+                    result.Result.Add(dto);
+                }
+
+                result.Pagination.PageNumber = data.Pagination.PageNumber;
+                result.Pagination.PageSize = data.Pagination.PageSize;
+                result.Pagination.TotalCount = data.Pagination.TotalCount;
+                result.Pagination.Skip = data.Pagination.Skip;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _logService.CreateLogError($"Get producr from Pim failed with exception {ex.Message}");
+                return result;
             }
         }
 

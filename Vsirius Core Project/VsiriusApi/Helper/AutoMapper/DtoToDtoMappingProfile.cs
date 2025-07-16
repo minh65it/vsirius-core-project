@@ -20,6 +20,8 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<OrderProcessDomain.Qgold.ItemQgold, AmazonIntegrationDataApi.Models.OrderAmazonProcessor.Providers.QgoldInvoiceItem>();
 
             CreateMap<PimApi.Dtos.ProductDto, AmazonIntegrationDataApi.Dtos.AmazonJewelryDataFeedItemV3_Dto>();
+
+            CreateMap<ExcludedProductAPI.DTOs.ExcludedProductDTO, AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB.ExcludedProductDto>().ReverseMap();
             #endregion
 
             #region Walmart
@@ -35,6 +37,39 @@ namespace VsiriusApi.Helper.AutoMapper
             CreateMap<PimApi.Dtos.Variation.VariationDto, WalmartIntegrationDataApi.Dtos.Product.VariationDto>();
 
             CreateMap<PimApi.Dtos.ProductDto, WalmartIntegrationDataApi.Dtos.Vsirius.VsiriusProductDto>();
+
+            CreateMap<WalmartIntegrationDataApi.DtosOrderStuller.StullerOrderDTO, WalmartIntegrationDataApi.Dtos.Order.OrderStullerDTO>();
+            CreateMap<WalmartIntegrationDataApi.DtosOrderStuller.ItemStuller, WalmartIntegrationDataApi.Dtos.Order.ItemStuller>();
+
+            CreateMap<WalmartIntegrationDataApi.Dtos.Order.UnshipOrderDto, StullerOrderProcessAPI.Dtos.UnshipOrderDto>();
+            CreateMap<WalmartIntegrationDataApi.Dtos.Order.ItemUnShip, StullerOrderProcessAPI.Dtos.ItemUnShip>();
+            #endregion
+
+            #region Stuller Order Process
+            CreateMap<AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.UnshipOrderDto, StullerOrderProcessAPI.Dtos.UnshipOrderDto>();
+            CreateMap<AmazonIntegrationDataApi.Dtos.OrderAmazonProcessor.ItemUnShip, StullerOrderProcessAPI.Dtos.ItemUnShip>();
+            #endregion
+
+            #region Ebay
+            CreateMap<PimApi.Dtos.ProductDto, EbayCoreApi.Dtos.PimProductDto>();
+
+            CreateMap<ExcludedProductAPI.DTOs.ExcludedProductDTO, EbayCoreApi.Dtos.ExcludedProductDto>();
+
+            CreateMap<PimApi.Dtos.Variation.VariationDto, EbayCoreApi.Dtos.VariationDto>();
+
+            CreateMap<OrderProcessApi.DTOs.QgoldOrderDTO, EbayCoreApi.Dtos.OrderQgoldDto>();
+            CreateMap<OrderProcessDomain.Qgold.ItemQgold, EbayCoreApi.Dtos.ItemQgold>();
+
+            CreateMap<EbayCoreApi.Dtos.SubmitQgoldOrderDto, OrderProcessDomain.AmazonSeller.QgoldFtpOrderObject>();
+            CreateMap<EbayCoreApi.Dtos.ItemQgoldParam, OrderProcessDomain.AmazonSeller.QgoldFtpOrderItem>();
+
+            CreateMap<StullerOrderProcessAPI.Dtos.StullerOrderDTO, EbayCoreApi.Dtos.OrderStullerDto>();
+            #endregion
+
+            #region Etsy
+            CreateMap<PimApi.Dtos.ProductDto, EtsyIntegrationDataAPI.Dtos.MapPIMToEtsyDB.ProductPIMDto>();
+
+            CreateMap<ExcludedProductAPI.DTOs.ExcludedProductDTO, EtsyIntegrationDataAPI.Dtos.MapPIMToEtsyDB.ExcludedProductDto>().ReverseMap();
             #endregion
         }
     }

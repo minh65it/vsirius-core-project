@@ -8,6 +8,7 @@ namespace PackageApi._Services.IServices
     {
         Task<PaginationResult<ClaimDTO>> GetClaim(PaginationParam paginationParam, ClaimSearchParam search);
         Task<OperationResult> Submit(ClaimParam model);
+        Task<OperationResult> SaveTextFromImage(ClaimTextParam model);
         List<KeyValuePair<int, string>> GetDocTypes();
         Task<List<ClaimDTO>> GetAllByRMA(List<string> rma);
         Task<ClaimDTO?> GetDetail(string id);

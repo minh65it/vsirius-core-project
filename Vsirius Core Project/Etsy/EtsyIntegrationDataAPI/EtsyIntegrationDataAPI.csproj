@@ -36,6 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Excluded\ExcludedProductAPI\ExcludedProductAPI.csproj" />
+    <ProjectReference Include="..\..\PIM\ProductInfoManagementAPI\PimApi.csproj" />
     <ProjectReference Include="..\..\VsiriusSystem\JobClient\QuartzInfrastructure.csproj" />
     <ProjectReference Include="..\..\VsiriusSystem\VSiriusSystemLog\VSiriusSystemLog.csproj" />
   </ItemGroup>

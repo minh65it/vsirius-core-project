@@ -62,11 +62,32 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ResourcesProductApi\Template\VsiriusTemplate1.0.xlsm">
+    <None Update="ResourcesAmazonApi\AmazonTemplate.xlsm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ResourcesProductApi\Template\VsiriusTemplate1.1.xlsm">
+    <None Update="ResourcesAmazonApi\Amazon_Jewelry_Data_Export_V3.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ResourcesAmazonApi\DataAmazonMapping.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ResourcesAmazonApi\DataAmazonMapping.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ResourcesAmazonApi\VsiriusTemplate1.0.xlsm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ResourcesProductApi\Template\VsiriusTemplate1.0.xlsm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ResourcesProductApi\Template\VsiriusTemplate1.1.xlsm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ResourcesStullerApi\AmazonTemplate.xlsm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ResourcesStullerApi\DataStullerMapping.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

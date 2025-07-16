@@ -9,7 +9,7 @@ namespace StullerDataApi.Utilities.Mapping.MapStullerDBToVsiriusDB
             var result = new Dictionary<string, string>();
 
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string sourceFilePath = Path.Combine(baseDirectory, "Resources");
+            string sourceFilePath = Path.Combine(baseDirectory, "ResourcesStullerApi");
             sourceFilePath = sourceFilePath + "\\AmazonTemplate.xlsm";
 
             ExcelPackage targetWorkbook = new ExcelPackage(sourceFilePath);

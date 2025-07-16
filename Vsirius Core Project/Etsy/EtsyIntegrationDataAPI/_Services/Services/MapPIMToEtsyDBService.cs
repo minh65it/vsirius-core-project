@@ -43,7 +43,7 @@ namespace EtsyIntegrationDataAPI._Etsy.Etsy
             {
                 await _logService.CreateLogInformation("Map data PIM to EtsyDB START //========================================================");
                 var pageSize = 3000;
-                var dataFirstCall = await _pIMApiClient.GetPaginationResult(1, pageSize, new SemaphoreSlim(2));
+                var dataFirstCall = await _pIMApiClient.GetPaginationResult_RFT(1, pageSize, new SemaphoreSlim(2));
                 var totalPages = 0;
                 //first data
                 List<ExcludedProductDto>? lstExcludedProduct = await _excludedProduct.GetExcludedProducts();
@@ -76,11 +76,11 @@ namespace EtsyIntegrationDataAPI._Etsy.Etsy
                 {
 
                     //// using async await
-                    var result = await _pIMApiClient.GetPaginationResult(i, pageSize, semaphore);
+                    var result = await _pIMApiClient.GetPaginationResult_RFT(i, pageSize, semaphore);
                     if (result == null)
                     {
                         Thread.Sleep(5000);
-                        result = await _pIMApiClient.GetPaginationResult(i, pageSize, semaphore);
+                        result = await _pIMApiClient.GetPaginationResult_RFT(i, pageSize, semaphore);
                     }
                     if (result == null)
                     {

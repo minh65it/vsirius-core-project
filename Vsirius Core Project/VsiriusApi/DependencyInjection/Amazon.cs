@@ -66,20 +66,20 @@ namespace VsiriusApi.DependencyInjection
                 .AddEventSourceLogger());
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            //services.AddUpdateJobs();
-            //services.AddTransient<UploadProductToAmazonSellerController>();
-            //services.AddJob<Amazon_UploadProductToAmazon>();
-            //services.AddJob<Amazon_UpdateInventoryToAmazon>();
-            //services.AddJob<Amazon_UpdatePriceToAmazon>();
+            services.AddUpdateJobs();
+            services.AddTransient<UploadProductToAmazonSellerController>();
+            services.AddJob<Amazon_UploadProductToAmazon>();
+            services.AddJob<Amazon_UpdateInventoryToAmazon>();
+            services.AddJob<Amazon_UpdatePriceToAmazon>();
 
-            //services.AddTransient<TriggerOrderAmazonProcessorController>();
-            //services.AddJob<Amazon_GetNewAmazonOrder>();
-            //services.AddJob<Amazon_SubmitOrderAmazonToQgold>();
-            //services.AddJob<Amazon_UpdateTrackingOrderAmazon>();
-            //services.AddTransient<ReturnOrderController>();
-            //services.AddJob<Amazon_ReturnAmazonOrder>();
-            //services.AddTransient<MapVSiriusDBToAmazonDBController>();
-            //services.AddJob<Amazon_MapPIMToAmazonDB>();
+            services.AddTransient<TriggerOrderAmazonProcessorController>();
+            services.AddJob<Amazon_GetNewAmazonOrder>();
+            services.AddJob<Amazon_SubmitOrderAmazonToQgold>();
+            services.AddJob<Amazon_UpdateTrackingOrderAmazon>();
+            services.AddTransient<ReturnOrderController>();
+            services.AddJob<Amazon_ReturnAmazonOrder>();
+            services.AddTransient<MapVSiriusDBToAmazonDBController>();
+            services.AddJob<Amazon_MapPIMToAmazonDB>();
 
         }
     }

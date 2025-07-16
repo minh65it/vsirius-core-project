@@ -32,6 +32,7 @@ namespace AmazonIntegrationDataApi._Services.Services
         {
             try
             {
+                await Utilities2.WriteLogAsync($"Job Title: Amazon_MapPIMToAmazonDB");
                 await Utilities2.WriteLogAsync("Map data VSiriusDB to AmazonDB START //========================================================");
                 var pageSize = 3000;
                 var dataFirstCall = await _vSiriusProductApiClient.GetPaginationResult_RFT(1, pageSize, new SemaphoreSlim(2));
@@ -51,7 +52,6 @@ namespace AmazonIntegrationDataApi._Services.Services
 
                 //List rest data
                 List<Task<PaginationUtility<AmazonJewelryDataFeedItemV3_Dto>>> tasks = new();
-                int amountRunTask = 0;
                 int maxConcurrency = 3;
                 SemaphoreSlim semaphore = new SemaphoreSlim(maxConcurrency);
                 bool checkNull = false;

@@ -99,7 +99,7 @@ namespace QgoldIntegrationDataApi._JobServices.JobServices
 
                     //var checkImportExcelApi = await callApiVsiriusWeb.ImportExcelApi(workbookQgolds);
                     Common.WriteLog("Start Import Data to Vsirius");
-                    bool checkImportExcelApi = await ImportExcelApi();
+                    bool checkImportExcelApi = await ImportExcelApi_RFT();
                     Common.WriteLog("End Import Data to Vsirius");
 
                     Common.WriteLog("Start Delete Item Vsirius");

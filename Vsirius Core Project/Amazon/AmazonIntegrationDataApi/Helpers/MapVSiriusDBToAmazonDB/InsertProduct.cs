@@ -69,7 +69,7 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
                 .GroupBy(p => p.MarketplaceSKU)
                 .Select(g => g.First())
                 .ToList();
-            await _excludedProduct.UpdateExcludedProducts(listUpdate);
+            await _excludedProduct.UpdateExcludedProducts_RFT(listUpdate);
 
             if (lstExcludedProduct != null)
             {

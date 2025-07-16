@@ -16,11 +16,7 @@ namespace VsiriusApi.DependencyInjection
         {
             if (services == null) throw new ArgumentNullException(nameof(services));
 
-            /*services.AddDbContext<IdentityContext>(
-                options => options.UseSqlServer(configuration.GetConnectionString("VsiriusWebConnection")));*/
-
             //User
-            
             services.AddScoped<IValidUser, ValidUser>();
             //Mail
             services.AddScoped<IEmailSender, EmailSender>();

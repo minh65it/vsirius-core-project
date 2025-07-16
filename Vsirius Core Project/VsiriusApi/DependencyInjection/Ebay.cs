@@ -26,17 +26,15 @@ namespace VsiriusApi.DependencyInjection
             services.AddScoped<ISubmitOrderService, SubmitOrderService>();
             services.AddScoped<IUpdateTrackingOrderService, UpdateTrackingOrderService>();
 
-            //services.AddTransient<TriggerController>();
+            //services.AddTransient<TriggerController>()
+            //services.AddUpdateJobs();
+            //services.AddJob<Ebay_GetOrderFromEbay>();
+            //services.AddJob<Ebay_MapperPimProductToEbayProduct>();
+            //services.AddJob<Ebay_SubmitEbayOrder>();
+            //services.AddJob<Ebay_UpdatePriceQuantityMarketplace>();
+            //services.AddJob<Ebay_UpdateTrackingOrder>();
+            //services.AddJob<Ebay_UploadProductToSeller>();
 
-            /*
-            services.AddUpdateJobs();
-            services.AddJob<Ebay_GetOrderFromEbay>();
-            services.AddJob<Ebay_MapperPimProductToEbayProduct>();
-            services.AddJob<Ebay_SubmitEbayOrder>();
-            services.AddJob<Ebay_UpdatePriceQuantityMarketplace>();
-            services.AddJob<Ebay_UpdateTrackingOrder>();
-            services.AddJob<Ebay_UploadProductToSeller>();
-            */
         }
     }
 }

@@ -515,7 +515,11 @@ namespace QgoldIntegrationDataApi._JobServices.JobServices
                         }
                         
                     }
-                    var image = item.Image[..item.Image.LastIndexOf('.')].Replace('_', '/');
+                    var image = string.Empty;
+                    if(!string.IsNullOrEmpty(image))
+                    {
+                        image = item.Image[..item.Image.LastIndexOf('.')].Replace('_', '/');
+                    }
                     if (!image.Contains("--")
                     && !image.Contains("NOIMAGE")
                     && item.Status != "Discontinued")

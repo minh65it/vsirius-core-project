@@ -13,7 +13,7 @@ namespace VsiriusSystem._Services.Services
         public TextractAWSService() { }
 
         public string KeyorPath { get; set; } = "REMOVED_AWS_KEY";
-        public string SecretKey { get; set; } = "eMiQIRN8j4srfwbpdOBTGeUr81j2TUUu894fvOiD";
+        public string SecretKey { get; set; } = "0WkCMked5LQGCZAU58X66T/9B4+6nnxdzJc6MeKj";
 
         public async Task<string> AmazoneScanForText(IFormFile file)
         {

@@ -1,4 +1,5 @@
-﻿using EbayCoreApi.Common.Configurations;
+﻿using AutoMapper;
+using EbayCoreApi.Common.Configurations;
 using EbayCoreApi.Common.Helpers;
 using EbayCoreApi.Common.Mappers;
 using EbayCoreApi.DataContext;
@@ -15,13 +16,25 @@ namespace EbayCoreApi.JobServices.Services
     {
         private readonly EbayContext _context;
         private readonly IConfiguration _config;
+        private readonly PimApi._Services.Interfaces.IOrderService _pimOrderService;
+        private readonly ExcludedProductAPI._Services.Interfaces.IExcludedProductService _excludedProductService;
+        private readonly PimApi._Services.Interfaces.IVariationService _variationService;
+        private readonly IMapper _mapper;
 
         public MapPimToEbayProductService(
             EbayContext context,
+            PimApi._Services.Interfaces.IOrderService pimOrderService,
+            ExcludedProductAPI._Services.Interfaces.IExcludedProductService excludedProductService,
+            PimApi._Services.Interfaces.IVariationService variationService,
+            IMapper mapper,
             IConfiguration config)
         {
             _context = context;
             _config = config;
+            _pimOrderService = pimOrderService;
+            _excludedProductService = excludedProductService;
+            _variationService = variationService;
+            _mapper = mapper;
         }
 
         public async Task MapperPimProductToEbayProduct()
@@ -62,7 +75,7 @@ namespace EbayCoreApi.JobServices.Services
                 UtilHelper.WriteLog("End Delete old Data");
 
                 UtilHelper.WriteLog("Push Data Start Bulk insert update to local API Walmart");
-                List<VariationDto> lstVariation = await GetLstVariation();
+                List<VariationDto> lstVariation = await GetLstVariation_RFT();
                 await PushItemToDbLocal(lstData, lstVariation);
                 UtilHelper.WriteLog("Push Data End Bulk insert update to local API Walmart");
 
@@ -96,13 +109,35 @@ namespace EbayCoreApi.JobServices.Services
             return rs;
         }
 
+        private async Task<List<VariationDto>> GetLstVariation_RFT()
+        {
+            var rs = new List<VariationDto>();
+            try
+            {
+                var data = await _variationService.GetAll();
+
+                foreach ( var item in data)
+                {
+                    var dto = _mapper.Map<VariationDto>(item);
+                    rs.Add(dto);
+                }
+                UtilHelper.WriteLog($"GetLstVariation success");
+                return rs;
+            }
+            catch (Exception ex)
+            {
+                UtilHelper.WriteLog($"GetLstVariation failed with err: {ex.Message}");
+                return rs;
+            }
+        }
+
         private async Task<List<ExcludedProductDto>> GetExcludedProducts()
         {
             try
             {
                 List<ExcludedProductDto> allResults = new();
                 var pageSize = 3000;
-                var dataFirstCall = await GetPaginationExcludedProductAsync(1, pageSize);
+                var dataFirstCall = await GetPaginationExcludedProductAsync_RFT(1, pageSize);
                 var totalPages = 0;
                 List<ExcludedProductDto> firstData = new();
                 //first data
@@ -118,35 +153,23 @@ namespace EbayCoreApi.JobServices.Services
                     return null;
                 }
 
-                //List rest data
-                List<Task<PaginationUtil<ExcludedProductDto>>> tasks = new();
-                int amountRunTask = 0;
+
                 for (int i = 2; i <= totalPages; i++)
                 {
                     int pageNumber = i;
 
-                    tasks.Add(GetPaginationExcludedProductAsync(pageNumber, pageSize));
+                    var getData = await GetPaginationExcludedProductAsync_RFT(pageNumber, pageSize);
 
-                    if (amountRunTask < 3 && i != totalPages)
+                    foreach (var result in getData.Result)
                     {
-                        amountRunTask++;
-                    }
-                    else
-                    {
-                        amountRunTask = 0;
-                        var results = await Task.WhenAll(tasks);
-                        foreach (var result in results)
+                        if (getData.Result != null)
                         {
-                            if (result != null)
-                            {
-                                allResults.AddRange(result.Result);
-                            }
-                            else
-                            {
-                                UtilHelper.WriteLog($"Failed when add record");
-                            }
+                            allResults.AddRange(getData.Result);
                         }
-                        tasks.RemoveAll(x => x.IsCompleted);
+                        else
+                        {
+                            UtilHelper.WriteLog($"Failed when add record");
+                        }
                     }
                 }
 
@@ -190,6 +213,43 @@ namespace EbayCoreApi.JobServices.Services
             }
 
             return result;
+        }
+
+        private async Task<PaginationUtil<ExcludedProductDto>> GetPaginationExcludedProductAsync_RFT(int pageNumber, int pageSize)
+        {
+            PaginationUtil<ExcludedProductDto> result = new PaginationUtil<ExcludedProductDto>(null, 1, 1, 1, 1);
+            try
+            {
+                var pagination = new ExcludedProductAPI.Helpers.PaginationParam();
+                pagination.PageNumber = pageNumber;
+                pagination.PageSize = pageSize;
+
+                var search = new ExcludedProductAPI.DTOs.ExcludedProductParam();
+                search.Marketplace = "Walmart";
+
+                var data = await _excludedProductService.GetAll(pagination, search);
+
+                result.Result = new List<ExcludedProductDto>();
+                foreach (var item in data.Result)
+                {
+                    var dto = _mapper.Map<ExcludedProductDto>(item);
+                    result.Result.Add(dto);
+                }
+                UtilHelper.WriteLog($"Get excluded product success at page {pageNumber}");
+
+                result.Pagination.PageNumber = data.Pagination.PageNumber;
+                result.Pagination.PageSize = data.Pagination.PageSize;
+                result.Pagination.TotalCount = data.Pagination.TotalCount;
+                result.Pagination.Skip = data.Pagination.Skip;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                UtilHelper.WriteLog($"Get excluded product failed with exception {ex.Message} at page {pageNumber}");
+                return result;
+            }
+
         }
 
         private async Task PushItemToDbLocal(List<PimProductDto> lstData, List<VariationDto> lstVariation)
@@ -308,7 +368,7 @@ namespace EbayCoreApi.JobServices.Services
             {
                 List<PimProductDto> allResults = new List<PimProductDto>();
                 var pageSize = 3000;
-                var dataFirstCall = await GetPaginationTopResultAsync(1, pageSize);
+                var dataFirstCall = await GetPaginationTopResultAsync_RFT(1, pageSize);
                 var totalPages = 0;
                 List<PimProductDto> firstData = new List<PimProductDto>();
                 //first data
@@ -324,35 +384,22 @@ namespace EbayCoreApi.JobServices.Services
                     return null;
                 }
 
-                //List rest data
-                List<Task<PaginationUtil<PimProductDto>>> tasks = new List<Task<PaginationUtil<PimProductDto>>>();
-                int amountRunTask = 0;
                 for (int i = 2; i <= totalPages; i++)
                 {
                     int pageNumber = i;
 
-                    tasks.Add(GetPaginationTopResultAsync(pageNumber, pageSize));
+                    var getData = await GetPaginationTopResultAsync_RFT(pageNumber, pageSize);
 
-                    if (amountRunTask < 3 && i != totalPages)
+                    foreach (var result in getData.Result)
                     {
-                        amountRunTask++;
-                    }
-                    else
-                    {
-                        amountRunTask = 0;
-                        var results = await Task.WhenAll(tasks);
-                        foreach (var result in results)
+                        if (getData.Result != null)
                         {
-                            if (result != null)
-                            {
-                                allResults.AddRange(result.Result);
-                            }
-                            else
-                            {
-                                UtilHelper.WriteLog($"Failed when add record");
-                            }
+                            allResults.AddRange(getData.Result);
                         }
-                        tasks.RemoveAll(x => x.IsCompleted);
+                        else
+                        {
+                            UtilHelper.WriteLog($"Failed when add record");
+                        }
                     }
                 }
 
@@ -396,6 +443,44 @@ namespace EbayCoreApi.JobServices.Services
             }
 
             return result;
+        }
+
+        private async Task<PaginationUtil<PimProductDto>> GetPaginationTopResultAsync_RFT(int pageNumber, int pageSize)
+        {
+            PaginationUtil<PimProductDto> result = new PaginationUtil<PimProductDto>(null, 1, 1, 1, 1);
+            try
+            {
+                var pagination = new PimApi.Helpers.Utilities.PaginationParam();
+                pagination.PageNumber = pageNumber;
+                pagination.PageSize = pageSize;
+
+                var search = new PimApi.Dtos.OrderDto.SearchOrderParams();
+                search.isPagging = true;
+                search.isSortQuantity = true;
+                search.isGroupQuantity = true;
+
+                var data = await _pimOrderService.GetProductTop(pagination, search);
+
+                result.Result = new List<PimProductDto>();
+                foreach (var item in data.Result)
+                {
+                    var dto = _mapper.Map<PimProductDto>(item);
+                    result.Result.Add(dto);
+                }
+
+                result.Pagination.PageNumber = data.Pagination.PageNumber;
+                result.Pagination.PageSize = data.Pagination.PageSize;
+                result.Pagination.TotalCount = data.Pagination.TotalCount;
+                result.Pagination.Skip = data.Pagination.Skip;
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                UtilHelper.WriteLog($"Get top product from pim failed: {ex.ToString()}");
+                return result;
+            }
+            
         }
     }
 }

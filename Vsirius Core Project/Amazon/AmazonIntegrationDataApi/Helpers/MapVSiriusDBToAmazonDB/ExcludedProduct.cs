@@ -10,6 +10,7 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
     {
         public Task<List<ExcludedProductDto>?> GetExcludedProducts();
         public Task<bool> UpdateExcludedProducts(List<ExcludedProductDto> listUpdate);
+        public Task<bool> UpdateExcludedProducts_RFT(List<ExcludedProductDto> listUpdate);
     }
     public class ExcludedProduct : IExcludedProduct
     {
@@ -30,7 +31,7 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
             {
                 List<ExcludedProductDto> allResults = new();
                 var pageSize = 3000;
-                var dataFirstCall = await GetPaginationExcludedProductAsync(1, pageSize);
+                var dataFirstCall = await GetPaginationExcludedProductAsync_RFT(1, pageSize);
                 var totalPages = 0;
                 List<ExcludedProductDto> firstData = new();
                 //first data
@@ -46,35 +47,22 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
                     return null;
                 }
 
-                //List rest data
-                List<Task<PaginationUtility<ExcludedProductDto>?>> tasks = new();
-                int amountRunTask = 0;
                 for (int i = 2; i <= totalPages; i++)
                 {
                     int pageNumber = i;
 
-                    tasks.Add(GetPaginationExcludedProductAsync(pageNumber, pageSize));
+                    var getData = await GetPaginationExcludedProductAsync(pageNumber, pageSize);
 
-                    if (amountRunTask < 3 && i != totalPages)
+                    foreach (var result in getData.Result)
                     {
-                        amountRunTask++;
-                    }
-                    else
-                    {
-                        amountRunTask = 0;
-                        var results = await Task.WhenAll(tasks);
-                        foreach (var result in results)
+                        if (getData.Result != null)
                         {
-                            if (result != null)
-                            {
-                                allResults.AddRange(result.Result);
-                            }
-                            else
-                            {
-                                await Utilities2.WriteLogAsync($"Failed when add record");
-                            }
+                            allResults.AddRange(getData.Result);
                         }
-                        tasks.RemoveAll(x => x.IsCompleted);
+                        else
+                        {
+                            await Utilities2.WriteLogAsync($"Failed when add record");
+                        }
                     }
                 }
 
@@ -101,7 +89,7 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
 
                 string resultString = response.Content.ReadAsStringAsync().Result;
                 var result = JsonConvert.DeserializeObject<ResponseData>(resultString);
-                if(result != null)
+                if (result != null)
                 {
                     return result.Success;
                 }
@@ -112,7 +100,19 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
                 await Utilities2.WriteLogAsync($"Call Api CreateUpdate failed: with exception {ex.Message}");
                 return false;
             }
-            
+
+        }
+
+        public async Task<bool> UpdateExcludedProducts_RFT(List<ExcludedProductDto> listUpdate)
+        {
+            var list = new List<ExcludedProductAPI.DTOs.ExcludedProductDTO>();
+            foreach (var item in listUpdate)
+            {
+                var dto = _mapper.Map<ExcludedProductAPI.DTOs.ExcludedProductDTO>(item);
+                list.Add(dto);
+            }
+            var result = await _service.BulkCreateUpdate(list);
+            return result.Success;
         }
         public class ResponseData
         {
@@ -182,11 +182,11 @@ namespace AmazonIntegrationDataApi.Helpers.MapVSiriusDBToAmazonDB
                 return result;
             }
             catch (Exception ex)
-            { 
-            await Utilities2.WriteLogAsync($"Call service failed with exception {ex.Message} at page {pageNumber}");
-            return result;
+            {
+                await Utilities2.WriteLogAsync($"Call service failed with exception {ex.Message} at page {pageNumber}");
+                return result;
             }
-            
+
         }
     }
 }

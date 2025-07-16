@@ -39,7 +39,7 @@ namespace StullerDataApi.Services.Services
         {
             await Common.WriteLogAsync(@$"StullerToVsiriusWebProcessor start =================================");
             //export data
-            //await _exportDataVsirius.ExportExcel();
+            await _exportDataVsirius.ExportExcel();
 
             //Import data
             await Common.WriteLogAsync("Stuller to VsiriusWeb import excel!");
