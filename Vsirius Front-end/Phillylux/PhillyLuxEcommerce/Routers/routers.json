@@ -1,57 +1,57 @@
 {
   "BaseURLImage": "",
   "BaseURLImageUser": "",
-  "ViewAnalytic": "http://192.168.2.163:5202/csr/api/PageView/",
-  "SecretInfoUser": "http://192.168.2.163:5202/csr/api/PageView/IndentityUser/",
-  "VsiriusSystemApi": "http://192.168.2.163:5202/system/api/Log/",
+  "ViewAnalytic": "http://api.phillylux.com/csr/api/PageView/",
+  "SecretInfoUser": "http://api.phillylux.com/csr/api/PageView/IndentityUser/",
+  "VsiriusSystemApi": "http://api.phillylux.com/system/api/Log/",
   "NotificationService": {
-    "URL_MarkReadNotifications": "http://192.168.2.163:5202/csr/api/Notifications/UpdateView",
-    "URL_TopNotification": "http://192.168.2.163:5202/csr/api/Notifications/GetNotificationMain/",
-    "URL_AllNotifications": "http://192.168.2.163:5202/csr/api/Notifications/GetNotificationByUser/",
-    "URL_NotReadNotification": "http://192.168.2.163:5202/csr/api/Notifications/NotReadNotifications"
+    "URL_MarkReadNotifications": "http://api.phillylux.com/csr/api/Notifications/UpdateView",
+    "URL_TopNotification": "http://api.phillylux.com/csr/api/Notifications/GetNotificationMain/",
+    "URL_AllNotifications": "http://api.phillylux.com/csr/api/Notifications/GetNotificationByUser/",
+    "URL_NotReadNotification": "http://api.phillylux.com/csr/api/Notifications/NotReadNotifications"
   },
   "ProductDetailService": {
-    "URL_Detail": "http://192.168.2.163:5202/product/api/VsiriusProduct/SKU/",
-    "URL_Related": "http://192.168.2.163:5202/product/api/VsiriusHomeProduct/GetRelatedProduct/"
+    "URL_Detail": "http://api.phillylux.com/product/api/VsiriusProduct/SKU/",
+    "URL_Related": "http://api.phillylux.com/product/api/VsiriusHomeProduct/GetRelatedProduct/"
   },
   "SearchService": {
-    "URL_Filter": "http://192.168.2.163:5202/product/api/VsiriusProduct/Filter/",
-    "URL_Search": "http://192.168.2.163:5202/product/api/VsiriusProduct/",
-    "URL_TopProduct": "http://192.168.2.163:5202/product/api/VsiriusTopProduct/"
+    "URL_Filter": "http://api.phillylux.com/product/api/VsiriusProduct/Filter/",
+    "URL_Search": "http://api.phillylux.com/product/api/VsiriusProduct/",
+    "URL_TopProduct": "http://api.phillylux.com/product/api/VsiriusTopProduct/"
   },
   "HomeService": {
-    "APIURlVsiriusFilter": "http://192.168.2.163:5202/product/api/VsiriusFilter/",
-    "APIURlVsiriusHomeProduct": "http://192.168.2.163:5202/product/api/VsiriusHomeProduct/",
-    "URL_RegisterAccount": "http://192.168.2.163:5202/identity/api/User/CreateUser/",
+    "APIURlVsiriusFilter": "http://api.phillylux.com/product/api/VsiriusFilter/",
+    "APIURlVsiriusHomeProduct": "http://api.phillylux.com/product/api/VsiriusHomeProduct/",
+    "URL_RegisterAccount": "http://api.phillylux.com/identity/api/User/CreateUser/",
     //"URL_CheckLogin": "https://localhost:7021/api/User/Login/",
-    "URL_CheckLogin": "http://192.168.2.163:5202/identity/api/User/Login/"
+    "URL_CheckLogin": "http://api.phillylux.com/identity/api/User/Login/"
   },
   "CartService": {
-    "URL_CartDetails": "http://192.168.2.163:5202/order/api/VsiriusCart/ListCartByUser/",
-    "URL_AddToCart": "http://192.168.2.163:5202/order/api/VsiriusCart/AddCartOrDelete/"
+    "URL_CartDetails": "http://api.phillylux.com/order/api/VsiriusCart/ListCartByUser/",
+    "URL_AddToCart": "http://api.phillylux.com/order/api/VsiriusCart/AddCartOrDelete/"
   },
   "OrderService": {
-    "URL_Order": "http://192.168.2.163:5202/order/api/Order/",
-    "URL_Cart": "http://192.168.2.163:5202/order/api/VsiriusCart/",
+    "URL_Order": "http://api.phillylux.com/order/api/Order/",
+    "URL_Cart": "http://api.phillylux.com/order/api/VsiriusCart/",
     //"URL_User": "https://localhost:7021/api/User/",
-    "URL_User": "http://192.168.2.163:5202/identity/api/User/",
-    "URL_OrderStatus": "http://192.168.2.163:5202/order/api/OrderStatus/"
+    "URL_User": "http://api.phillylux.com/identity/api/User/",
+    "URL_OrderStatus": "http://api.phillylux.com/order/api/OrderStatus/"
   },
   "UserService": {
-    "URL_UserInfo": "http://192.168.2.163:5202/identity/api/User/GetUserDetail/",
-    "URL_ConfirmEmail": "http://192.168.2.163:5202/identity/api/User/ConfirmEmail/",
-    "URL_SendOTP": "http://192.168.2.163:5202/identity/api/User/SendSMS/",
-    "URL_ConfirmPhone": "http://192.168.2.163:5202/identity/api/User/VerifySMS/",
-    "URL_UpdateUser": "http://192.168.2.163:5202/identity/api/User/UpdateUser/",
-    "URL_UserWishlist": "http://192.168.2.163:5202/csr/api/Favorites/"
+    "URL_UserInfo": "http://api.phillylux.com/identity/api/User/GetUserDetail/",
+    "URL_ConfirmEmail": "http://api.phillylux.com/identity/api/User/ConfirmEmail/",
+    "URL_SendOTP": "http://api.phillylux.com/identity/api/User/SendSMS/",
+    "URL_ConfirmPhone": "http://api.phillylux.com/identity/api/User/VerifySMS/",
+    "URL_UpdateUser": "http://api.phillylux.com/identity/api/User/UpdateUser/",
+    "URL_UserWishlist": "http://api.phillylux.com/csr/api/Favorites/"
   },
   "PageService": {
-    "URL_Contact": "http://192.168.2.163:5202/csr/api/Contacts/",
-    "URL_ListPage": "http://192.168.2.163:5202/csr/api/DrivenHtmlPages/GetListData",
-    "URL_DetailPage": "http://192.168.2.163:5202/csr/api/DrivenHtmlPages/GetDetail"
+    "URL_Contact": "http://api.phillylux.com/csr/api/Contacts/",
+    "URL_ListPage": "http://api.phillylux.com/csr/api/DrivenHtmlPages/GetListData",
+    "URL_DetailPage": "http://api.phillylux.com/csr/api/DrivenHtmlPages/GetDetail"
   },
   "SignalR": {
-    "NotificationHub": "http://192.168.2.163:5202/csr/notificationhub"
+    "NotificationHub": "http://api.phillylux.com/csr/notificationhub"
   },
   "ApiVsiriusCredentials": {
     "ClientId": "FrontEnd",
